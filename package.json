@@ -1,0 +1,21 @@
+{
+  "name": "alpinejs-component",
+  "version": "1.0.0",
+  "description": "Create components with Alpine JS",
+  "keywords": [
+    "Alpine",
+    "Alpine JS",
+    "Alpine JS Plugins"
+  ],
+  "author": "Mark Mead",
+  "license": "MIT",
+  "main": "dist/component.cjs.js",
+  "module": "dist/component.esm.js",
+  "unpkg": "dist/component.min.js",
+  "scripts": {
+    "build": "node scripts/build.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.12.22"
+  }
+}
