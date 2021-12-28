@@ -1,51 +1,47 @@
-# Apline JS Component
+# Alpine JS Component
 
-Alpine JS plugin `x-component` allows you to create reusable components, sprinkled with Alpine JS reactive data 🧁
+Create reusable HTML components sprinkled with Alpine JS reactive data 🧁
 
 ## Example 👀
 
 ### Page
 
-We can render on page components by using a `<template>` tag with an `id` that matches the modifier on `x-component` 🎉
+We can render on page components by using a `<template>` tag with an `id` that matches the `template` attribute 🎉
 
-In this example we are attaching `user` as the modifier which will look for the `<template id="user">` element
+In this example we are using the `person` template to find the `<template id="person">` element.
 
 ```html
 <div
-  x-data="{
-    people: [
-      {
-        name: 'John',
-        age: '25',
-        job: 'Developer',
-        image: '../images/john.jpg'
-      },
-      {
-        name: 'Jane',
-        age: '30',
-        job: 'Designer',
-        image: '../images/jane.jpg'
-      }
-    ]
-  }"
+x-data="{
+  people: [
+    { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] },
+    { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
+  ]
+}"
 >
-  <ul>
-    <template x-for="person in people">
-      <template
-        x-component.user="person.name,person.age,person.job,person.image"
-      ></template>
-    </template>
-  </ul>
+<ul>
+  <template x-for="person in people">
+    <x-component-wrapper
+      x-component
+      template="person"
+      x-data="{ item: person }"
+    ></x-component-wrapper>
+  </template>
+</ul>
 </div>
 
-<template id="user">
-  <li class="user-card">
-    <img src="{person.image}" alt="{person.name}" />
+<template id="person">
+<li class="user-card">
+  <h2 x-text="item.name"></h2>
 
-    <h5>{person.name}</h5>
+  <p x-text="item.age"></p>
 
-    <p>I am {person.age} years old and I work as {person.job}</p>
-  </li>
+  <ul>
+    <template x-for="skill in item.skills">
+      <li x-text="skill"></li>
+    </template>
+  </ul>
+</li>
 </template>
 ```
 
@@ -53,64 +49,74 @@ In this example we are attaching `user` as the modifier which will look for the 
 
 We can also render global components 🌍
 
-This works by checking the `public` folder for a HTML file that matches the attached name modifier
+This works by passing a URL for an HTML file in the `url` attribute that matches to a HTML file within the app
 
-In this example, we are telling Alpine JS to check for the `public/user.html` file 🕵️‍♀️
-
-To use a global component attach `url` at the end of `x-component`, after the name modifier
+In this example, we are telling Alpine JS to get the HTML from `public/person.html` 🕵️‍♀️
 
 ```html
 <div
-  x-data="{
-    people: [
-      {
-        name: 'John',
-        age: '25',
-        job: 'Developer',
-        image: '../images/john.jpg'
-      },
-      {
-        name: 'Jane',
-        age: '30',
-        job: 'Designer',
-        image: '../images/jane.jpg'
-      }
-    ]
-  }"
+x-data="{
+  people: [
+    { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] },
+    { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
+  ]
+}"
 >
-  <ul>
-    <template x-for="person in people">
-      <template
-        x-component.user.url="person.name,person.age,person.job,person.image"
-      ></template>
-    </template>
-  </ul>
+<ul>
+  <template x-for="person in people">
+    <x-component-wrapper
+      x-component
+      url="/public/person.html"
+      x-data="{ item: person }"
+    ></x-component-wrapper>
+  </template>
+</ul>
 </div>
 ```
 
-Then in `public/user.html` we have this
+Then in `public/person.html` we have this
 
 ```html
 <li class="user-card">
-  <img src="{person.image}" alt="{person.name}" />
+<h2 x-text="item.name"></h2>
 
-  <h5>{person.name}</h5>
+<p x-text="item.age"></p>
 
-  <p>I am {person.age} years old and I work as {person.job}</p>
+<ul>
+  <template x-for="skill in item.skills">
+    <li x-text="skill"></li>
+  </template>
+</ul>
 </li>
 ```
 
-#### Thoughts 🤔
+## Styling
 
-**Why am I passing the data as a comma seperate list?**
+Sadly, the Shadow DOM doesn't allow for global CSS styling and therefore you'll need to pass the CSS via a `<style>` tag.
 
-It makes it easier to render reactive data from Alpine JS within the components as we can use moustache syntax
+```html
+<li>
+  <style>
+    .user-card {
+      background: #00F;
+    }
+  </style>
 
-If you like this syntax, take a look at [AlpineJS Tash](https://github.com/markmead/alpinejs-tash)
+  <div class="user-card">
+    <h2 x-text="item.name"></h2>
 
-**Can I pass arrays?**
+    <p x-text="item.age"></p>
 
-I don't think this is something you'd be able to do without some very confusing code, but if you figure it out and it follows Alpine JS' easy to read syntax, create a PR 🙌 🤩
+    <ul>
+      <template x-for="skill in item.skills">
+        <li x-text="skill"></li>
+      </template>
+    </ul>
+  </div>
+</li>
+```
+
+I don't like this approach and I feel like there is something better out there, if you have any ideas then let me know.
 
 ## Install 🌟
 
@@ -119,7 +125,7 @@ It's very easy to install Alpine JS plugins! 🙌
 ### CDN
 
 ```html
-<script src="https://unpkg.com/alpinejs-component@1.0.0/dist/component.min.js"></script>
+<script src="https://unpkg.com/alpinejs-component@1.x.x/dist/component.min.js"></script>
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 ```
 
