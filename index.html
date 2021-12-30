@@ -14,7 +14,7 @@
     x-data="{
       skill: '',
       people: [
-        { name: 'Mark', age: 24, skills: ['Shopify', 'Tailwind CSS', 'Rails'] },
+        { name: 'Mark', age: 24, skills: ['Shopify', 'Tailwind CSS', 'Rails'], job: { company: 'Wiro', role: 'Developer' } },
         { name: 'Kate', age: 22, skills: ['Marketing', 'SEO'] }
       ]
     }"
@@ -64,6 +64,15 @@
             </li>
           </template>
         </ul>
+
+        <dl>
+          <template x-for="(key, value) in item.job">
+            <div>
+              <dd x-text="key"></dd>
+              <t x-text="value"></t>
+            </div>
+          </template>
+        </dl>
       </div>
     </template>
   </div>
