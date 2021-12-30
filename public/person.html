@@ -1,0 +1,12 @@
+<div>
+  <p>Name: <span x-text="item.name"></span></p>
+  <p>Age: <span x-text="item.age"></span></p>
+
+  <ul>
+    <template x-for="skill in item.skills">
+      <li>
+        <input type="text" x-model="skill">
+      </li>
+    </template>
+  </ul>
+</div>

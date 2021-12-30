@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <script src="dist/component.min.js"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body>
+  <div
+    x-data="{
+      skill: '',
+      people: [
+        { name: 'Mark', age: 24, skills: ['Shopify', 'Tailwind CSS', 'Rails'] },
+        { name: 'Kate', age: 22, skills: ['Marketing', 'SEO'] }
+      ]
+    }"
+  >
+    <input type="text" x-model="skill">
+
+    <button type="button" @click="people[0].skills.push(skill)">
+      Add Skill to Mark
+    </button>
+
+    <button type="button" @click="people[1].skills.push(skill)">
+      Add Skill to Kate
+    </button>
+
+    <ul>
+      <template x-for="person in people">
+        <li style="border: 1px solid red;">
+          <input type="text" x-model="person.name">
+          <input type="text" x-model="person.age">
+
+          <hr>
+
+          <x-component-wrapper
+            x-component
+            template="person"
+            x-data="{ item: person }"
+          ></x-component-wrapper>
+
+          <!-- <x-component-wrapper
+            x-component
+            url="/public/person.html"
+            x-data="{ item: person }"
+          ></x-component-wrapper> -->
+        </li>
+      </template>
+    </ul>
+
+    <template id="person">
+      <div>
+        <p>Name: <span x-text="item.name"></span></p>
+        <p>Age: <span x-text="item.age"></span></p>
+
+        <ul>
+          <template x-for="skill in item.skills">
+            <li>
+              <input type="text" x-model="skill">
+            </li>
+          </template>
+        </ul>
+      </div>
+    </template>
+  </div>
+</body>
+</html>
