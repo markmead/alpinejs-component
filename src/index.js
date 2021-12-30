@@ -1,41 +1,44 @@
 export default function (Alpine) {
-  Alpine.directive("component", (el, { modifiers }, { evaluate, effect }) => {
-    let target = modifiers[0];
-    let file = modifiers[1];
-    let name = `x-component.${modifiers.join(".")}`;
-    let expressions = el.getAttribute(name).split(",");
-    let html = "";
+  class ComponentWrapper extends HTMLElement {
+    connectedCallback() {
+      let shadow = this.attachShadow({ mode: "open" });
 
-    let finder = (exp) => new RegExp(`{${exp}}`, "g");
+      if (this.attributes.template) {
+        let template = document.getElementById(this.attributes.template.value);
+        let component = new DOMParser().parseFromString(
+          template.innerHTML,
+          "text/html"
+        ).body.firstChild;
 
-    if (file) {
-      fetch(`/public/${target}.html`)
-        .then((response) => response.text())
-        .then((text) => {
-          localStorage.setItem(`x-component-${target}`, text);
-        });
+        shadow.appendChild(component);
 
-      html = localStorage.getItem(`x-component-${target}`);
+        document.addEventListener("alpine:initialized", () =>
+          Alpine.initTree(shadow)
+        );
+      }
+
+      if (this.attributes.url) {
+        fetch(this.attributes.url.value)
+          .then((response) => response.text())
+          .then((template) => {
+            let component = new DOMParser().parseFromString(
+              template,
+              "text/html"
+            ).body.firstChild;
+
+            shadow.appendChild(component);
+
+            Alpine.initTree(shadow);
+          });
+      }
     }
+  }
 
-    if (!file) {
-      let component = document.getElementById(target);
+  if (window.customElements.get("x-component-wrapper")) return;
 
-      html = component.innerHTML;
-    }
+  customElements.define("x-component-wrapper", ComponentWrapper);
 
-    effect(() => {
-      expressions.forEach((exp) => {
-        let value = evaluate(exp);
-        let regex = finder(exp);
-
-        html = html.replace(regex, value);
-      });
-
-      let element = new DOMParser().parseFromString(html, "text/html").body
-        .firstChild;
-
-      el.parentElement.appendChild(element);
-    });
+  Alpine.directive("component", () => {
+    new ComponentWrapper();
   });
 }
