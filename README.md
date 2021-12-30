@@ -1,6 +1,6 @@
 # Apline JS Component
 
-Alpine JS plugin `x-component` allows you to create reusable components, sprinkled with Alpine JS reactive data 🧁
+Create reusable HTML components sprinkled with Alpine JS reactive data 🧁
 
 ## Example 👀
 
@@ -8,7 +8,7 @@ Alpine JS plugin `x-component` allows you to create reusable components, sprinkl
 
 We can render on page components by using a `<template>` tag with an `id` that matches the `template` attribute 🎉
 
-In this example we are using the `person` template to find the `<template id="person">` element
+In this example we are using the `person` template to find the `<template id="person">` element.
 
 ```html
 <div
@@ -97,7 +97,7 @@ It's very easy to install Alpine JS plugins! 🙌
 ### CDN
 
 ```html
-<script src="https://unpkg.com/alpinejs-component@1.0.0/dist/component.min.js"></script>
+<script src="https://unpkg.com/alpinejs-component@1.x.x/dist/component.min.js"></script>
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 ```
 
