@@ -1,4 +1,4 @@
-# Apline JS Component
+# Alpine JS Component
 
 Create reusable HTML components sprinkled with Alpine JS reactive data 🧁
 
@@ -12,36 +12,36 @@ In this example we are using the `person` template to find the `<template id="pe
 
 ```html
 <div
-  x-data="{
-    people: [
-      { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] },
-      { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
-    ]
-  }"
+x-data="{
+  people: [
+    { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] },
+    { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
+  ]
+}"
 >
-  <ul>
-    <template x-for="person in people">
-      <x-component-wrapper
-        x-component
-        template="person"
-        x-data="{ item: person }"
-      ></x-component-wrapper>
-    </template>
-  </ul>
+<ul>
+  <template x-for="person in people">
+    <x-component-wrapper
+      x-component
+      template="person"
+      x-data="{ item: person }"
+    ></x-component-wrapper>
+  </template>
+</ul>
 </div>
 
 <template id="person">
-  <li class="user-card">
-    <h2 x-text="item.name"></h2>
+<li class="user-card">
+  <h2 x-text="item.name"></h2>
 
-    <p x-text="item.age"></p>
+  <p x-text="item.age"></p>
 
-    <ul>
-      <template x-for="skill in item.skills">
-        <li x-text="skill"></li>
-      </template>
-    </ul>
-  </li>
+  <ul>
+    <template x-for="skill in item.skills">
+      <li x-text="skill"></li>
+    </template>
+  </ul>
+</li>
 </template>
 ```
 
@@ -55,22 +55,22 @@ In this example, we are telling Alpine JS to get the HTML from `public/person.ht
 
 ```html
 <div
-  x-data="{
-    people: [
-      { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] },
-      { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
-    ]
-  }"
+x-data="{
+  people: [
+    { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] },
+    { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
+  ]
+}"
 >
-  <ul>
-    <template x-for="person in people">
-      <x-component-wrapper
-        x-component
-        url="/public/person.html"
-        x-data="{ item: person }"
-      ></x-component-wrapper>
-    </template>
-  </ul>
+<ul>
+  <template x-for="person in people">
+    <x-component-wrapper
+      x-component
+      url="/public/person.html"
+      x-data="{ item: person }"
+    ></x-component-wrapper>
+  </template>
+</ul>
 </div>
 ```
 
@@ -78,17 +78,45 @@ Then in `public/person.html` we have this
 
 ```html
 <li class="user-card">
-  <h2 x-text="item.name"></h2>
+<h2 x-text="item.name"></h2>
 
-  <p x-text="item.age"></p>
+<p x-text="item.age"></p>
 
-  <ul>
-    <template x-for="skill in item.skills">
-      <li x-text="skill"></li>
-    </template>
-  </ul>
+<ul>
+  <template x-for="skill in item.skills">
+    <li x-text="skill"></li>
+  </template>
+</ul>
 </li>
 ```
+
+## Styling
+
+Sadly, the Shadow DOM doesn't allow for global CSS styling and therefore you'll need to pass the CSS via a `<style>` tag.
+
+```html
+<li>
+  <style>
+    .user-card {
+      background: #00F;
+    }
+  </style>
+
+  <div class="user-card">
+    <h2 x-text="item.name"></h2>
+
+    <p x-text="item.age"></p>
+
+    <ul>
+      <template x-for="skill in item.skills">
+        <li x-text="skill"></li>
+      </template>
+    </ul>
+  </div>
+</li>
+```
+
+I don't like this approach and I feel like there is something better out there, if you have any ideas then let me know.
 
 ## Install 🌟
 
