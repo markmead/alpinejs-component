@@ -1,20 +1,20 @@
 export default function (Alpine) {
   class ComponentWrapper extends HTMLElement {
     connectedCallback() {
-      let shadow = this.attachShadow({ mode: "open" });
+      let shadow = this.attachShadow({ mode: 'open' })
 
       if (this.attributes.template) {
-        let template = document.getElementById(this.attributes.template.value);
+        let template = document.getElementById(this.attributes.template.value)
         let component = new DOMParser().parseFromString(
           template.innerHTML,
-          "text/html"
-        ).body.firstChild;
+          'text/html'
+        ).body.firstChild
 
-        shadow.appendChild(component);
+        shadow.appendChild(component)
 
-        document.addEventListener("alpine:initialized", () =>
+        document.addEventListener('alpine:initialized', () =>
           Alpine.initTree(shadow)
-        );
+        )
       }
 
       if (this.attributes.url) {
@@ -23,22 +23,22 @@ export default function (Alpine) {
           .then((template) => {
             let component = new DOMParser().parseFromString(
               template,
-              "text/html"
-            ).body.firstChild;
+              'text/html'
+            ).body.firstChild
 
-            shadow.appendChild(component);
+            shadow.appendChild(component)
 
-            Alpine.initTree(shadow);
-          });
+            Alpine.initTree(shadow)
+          })
       }
     }
   }
 
-  if (window.customElements.get("x-component-wrapper")) return;
+  if (window.customElements.get('x-component-wrapper')) return
 
-  customElements.define("x-component-wrapper", ComponentWrapper);
+  customElements.define('x-component-wrapper', ComponentWrapper)
 
-  Alpine.directive("component", () => {
-    new ComponentWrapper();
-  });
+  Alpine.directive('component', () => {
+    new ComponentWrapper()
+  })
 }

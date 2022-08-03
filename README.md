@@ -1,37 +1,111 @@
 # Alpine JS Component
 
-Create reusable HTML components sprinkled with Alpine JS reactive data 🧁
+Reusable HTML components powered by Alpine JS reactivity 🛸
 
-## Example 👀
+## Install
 
-### Page
+### With a CDN
 
-We can render on page components by using a `<template>` tag with an `id` that matches the `template` attribute 🎉
+```html
+<script
+  defer
+  src="https://unpkg.com/alpinejs-component@latest/dist/component.min.js"
+></script>
 
-In this example we are using the `person` template to find the `<template id="person">` element.
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+```
+
+### With a Package Manager
+
+```shell
+npm install -D alpinejs-component
+
+yarn add -D alpinejs-component
+```
+
+```js
+import Alpine from 'alpinejs'
+import component from 'alpinejs-component'
+
+Alpine.plugin(component)
+
+Alpine.start()
+```
+
+## Example
+
+### On Page Components
+
+You can render on page components by using a `<template>` with an `id` that matches the `template` attribute on the component.
+
+Here we are rendering the component HTML found in `<template id="person">` element.
 
 ```html
 <div
-x-data="{
-  people: [
-    { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] },
-    { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
-  ]
-}"
+  x-data="{
+    people: [
+      { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] },
+      { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
+    ]
+  }"
 >
-<ul>
-  <template x-for="person in people">
-    <x-component-wrapper
-      x-component
-      template="person"
-      x-data="{ item: person }"
-    ></x-component-wrapper>
-  </template>
-</ul>
+  <ul>
+    <template x-for="person in people">
+      <x-component-wrapper
+        x-component
+        template="person"
+        x-data="{ item: person }"
+      ></x-component-wrapper>
+    </template>
+  </ul>
 </div>
 
 <template id="person">
-<li class="user-card">
+  <li>
+    <h2 x-text="item.name"></h2>
+
+    <p x-text="item.age"></p>
+
+    <ul>
+      <template x-for="skill in item.skills">
+        <li x-text="skill"></li>
+      </template>
+    </ul>
+  </li>
+</template>
+```
+
+### Global Components
+
+If you don't want on page components you can use the `url` attribute which accepts a path to the HTML component.
+
+Here we are telling Alpine JS to fetch the HTML from `/public/person.html` within the codebase.
+
+```html
+<div
+  x-data="{
+    people: [
+      { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] },
+      { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
+    ]
+  }"
+>
+  <ul>
+    <template x-for="person in people">
+      <x-component-wrapper
+        x-component
+        url="/public/person.html"
+        x-data="{ item: person }"
+      ></x-component-wrapper>
+    </template>
+  </ul>
+</div>
+```
+
+Then we'd have a file `/public/person.html` which could look like this.
+
+```html
+<li>
   <h2 x-text="item.name"></h2>
 
   <p x-text="item.age"></p>
@@ -42,117 +116,27 @@ x-data="{
     </template>
   </ul>
 </li>
-</template>
 ```
 
-### Global
+## Styling Components
 
-We can also render global components 🌍
+As this plugin uses the "Shadow DOM" components cannot use global CSS.
 
-This works by passing a URL for an HTML file in the `url` attribute that matches to a HTML file within the app
-
-In this example, we are telling Alpine JS to get the HTML from `public/person.html` 🕵️‍♀️
+Instead you need to add a `<style>` element with the components CSS to the component itself.
 
 ```html
-<div
-x-data="{
-  people: [
-    { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] },
-    { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
-  ]
-}"
->
-<ul>
-  <template x-for="person in people">
-    <x-component-wrapper
-      x-component
-      url="/public/person.html"
-      x-data="{ item: person }"
-    ></x-component-wrapper>
-  </template>
-</ul>
-</div>
-```
-
-Then in `public/person.html` we have this
-
-```html
-<li class="user-card">
-<h2 x-text="item.name"></h2>
-
-<p x-text="item.age"></p>
-
-<ul>
-  <template x-for="skill in item.skills">
-    <li x-text="skill"></li>
-  </template>
-</ul>
-</li>
-```
-
-## Styling
-
-Sadly, the Shadow DOM doesn't allow for global CSS styling and therefore you'll need to pass the CSS via a `<style>` tag.
-
-```html
-<li>
+<div>
   <style>
-    .user-card {
-      background: #00F;
+    .example {
+      background: #00f;
     }
   </style>
 
-  <div class="user-card">
-    <h2 x-text="item.name"></h2>
-
-    <p x-text="item.age"></p>
-
-    <ul>
-      <template x-for="skill in item.skills">
-        <li x-text="skill"></li>
-      </template>
-    </ul>
-  </div>
-</li>
+  <p class="example" x-text="message"> </p>
+</div>
 ```
 
-I don't like this approach and I feel like there is something better out there, if you have any ideas then let me know.
-
-## Install 🌟
-
-It's very easy to install Alpine JS plugins! 🙌
-
-### CDN
-
-```html
-<script src="https://unpkg.com/alpinejs-component@1.x.x/dist/component.min.js"></script>
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-```
-
-### NPM/Yarn
-
-```shell
-npm i -D alpinejs-component
-
-yarn add -D alpinejs-component
-```
-
-Then you can register the plugin.
-
-```js
-import Alpine from "alpinejs";
-import component from "alpinejs-component";
-
-Alpine.plugin(component);
-
-window.Alpine = Alpine;
-
-Alpine.start();
-```
-
-### Stats 📊
-
-Here's some stats about the Alpine JS component package! As you can see, it's tiny 🤏
+### Stats
 
 ![](https://img.shields.io/bundlephobia/min/alpinejs-component)
 ![](https://img.shields.io/npm/v/alpinejs-component)
