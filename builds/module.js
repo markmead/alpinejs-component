@@ -1,3 +1,3 @@
-import component from "../src/index.js";
+import component from '../src/index.js'
 
-export default component;
+export default component
