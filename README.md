@@ -36,9 +36,11 @@ Alpine.start()
 
 ### On Page Components
 
-You can render on page components by using a `<template>` with an `id` that matches the `template` attribute on the component.
+You can render on page components by using a `<template>` with an `id` that
+matches the `template` attribute on the component.
 
-Here we are rendering the component HTML found in `<template id="person">` element.
+Here we are rendering the component HTML found in `<template id="person">`
+element.
 
 ```html
 <div
@@ -77,9 +79,11 @@ Here we are rendering the component HTML found in `<template id="person">` eleme
 
 ### Global Components
 
-If you don't want on page components you can use the `url` attribute which accepts a path to the HTML component.
+If you don't want on page components you can use the `url` attribute which
+accepts a path to the HTML component.
 
-Here we are telling Alpine JS to fetch the HTML from `/public/person.html` within the codebase.
+Here we are telling Alpine JS to fetch the HTML from `/public/person.html`
+within the codebase.
 
 ```html
 <div
@@ -122,7 +126,8 @@ Then we'd have a file `/public/person.html` which could look like this.
 
 As this plugin uses the "Shadow DOM" components cannot use global CSS.
 
-Instead you need to add a `<style>` element with the components CSS to the component itself.
+Instead you need to add a `<style>` element with the components CSS to the
+component itself.
 
 ```html
 <div>
