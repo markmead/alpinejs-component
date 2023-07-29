@@ -122,6 +122,45 @@ Then we'd have a file `/public/person.html` which could look like this.
 </li>
 ```
 
+## Dynamic Templates
+
+You can pass `template` or `url` as a dynamic value, here's an example.
+
+```html
+<div
+  x-data="{
+    components: [
+      {
+        template: '/public/person.html',
+        data: { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] }
+      },
+      {
+        template: '/public/person.html',
+        data: { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
+      },
+    ]
+  }"
+>
+  <ul>
+    <template x-for="component in components">
+      <x-component-wrapper
+        x-component
+        :template="component.template"
+        x-data="{ item: component.data }"
+      ></x-component-wrapper>
+
+      // Or
+
+      <x-component-wrapper
+        x-component
+        :url="component.template"
+        x-data="{ item: component.data }"
+      ></x-component-wrapper>
+    </template>
+  </ul>
+</div>
+```
+
 ## Styling Components
 
 As this plugin uses the "Shadow DOM" components cannot use global CSS.

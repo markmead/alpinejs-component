@@ -3,7 +3,7 @@ export default function (Alpine) {
     connectedCallback() {
       const shadow = this.attachShadow({ mode: 'open' })
 
-      if (this.hasAttribute(':template')) {
+      if (this.hasAttribute(':template') || this.hasAttribute(':url')) {
         Alpine.initTree(this)
       }
 
