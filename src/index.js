@@ -1,38 +1,47 @@
 export default function (Alpine) {
   class ComponentWrapper extends HTMLElement {
     connectedCallback() {
-      const shadow = this.attachShadow({ mode: 'open' })
+      const shadowDom = this.attachShadow({ mode: 'open' })
 
-      if (this.hasAttribute(':template') || this.hasAttribute(':url')) {
+      const hasDynamicTemplate = this.hasAttribute(':template')
+      const hasDynamicUrl = this.hasAttribute(':url')
+
+      if (hasDynamicTemplate || hasDynamicUrl) {
         Alpine.initTree(this)
       }
 
-      if (this.attributes.template) {
-        const template = document.getElementById(this.attributes.template.value)
-        const component = new DOMParser().parseFromString(
-          template.innerHTML,
-          'text/html'
-        ).body.firstChild
+      const { template: componentTemplate, url: componentUrl } = this.attributes
 
-        shadow.appendChild(component)
+      if (componentTemplate) {
+        function generate(targetHtml) {
+          const htmlTemplate = document.getElementById(targetHtml)
+          const newComponent = new DOMParser().parseFromString(
+            htmlTemplate.innerHTML,
+            'text/html'
+          ).body.firstChild
 
-        document.addEventListener('alpine:initialized', () => {
-          Alpine.initTree(shadow)
+          return Promise.resolve(newComponent)
+        }
+
+        generate(componentTemplate.value).then((alpineComponent) => {
+          shadowDom.appendChild(alpineComponent)
+
+          Alpine.initTree(shadowDom)
         })
       }
 
-      if (this.attributes.url) {
-        fetch(this.attributes.url.value)
-          .then((response) => response.text())
-          .then((template) => {
-            const component = new DOMParser().parseFromString(
-              template,
+      if (componentUrl) {
+        fetch(componentUrl.value)
+          .then((htmlResponse) => htmlResponse.text())
+          .then((htmlTemplate) => {
+            const newComponent = new DOMParser().parseFromString(
+              htmlTemplate,
               'text/html'
             ).body.firstChild
 
-            shadow.appendChild(component)
+            shadowDom.appendChild(newComponent)
 
-            Alpine.initTree(shadow)
+            Alpine.initTree(shadowDom)
           })
       }
     }
