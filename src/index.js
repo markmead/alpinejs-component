@@ -13,7 +13,7 @@ export default function (Alpine) {
       const { template: componentTemplate, url: componentUrl } = this.attributes
 
       if (componentTemplate) {
-        function generate(targetHtml) {
+        function generateComponent(targetHtml) {
           const htmlTemplate = document.getElementById(targetHtml)
           const newComponent = new DOMParser().parseFromString(
             htmlTemplate.innerHTML,
@@ -23,7 +23,7 @@ export default function (Alpine) {
           return Promise.resolve(newComponent)
         }
 
-        generate(componentTemplate.value).then((alpineComponent) => {
+        generateComponent(componentTemplate.value).then((alpineComponent) => {
           shadowDom.appendChild(alpineComponent)
 
           Alpine.initTree(shadowDom)
