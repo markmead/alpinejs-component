@@ -22,3 +22,6 @@ yarn-error.log*
 
 # testing
 index.html
+
+# github
+/.github
