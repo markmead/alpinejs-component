@@ -53,7 +53,5 @@ export default function (Alpine) {
 
   customElements.define('x-component', ComponentWrapper)
 
-  const componentElements = document.querySelectorAll('x-component')
-
-  componentElements.forEach(() => new ComponentWrapper())
+  new ComponentWrapper()
 }
