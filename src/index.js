@@ -47,11 +47,11 @@ export default function (Alpine) {
     }
   }
 
-  if (window.customElements.get('x-component-wrapper')) {
+  if (window.customElements.get('x-component')) {
     return
   }
 
-  customElements.define('x-component-wrapper', ComponentWrapper)
+  customElements.define('x-component', ComponentWrapper)
 
-  Alpine.directive('component', () => new ComponentWrapper())
+  new ComponentWrapper()
 }

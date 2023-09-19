@@ -143,19 +143,17 @@ You can pass `template` or `url` as a dynamic value, here's an example.
 >
   <ul>
     <template x-for="component in components">
-      <x-component-wrapper
-        x-component
+      <x-component
         :template="component.template"
         x-data="{ item: component.data }"
-      ></x-component-wrapper>
+      ></x-component>
 
       // Or
 
-      <x-component-wrapper
-        x-component
+      <x-component
         :url="component.template"
         x-data="{ item: component.data }"
-      ></x-component-wrapper>
+      ></x-component>
     </template>
   </ul>
 </div>
