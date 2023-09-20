@@ -53,11 +53,7 @@ element.
 >
   <ul>
     <template x-for="person in people">
-      <x-component-wrapper
-        x-component
-        template="person"
-        x-data="{ item: person }"
-      ></x-component-wrapper>
+      <x-component template="person" x-data="{ item: person }"></x-component>
     </template>
   </ul>
 </div>
@@ -96,11 +92,10 @@ within the codebase.
 >
   <ul>
     <template x-for="person in people">
-      <x-component-wrapper
-        x-component
+      <x-component
         url="/public/person.html"
         x-data="{ item: person }"
-      ></x-component-wrapper>
+      ></x-component>
     </template>
   </ul>
 </div>
