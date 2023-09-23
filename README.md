@@ -173,6 +173,11 @@ component itself.
 </div>
 ```
 
+You can also use the `styles` attributes to make the "Shadow DOM" inherits the global CSS:
+```html
+<x-component styles="true"></x-component>
+```
+
 ### Stats
 
 ![](https://img.shields.io/bundlephobia/min/alpinejs-component)
