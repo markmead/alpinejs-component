@@ -5,25 +5,35 @@ export default function (Alpine) {
 
       const hasDynamicTemplate = this.hasAttribute(':template')
       const hasDynamicUrl = this.hasAttribute(':url')
-      const hasDynamicStyles = this.hasAttribute(':styles')
 
-      if (hasDynamicTemplate || hasDynamicUrl || hasDynamicStyles) {
+      if (hasDynamicTemplate || hasDynamicUrl) {
         Alpine.initTree(this)
       }
 
-      const { template: componentTemplate, url: componentUrl, styles: componentStyles } = this.attributes
+      const {
+        template: componentTemplate,
+        url: componentUrl,
+        styles: componentStyles,
+      } = this.attributes
 
       if (componentStyles) {
-        const styles = new CSSStyleSheet()
-        styles.insertRule(':host { display: contents; }')
-        let i = 0
-        for (const rule of [...document.styleSheets].flatMap((sheet) => [...sheet.cssRules])) {
-          if (rule instanceof CSSStyleRule && rule.selectorText === ':root') {
+        const newStyle = new CSSStyleSheet()
+        const documentStyles = [...document.styleSheets].flatMap(
+          ({ cssRules }) => [...cssRules]
+        )
+
+        for (const styleRule of documentStyles) {
+          if (
+            styleRule instanceof CSSStyleRule &&
+            styleRule.selectorText === ':root'
+          ) {
             continue
           }
-          styles.insertRule(rule.cssText, i++)
+
+          newStyle.insertRule(styleRule.cssText)
         }
-        shadowDom.adoptedStyleSheets = [styles]
+
+        shadowDom.adoptedStyleSheets = [newStyle]
       }
 
       if (componentTemplate) {

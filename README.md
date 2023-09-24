@@ -156,9 +156,23 @@ You can pass `template` or `url` as a dynamic value, here's an example.
 
 ## Styling Components
 
-As this plugin uses the "Shadow DOM" components cannot use global CSS.
+### Inherit Global CSS
 
-Instead you need to add a `<style>` element with the components CSS to the
+You can use the `styles` attributes to inherit the global CSS.
+
+```html
+<x-component
+  template="person"
+  styles="true"
+  x-data="{ item: person }"
+></x-component>
+```
+
+This works with Tailwind CSS, but not the Tailwind CSS CDN build.
+
+### Pass Stylesheet
+
+If you wanted, you can add a `<style>` element with the components CSS to the
 component itself.
 
 ```html
@@ -171,11 +185,6 @@ component itself.
 
   <p class="example" x-text="message"> </p>
 </div>
-```
-
-You can also use the `styles` attributes to make the "Shadow DOM" inherits the global CSS:
-```html
-<x-component styles="true"></x-component>
 ```
 
 ### Stats
