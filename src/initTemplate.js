@@ -12,6 +12,7 @@ export async function initTemplate(Alpine, templateName, shadowDom) {
   const alpineComponent = await generateComponent(templateName)
 
   shadowDom.appendChild(alpineComponent)
+
   Alpine.initTree(shadowDom)
 }
 
