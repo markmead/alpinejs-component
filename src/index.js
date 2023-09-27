@@ -1,3 +1,6 @@
+import { initStyles } from './initStyles'
+import { initTemplate, initUrl } from './initTemplate'
+
 export default function (Alpine) {
   class ComponentWrapper extends HTMLElement {
     connectedCallback() {
@@ -11,62 +14,23 @@ export default function (Alpine) {
       }
 
       const {
-        template: componentTemplate,
-        url: componentUrl,
-        styles: componentStyles,
+        template: componentTemplate = { value: '' },
+        url: componentUrl = { value: '' },
       } = this.attributes
 
-      if (componentStyles) {
-        const newStyle = new CSSStyleSheet()
-        const documentStyles = [...document.styleSheets].flatMap(
-          ({ cssRules }) => [...cssRules]
-        )
+      const [templateName, templateStyled] = componentTemplate.value.split(':')
+      const [urlName, urlStyled] = componentUrl.value.split(':')
 
-        for (const styleRule of documentStyles) {
-          if (
-            styleRule instanceof CSSStyleRule &&
-            styleRule.selectorText === ':root'
-          ) {
-            continue
-          }
-
-          newStyle.insertRule(styleRule.cssText)
-        }
-
-        shadowDom.adoptedStyleSheets = [newStyle]
+      if (templateName) {
+        initTemplate(Alpine, templateName, shadowDom)
       }
 
-      if (componentTemplate) {
-        function generateComponent(targetHtml) {
-          const htmlTemplate = document.getElementById(targetHtml)
-          const newComponent = new DOMParser().parseFromString(
-            htmlTemplate.innerHTML,
-            'text/html'
-          ).body.firstChild
-
-          return Promise.resolve(newComponent)
-        }
-
-        generateComponent(componentTemplate.value).then((alpineComponent) => {
-          shadowDom.appendChild(alpineComponent)
-
-          Alpine.initTree(shadowDom)
-        })
+      if (urlName) {
+        initUrl(Alpine, urlName, shadowDom)
       }
 
-      if (componentUrl) {
-        fetch(componentUrl.value)
-          .then((htmlResponse) => htmlResponse.text())
-          .then((htmlTemplate) => {
-            const newComponent = new DOMParser().parseFromString(
-              htmlTemplate,
-              'text/html'
-            ).body.firstChild
-
-            shadowDom.appendChild(newComponent)
-
-            Alpine.initTree(shadowDom)
-          })
+      if (templateStyled || urlStyled) {
+        initStyles(shadowDom)
       }
     }
   }
