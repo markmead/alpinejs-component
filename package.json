@@ -1,6 +1,6 @@
 {
   "name": "alpinejs-component",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Reusable HTML components powered by Alpine JS reactivity 🛸",
   "keywords": [
     "Alpine",
@@ -9,8 +9,7 @@
     "Alpine JS Plugins",
     "Alpine JS Component",
     "Alpine JS Components",
-    "HTML Components",
-    "HTML React"
+    "HTML Components"
   ],
   "author": "Mark Mead",
   "license": "MIT",

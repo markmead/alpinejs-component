@@ -1,3 +1,6 @@
+import { initStyles } from './initStyles'
+import { initTemplate, initUrl } from './initTemplate'
+
 export default function (Alpine) {
   class ComponentWrapper extends HTMLElement {
     connectedCallback() {
@@ -10,39 +13,24 @@ export default function (Alpine) {
         Alpine.initTree(this)
       }
 
-      const { template: componentTemplate, url: componentUrl } = this.attributes
+      const {
+        template: componentTemplate = { value: '' },
+        url: componentUrl = { value: '' },
+      } = this.attributes
 
-      if (componentTemplate) {
-        function generateComponent(targetHtml) {
-          const htmlTemplate = document.getElementById(targetHtml)
-          const newComponent = new DOMParser().parseFromString(
-            htmlTemplate.innerHTML,
-            'text/html'
-          ).body.firstChild
+      const [templateName, templateStyled] = componentTemplate.value.split(':')
+      const [urlName, urlStyled] = componentUrl.value.split(':')
 
-          return Promise.resolve(newComponent)
-        }
-
-        generateComponent(componentTemplate.value).then((alpineComponent) => {
-          shadowDom.appendChild(alpineComponent)
-
-          Alpine.initTree(shadowDom)
-        })
+      if (templateName) {
+        initTemplate(Alpine, templateName, shadowDom)
       }
 
-      if (componentUrl) {
-        fetch(componentUrl.value)
-          .then((htmlResponse) => htmlResponse.text())
-          .then((htmlTemplate) => {
-            const newComponent = new DOMParser().parseFromString(
-              htmlTemplate,
-              'text/html'
-            ).body.firstChild
+      if (urlName) {
+        initUrl(Alpine, urlName, shadowDom)
+      }
 
-            shadowDom.appendChild(newComponent)
-
-            Alpine.initTree(shadowDom)
-          })
+      if (templateStyled || urlStyled) {
+        initStyles(shadowDom)
       }
     }
   }
