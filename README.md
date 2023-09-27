@@ -161,14 +161,15 @@ You can pass `template` or `url` as a dynamic value, here's an example.
 You can use the `styles` attributes to inherit the global CSS.
 
 ```html
+<x-component template="person:style" x-data="{ item: person }"></x-component>
+
 <x-component
-  template="person"
-  styles="true"
+  url="/public/person.html:style"
   x-data="{ item: person }"
 ></x-component>
 ```
 
-This works with Tailwind CSS, but not the Tailwind CSS CDN build.
+This works with Tailwind CSS but not the Tailwind CSS CDN build.
 
 **This will include all `<style>` elements which could impact performance.**
 
