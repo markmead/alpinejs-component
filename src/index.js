@@ -16,6 +16,7 @@ export default function (Alpine) {
       const {
         template: componentTemplate = { value: '' },
         url: componentUrl = { value: '' },
+        styles: componentStyles = { value: '' },
       } = this.attributes
 
       const [templateName, templateStyled] = componentTemplate.value.split(':')
@@ -29,8 +30,11 @@ export default function (Alpine) {
         initUrl(Alpine, urlName, shadowDom)
       }
 
+      const styleTargets = componentStyles.value.split(',')
+
+      initStyles(shadowDom, styleTargets)
+
       if (templateStyled || urlStyled) {
-        initStyles(shadowDom)
       }
     }
   }

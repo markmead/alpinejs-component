@@ -1,8 +1,21 @@
-export function initStyles(shadowDom) {
+export function initStyles(shadowDom, styleTargets) {
+  if (!styleTargets.length) {
+    return
+  }
+
   const newStyle = new CSSStyleSheet()
-  const documentStyles = [...document.styleSheets].flatMap(({ cssRules }) => [
-    ...cssRules,
-  ])
+
+  let documentSheets = [...document.styleSheets]
+
+  if (styleTargets.length) {
+    const useGlobal = styleTargets.includes('global')
+
+    documentSheets = useGlobal
+      ? documentSheets
+      : documentSheets.filter(({ title }) => styleTargets.includes(title))
+  }
+
+  const documentStyles = documentSheets.flatMap(({ cssRules }) => [...cssRules])
 
   for (const styleRule of documentStyles) {
     if (

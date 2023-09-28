@@ -156,26 +156,45 @@ You can pass `template` or `url` as a dynamic value, here's an example.
 
 ## Styling Components
 
-### Global Stylesheet
+### Including Stylesheets
 
-You can use the `:style` modifier at the end of the `template` or `url` value to
-inherit the global CSS.
+You can use `styles` attribute to specify which stylesheets to include.
 
 ```html
-<x-component template="person:style" x-data="{ item: person }"></x-component>
+<style title="person">
+  /* ... */
+</style>
 
 <x-component
-  url="/public/person.html:style"
+  template="person"
+  styles="person"
   x-data="{ item: person }"
 ></x-component>
 ```
 
-**This will include all `<style>` elements which could impact performance.**
+You can also include multiple stylesheets by separating them with a comma.
+
+```html
+<style title="person">
+  /* ... */
+</style>
+
+<style title="general">
+  /* ... */
+</style>
+
+<x-component
+  template="person"
+  styles="person,general"
+  x-data="{ item: person }"
+></x-component>
+```
+
+Or, if you want all stylesheets you can use `styles="global"`
 
 ### Inline Stylesheet
 
-If you wanted, you can add a `<style>` element with the components CSS to the
-component itself.
+You can add a `<style>` element with the components CSS to the component itself.
 
 ```html
 <div>
