@@ -190,7 +190,7 @@ You can also include multiple stylesheets by separating them with a comma.
 ></x-component>
 ```
 
-Or, if you want all stylesheets you can use `styles="global"`
+Or, if you want to include all stylesheets you can use `styles="global"`
 
 ### Inline Stylesheet
 
