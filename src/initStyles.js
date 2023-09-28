@@ -1,8 +1,4 @@
 export function initStyles(shadowDom, styleTargets) {
-  if (!styleTargets.length) {
-    return
-  }
-
   const newStyle = new CSSStyleSheet()
 
   let documentSheets = [...document.styleSheets]

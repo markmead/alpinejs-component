@@ -19,22 +19,20 @@ export default function (Alpine) {
         styles: componentStyles = { value: '' },
       } = this.attributes
 
-      const [templateName, templateStyled] = componentTemplate.value.split(':')
-      const [urlName, urlStyled] = componentUrl.value.split(':')
+      const templateName = componentTemplate.value
+      const urlName = componentUrl.value
+      const styleNames = componentStyles.value.split(',')
 
-      if (templateName) {
+      if (templateName.length) {
         initTemplate(Alpine, templateName, shadowDom)
       }
 
-      if (urlName) {
+      if (urlName.length) {
         initUrl(Alpine, urlName, shadowDom)
       }
 
-      const styleTargets = componentStyles.value.split(',')
-
-      initStyles(shadowDom, styleTargets)
-
-      if (templateStyled || urlStyled) {
+      if (styleNames.length) {
+        initStyles(shadowDom, styleNames)
       }
     }
   }
