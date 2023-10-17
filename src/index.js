@@ -4,6 +4,10 @@ import { initTemplate, initUrl } from './initTemplate'
 export default function (Alpine) {
   class ComponentWrapper extends HTMLElement {
     connectedCallback() {
+      if (this._init) {
+        return;
+      }
+
       const shadowDom = this.attachShadow({ mode: 'open' })
 
       const hasDynamicTemplate = this.hasAttribute(':template')
@@ -34,6 +38,8 @@ export default function (Alpine) {
       if (styleNames.length) {
         initStyles(shadowDom, styleNames)
       }
+
+      this._init = true;
     }
   }
 
