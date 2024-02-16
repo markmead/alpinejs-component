@@ -4,7 +4,7 @@ import { initTemplate, initUrl } from './initTemplate'
 export default function (Alpine) {
   class ComponentWrapper extends HTMLElement {
     connectedCallback() {
-      if (this._init) {
+      if (this.hasInit()) {
         return;
       }
 
@@ -40,6 +40,10 @@ export default function (Alpine) {
       }
 
       this._init = true;
+    }
+
+    hasInit() {
+      return !!this._init;
     }
   }
 
