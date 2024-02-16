@@ -16,9 +16,11 @@
   "module": "dist/component.esm.js",
   "unpkg": "dist/component.min.js",
   "scripts": {
-    "build": "node scripts/build.js"
+    "build": "node scripts/build.js",
+    "build:css": "npx tailwindcss -i input.css -o output.css -m"
   },
   "devDependencies": {
-    "esbuild": "^0.18.17"
+    "esbuild": "^0.18.17",
+    "tailwindcss": "^3.4.1"
   }
 }

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <script defer src="dist/component.min.js"></script>
+
+    <script
+      defer
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+
+    <link href="output.css" rel="stylesheet" title="tailwind" />
+  </head>
+  <body class="p-8">
+    <div
+      x-data="{
+        people: [
+          { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] },
+          { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
+        ]
+      }"
+    >
+      <ul class="flex flex-col gap-4">
+        <template x-for="person in people">
+          <x-component
+            template="person"
+            styles="tailwind"
+            x-data="{ item: person }"
+          ></x-component>
+        </template>
+      </ul>
+    </div>
+
+    <template id="person">
+      <li class="bg-gray-100 p-4">
+        <h2 x-text="item.name" class="font-medium text-gray-900"></h2>
+
+        <p x-text="item.age" class="text-gray-700 mt-1.5"></p>
+
+        <ul class="mt-4 list-disc list-inside">
+          <template x-for="skill in item.skills">
+            <li x-text="skill" class="text-gray-700"></li>
+          </template>
+        </ul>
+      </li>
+    </template>
+  </body>
+</html>
