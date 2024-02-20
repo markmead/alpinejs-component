@@ -39,11 +39,11 @@ export default function (Alpine) {
         initStyles(shadowDom, styleNames)
       }
 
-      this._init = true;
+      this._hasInit = true;
     }
 
     hasInit() {
-      return !!this._init;
+      return !!this._hasInit;
     }
   }
 
