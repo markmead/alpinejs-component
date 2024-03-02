@@ -4,8 +4,10 @@ import { initTemplate, initUrl } from './initTemplate'
 export default function (Alpine) {
   class ComponentWrapper extends HTMLElement {
     connectedCallback() {
-      if (this.hasInit()) {
-        return;
+      // We prevent the component from being
+      // initialized more than once
+      if (this._hasInit) {
+        return
       }
 
       const shadowDom = this.attachShadow({ mode: 'open' })
@@ -39,11 +41,7 @@ export default function (Alpine) {
         initStyles(shadowDom, styleNames)
       }
 
-      this._hasInit = true;
-    }
-
-    hasInit() {
-      return !!this._hasInit;
+      this._hasInit = true
     }
   }
 
