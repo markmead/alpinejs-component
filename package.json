@@ -1,6 +1,6 @@
 {
   "name": "alpinejs-component",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Reusable HTML components powered by Alpine JS reactivity 🛸",
   "keywords": [
     "Alpine",
@@ -19,6 +19,6 @@
     "build": "node scripts/build.js"
   },
   "devDependencies": {
-    "esbuild": "^0.18.17"
+    "esbuild": "^0.20.2"
   }
 }
