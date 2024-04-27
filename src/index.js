@@ -45,11 +45,13 @@ export default function (Alpine) {
     }
   }
 
-  if (window.customElements.get('x-component')) {
+  const { name: componentName } = window?.xComponent || { name: 'x-component' }
+
+  if (window.customElements.get(componentName)) {
     return
   }
 
-  customElements.define('x-component', ComponentWrapper)
+  customElements.define(componentName, ComponentWrapper)
 
   new ComponentWrapper()
 }
