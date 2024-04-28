@@ -208,6 +208,40 @@ You can add a `<style>` element with the components CSS to the component itself.
 </div>
 ```
 
+## Renaming Component
+
+If you need to change the name `x-component`, you can do so by setting the
+global `xComponent` object. This is necessary because blade components start
+with `x-`, which can cause conflicts.
+
+```js
+window.xComponent = {
+  name: 'a-component',
+}
+```
+
+You will then call components like this:
+
+```html
+<div
+  x-data="{
+    people: [
+      { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] },
+      { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
+    ]
+  }"
+>
+  <ul>
+    <template x-for="person in people">
+      <a-component
+        url="/public/person.html"
+        x-data="{ item: person }"
+      ></a-component>
+    </template>
+  </ul>
+</div>
+```
+
 ### Stats
 
 ![](https://img.shields.io/bundlephobia/min/alpinejs-component)
