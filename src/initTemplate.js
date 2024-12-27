@@ -1,7 +1,10 @@
 export async function initTemplate(Alpine, templateName, shadowDom) {
   function generateComponent(targetHtml) {
     const htmlTemplate = document.getElementById(targetHtml)
-    const newComponent = new DOMParser().parseFromString(
+
+    const domParser = new DOMParser()
+
+    const newComponent = domParser.parseFromString(
       htmlTemplate.innerHTML,
       'text/html'
     ).body.firstChild
@@ -20,10 +23,10 @@ export async function initUrl(Alpine, urlName, shadowDom) {
   const htmlResponse = await fetch(urlName)
   const htmlTemplate = await htmlResponse.text()
 
-  const newComponent = new DOMParser().parseFromString(
-    htmlTemplate,
-    'text/html'
-  ).body.firstChild
+  const domParser = new DOMParser()
+
+  const newComponent = domParser.parseFromString(htmlTemplate, 'text/html').body
+    .firstChild
 
   shadowDom.appendChild(newComponent)
 

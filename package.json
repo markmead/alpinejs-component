@@ -1,6 +1,6 @@
 {
   "name": "alpinejs-component",
-  "version": "1.2.9",
+  "version": "1.2.10",
   "description": "Reusable HTML components powered by Alpine JS reactivity 🛸",
   "keywords": [
     "Alpine",

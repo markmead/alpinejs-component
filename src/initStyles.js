@@ -7,8 +7,16 @@ export function initStyles(shadowDom, styleTargets) {
         styleTargets.includes(styleTitle)
       )
 
-  const filteredDocumentSheets = documentSheets.filter(({ href: styleHref }) =>
-    styleHref?.includes(window.location.host)
+  const filteredDocumentSheets = documentSheets.filter(
+    ({ href: styleHref }) => {
+      // We keep inline styles
+      if (!styleHref) {
+        return true
+      }
+
+      // We remove external stylesheets
+      return styleHref?.includes(window.location.host)
+    }
   )
 
   const documentStyles = filteredDocumentSheets.flatMap(({ cssRules }) => [

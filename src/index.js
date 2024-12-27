@@ -20,14 +20,14 @@ export default function (Alpine) {
       }
 
       const {
-        template: componentTemplate = { value: '' },
-        url: componentUrl = { value: '' },
-        styles: componentStyles = { value: '' },
-      } = this.attributes
+        template: componentTemplate,
+        url: componentUrl,
+        styles: componentStyles,
+      } = this.attributes || {}
 
-      const templateName = componentTemplate.value
-      const urlName = componentUrl.value
-      const styleNames = componentStyles.value.split(',')
+      const templateName = componentTemplate?.value || ''
+      const urlName = componentUrl?.value || ''
+      const styleNames = componentStyles?.value.split(',') || ''
 
       if (templateName.length) {
         initTemplate(Alpine, templateName, shadowDom)
