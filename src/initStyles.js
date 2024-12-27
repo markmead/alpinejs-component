@@ -6,7 +6,14 @@ export function initStyles(shadowDom, styleTargets) {
     : [...document.styleSheets].filter(({ title: styleTitle }) =>
         styleTargets.includes(styleTitle)
       )
-  const documentStyles = documentSheets.flatMap(({ cssRules }) => [...cssRules])
+
+  const filteredDocumentSheets = documentSheets.filter(({ href: styleHref }) =>
+    styleHref?.includes(window.location.host)
+  )
+
+  const documentStyles = filteredDocumentSheets.flatMap(({ cssRules }) => [
+    ...cssRules,
+  ])
 
   const newStyle = new CSSStyleSheet()
 
