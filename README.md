@@ -164,7 +164,7 @@ You can pass DOM content into your component using standard [HTML slots](https:/
 #### Example template with slots:
 
 ```html
-<template id="@modal">
+<template id="modal">
   <article>
     <header>
       <slot name="header"></slot>
@@ -185,7 +185,7 @@ You can pass DOM content into your component using standard [HTML slots](https:/
 
 ```html
 <x-component
-  template="@modal"
+  template="modal"
   x-data="{}"
 >
   <div slot="header">
