@@ -154,6 +154,58 @@ You can pass `template` or `url` as a dynamic value, here's an example.
 </div>
 ```
 
+### Named and Default Slots
+
+You can pass DOM content into your component using standard [HTML slots](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_templates_and_slots#using_slots).
+
+- Elements without a slot attribute will be inserted into the default slot (`<slot></slot>`).
+- Elements with a `slot="name"` attribute will be inserted into the named slot (`<slot name="name"></slot>`).
+
+#### Example template with slots:
+
+```html
+<template id="@modal">
+  <article>
+    <header>
+      <slot name="header"></slot>
+    </header>
+
+    <section>
+      <slot></slot>
+    </section>
+
+    <footer>
+      <slot name="footer"></slot>
+    </footer>
+  </article>
+</template>
+```
+
+#### Usage from `x-component`
+
+```html
+<x-component
+  template="@modal"
+  x-data="{}"
+>
+  <div slot="header">
+    <h2>Header Content</h2>
+  </div>
+
+  <div>
+    <p>Default Slot</p>
+  </div>
+  
+  <ul>
+    <li>Default Slot List</li>
+  </ul>
+
+  <div slot="footer">
+    <h5>Goodbye, World</h5>
+  </div>
+</x-component>
+```
+
 ## Styling Components
 
 ### Including Stylesheets
