@@ -30,11 +30,11 @@ export default function (Alpine) {
       const styleNames = componentStyles?.value.split(',') || ''
 
       if (templateName.length) {
-        initTemplate(Alpine, templateName, shadowDom)
+        initTemplate(this, Alpine, templateName, shadowDom)
       }
 
       if (urlName.length) {
-        initUrl(Alpine, urlName, shadowDom)
+        initUrl(this, Alpine, urlName, shadowDom)
       }
 
       if (styleNames.length) {

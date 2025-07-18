@@ -1,4 +1,4 @@
-export async function initTemplate(Alpine, templateName, shadowDom) {
+export async function initTemplate(componentWrapper, Alpine, templateName, shadowDom) {
   function generateComponent(targetHtml) {
     const htmlTemplate = document.getElementById(targetHtml)
 
@@ -13,21 +13,20 @@ export async function initTemplate(Alpine, templateName, shadowDom) {
   }
 
   const alpineComponent = await generateComponent(templateName)
-
   shadowDom.appendChild(alpineComponent)
+
+  initSlots(componentWrapper, shadowDom)
 
   Alpine.initTree(shadowDom)
 }
 
-export async function initUrl(Alpine, urlName, shadowDom) {
+export async function initUrl(componentWrapper, Alpine, urlName, shadowDom) {
   const htmlResponse = await fetch(urlName)
   const htmlTemplate = await htmlResponse.text()
 
   const domParser = new DOMParser()
 
-  const newComponent = domParser.parseFromString(htmlTemplate, 'text/html').body
-    .firstChild
-
+  const newComponent = domParser.parseFromString(htmlTemplate, 'text/html').body.firstChild
   shadowDom.appendChild(newComponent)
 
   Alpine.initTree(shadowDom)
