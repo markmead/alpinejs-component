@@ -25,7 +25,7 @@ export function initStyles(shadowDom, styleTargets) {
 
   const newStyle = new CSSStyleSheet()
 
-  for (const styleRule of documentStyles.reverse()) {
+  for (const styleRule of [...documentStyles].reverse()) {
     if (
       styleRule instanceof CSSStyleRule &&
       styleRule.selectorText === ':root'
