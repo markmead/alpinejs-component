@@ -218,7 +218,7 @@ You can pass `template` or `url` as a dynamic value, here's an example.
         x-data="{ item: component.data }"
       ></x-component>
 
-      // Or
+      <!-- Or -->
 
       <x-component
         :url="component.template"
@@ -254,7 +254,7 @@ You can pass `template` or `url` as a dynamic value, here's an example.
         x-data="{ item: component.data }"
       ></li>
 
-      // Or
+      <!-- Or -->
 
       <li
         x-component

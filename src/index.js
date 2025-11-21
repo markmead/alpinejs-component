@@ -56,7 +56,7 @@ export default function (Alpine) {
   new ComponentWrapper()
 
   // Register the directive
-  Alpine.directive('component', (el, { expression }, { evaluate, evaluateLater, effect }) => {
+  Alpine.directive('component', (el, {}, { evaluate }) => {
     // Prevent multiple initializations
     if (el._hasComponentInit) {
       return
@@ -79,7 +79,7 @@ export default function (Alpine) {
 
     const templateName = getAttributeValue('template') || ''
     const urlName = getAttributeValue('url') || ''
-    const styleNames = getAttributeValue('styles') || ''
+    const styleNames = getAttributeValue('styles')
 
     if (templateName.length) {
       initTemplate(Alpine, templateName, shadowDom)
@@ -89,7 +89,7 @@ export default function (Alpine) {
       initUrl(Alpine, urlName, shadowDom)
     }
 
-    if (styleNames.length) {
+    if (styleNames && styleNames.length) {
       initStyles(shadowDom, styleNames.split(','))
     }
 
