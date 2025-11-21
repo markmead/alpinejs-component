@@ -34,10 +34,21 @@ Alpine.start()
 
 ## Example
 
+### Using Components
+
+You can use components in two ways:
+
+1. **As an HTML element** (using `<x-component>`)
+2. **As a directive** (using `x-component` on any element)
+
+Both approaches support the same features and attributes.
+
 ### On Page Components
 
 You can render on page components by using a `<template>` with an `id` that
 matches the `template` attribute on the component.
+
+#### Using the HTML Element
 
 Here we are rendering the component HTML found in `<template id="person">`
 element.
@@ -73,10 +84,47 @@ element.
 </template>
 ```
 
+#### Using the Directive
+
+You can also use the `x-component` directive on any element:
+
+```html
+<div
+  x-data="{
+    people: [
+      { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] },
+      { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
+    ]
+  }"
+>
+  <ul>
+    <template x-for="person in people">
+      <li x-component template="person" x-data="{ item: person }"></li>
+    </template>
+  </ul>
+</div>
+
+<template id="person">
+  <div>
+    <h2 x-text="item.name"></h2>
+
+    <p x-text="item.age"></p>
+
+    <ul>
+      <template x-for="skill in item.skills">
+        <li x-text="skill"></li>
+      </template>
+    </ul>
+  </div>
+</template>
+```
+
 ### Global Components
 
 If you don't want on page components you can use the `url` attribute which
 accepts a path to the HTML component.
+
+#### Using the HTML Element
 
 Here we are telling Alpine JS to fetch the HTML from `/public/person.html`
 within the codebase.
@@ -101,10 +149,35 @@ within the codebase.
 </div>
 ```
 
+#### Using the Directive
+
+You can achieve the same result using the directive:
+
+```html
+<div
+  x-data="{
+    people: [
+      { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] },
+      { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
+    ]
+  }"
+>
+  <ul>
+    <template x-for="person in people">
+      <li
+        x-component
+        url="/public/person.html"
+        x-data="{ item: person }"
+      ></li>
+    </template>
+  </ul>
+</div>
+```
+
 Then we'd have a file `/public/person.html` which could look like this.
 
 ```html
-<li>
+<div>
   <h2 x-text="item.name"></h2>
 
   <p x-text="item.age"></p>
@@ -114,12 +187,14 @@ Then we'd have a file `/public/person.html` which could look like this.
       <li x-text="skill"></li>
     </template>
   </ul>
-</li>
+</div>
 ```
 
 ## Dynamic Templates
 
 You can pass `template` or `url` as a dynamic value, here's an example.
+
+#### Using the HTML Element
 
 ```html
 <div
@@ -154,11 +229,50 @@ You can pass `template` or `url` as a dynamic value, here's an example.
 </div>
 ```
 
+#### Using the Directive
+
+```html
+<div
+  x-data="{
+    components: [
+      {
+        template: '/public/person.html',
+        data: { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] }
+      },
+      {
+        template: '/public/person.html',
+        data: { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
+      },
+    ]
+  }"
+>
+  <ul>
+    <template x-for="component in components">
+      <li
+        x-component
+        :template="component.template"
+        x-data="{ item: component.data }"
+      ></li>
+
+      // Or
+
+      <li
+        x-component
+        :url="component.template"
+        x-data="{ item: component.data }"
+      ></li>
+    </template>
+  </ul>
+</div>
+```
+
 ## Styling Components
 
 ### Including Stylesheets
 
 You can use `styles` attribute to specify which stylesheets to include.
+
+#### Using the HTML Element
 
 ```html
 <style title="person">
@@ -170,6 +284,21 @@ You can use `styles` attribute to specify which stylesheets to include.
   styles="person"
   x-data="{ item: person }"
 ></x-component>
+```
+
+#### Using the Directive
+
+```html
+<style title="person">
+  /* ... */
+</style>
+
+<div
+  x-component
+  template="person"
+  styles="person"
+  x-data="{ item: person }"
+></div>
 ```
 
 You can also include multiple stylesheets by separating them with a comma.
@@ -190,7 +319,7 @@ You can also include multiple stylesheets by separating them with a comma.
 ></x-component>
 ```
 
-Or, if you want to include all stylesheets you can use `styles="global"`
+Or, if you want to include all stylesheets you can use `styles="global"`. This works the same way with both the HTML element and directive approaches.
 
 ### Inline Stylesheet
 

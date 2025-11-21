@@ -23,3 +23,4 @@ yarn-error.log*
 # testing
 index.html
 /public
+test-directive.html

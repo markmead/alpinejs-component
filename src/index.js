@@ -54,4 +54,45 @@ export default function (Alpine) {
   customElements.define(componentName, ComponentWrapper)
 
   new ComponentWrapper()
+
+  // Register the directive
+  Alpine.directive('component', (el, { expression }, { evaluate, evaluateLater, effect }) => {
+    // Prevent multiple initializations
+    if (el._hasComponentInit) {
+      return
+    }
+
+    const shadowDom = el.attachShadow({ mode: 'open' })
+
+    // Parse attributes from the element
+    const getAttributeValue = (attrName) => {
+      // Check for dynamic binding first
+      if (el.hasAttribute(`:${attrName}`)) {
+        return evaluate(el.getAttribute(`:${attrName}`))
+      }
+      // Check for static attribute
+      if (el.hasAttribute(attrName)) {
+        return el.getAttribute(attrName)
+      }
+      return null
+    }
+
+    const templateName = getAttributeValue('template') || ''
+    const urlName = getAttributeValue('url') || ''
+    const styleNames = getAttributeValue('styles') || ''
+
+    if (templateName.length) {
+      initTemplate(Alpine, templateName, shadowDom)
+    }
+
+    if (urlName.length) {
+      initUrl(Alpine, urlName, shadowDom)
+    }
+
+    if (styleNames.length) {
+      initStyles(shadowDom, styleNames.split(','))
+    }
+
+    el._hasComponentInit = true
+  })
 }
