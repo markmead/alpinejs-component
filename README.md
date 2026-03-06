@@ -173,6 +173,21 @@ The host element emits lifecycle events:
 ></div>
 ```
 
+## Security
+
+**Important:** Only load templates from trusted sources. This plugin:
+
+- Renders HTML content directly (no sanitization)
+- Fetches URLs without validation
+- Is designed for developer-controlled content
+
+**Your responsibility:**
+
+- Don't use user input directly in `x-component` or `x-component.url`
+- Only load templates from your own trusted servers
+- Validate/sanitize any dynamic template selection
+- Use CSP headers for additional protection
+
 ## Notes
 
 - Missing templates and failed URL requests are handled with console
