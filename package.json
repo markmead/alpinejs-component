@@ -1,20 +1,31 @@
 {
   "name": "alpinejs-component",
-  "version": "1.2.12",
-  "description": "Reusable HTML components powered by Alpine JS reactivity 🛸",
+  "version": "2.0.0",
+  "description": "Directive-based Alpine.js components with Shadow DOM encapsulation, slots, and cached template rendering",
   "keywords": [
-    "Alpine",
-    "Alpine JS",
-    "Alpine JS Plugin",
-    "Alpine JS Plugins",
-    "Alpine JS Component",
-    "Alpine JS Components",
-    "HTML Components"
+    "alpinejs",
+    "alpine.js",
+    "alpine-plugin",
+    "alpine-component",
+    "shadow-dom",
+    "web-components",
+    "template-rendering",
+    "html-templates",
+    "slots",
+    "frontend"
   ],
   "author": "Mark Mead",
   "license": "MIT",
+  "type": "module",
+  "main": "dist/component.min.js",
   "module": "dist/component.esm.js",
   "unpkg": "dist/component.min.js",
+  "exports": {
+    ".": {
+      "import": "./dist/component.esm.js",
+      "default": "./dist/component.min.js"
+    }
+  },
   "scripts": {
     "build": "node scripts/build.js"
   },

@@ -1,6 +1,6 @@
 # Alpine JS Component
 
-Reusable HTML components powered by Alpine JS reactivity 🛸
+Reusable HTML components powered by Alpine JS reactivity.
 
 ## Install
 
@@ -12,15 +12,13 @@ Reusable HTML components powered by Alpine JS reactivity 🛸
   src="https://unpkg.com/alpinejs-component@latest/dist/component.min.js"
 ></script>
 
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script defer src="https://unpkg.com/alpinejs@latest/dist/cdn.min.js"></script>
 ```
 
 ### With a Package Manager
 
 ```shell
 npm install -D alpinejs-component
-
-yarn add -D alpinejs-component
 ```
 
 ```js
@@ -28,19 +26,14 @@ import Alpine from 'alpinejs'
 import component from 'alpinejs-component'
 
 Alpine.plugin(component)
-
 Alpine.start()
 ```
 
-## Example
+## Usage
 
-### On Page Components
+v2 uses an Alpine directive: `x-component`.
 
-You can render on page components by using a `<template>` with an `id` that
-matches the `template` attribute on the component.
-
-Here we are rendering the component HTML found in `<template id="person">`
-element.
+### Render From an On-Page Template
 
 ```html
 <div
@@ -52,34 +45,31 @@ element.
   }"
 >
   <ul>
-    <template x-for="person in people">
-      <x-component template="person" x-data="{ item: person }"></x-component>
+    <template x-for="person in people" :key="person.name">
+      <li>
+        <div x-data="{ item: person }" x-component="'person-card'"></div>
+      </li>
     </template>
   </ul>
 </div>
 
-<template id="person">
-  <li>
+<template id="person-card">
+  <article>
     <h2 x-text="item.name"></h2>
-
     <p x-text="item.age"></p>
 
     <ul>
-      <template x-for="skill in item.skills">
+      <template x-for="skill in item.skills" :key="skill">
         <li x-text="skill"></li>
       </template>
     </ul>
-  </li>
+  </article>
 </template>
 ```
 
-### Global Components
+### Render From a URL
 
-If you don't want on page components you can use the `url` attribute which
-accepts a path to the HTML component.
-
-Here we are telling Alpine JS to fetch the HTML from `/public/person.html`
-within the codebase.
+Use the `.url` modifier when the expression resolves to a URL.
 
 ```html
 <div
@@ -91,156 +81,124 @@ within the codebase.
   }"
 >
   <ul>
-    <template x-for="person in people">
-      <x-component
-        url="/public/person.html"
-        x-data="{ item: person }"
-      ></x-component>
+    <template x-for="person in people" :key="person.name">
+      <li>
+        <div
+          x-data="{ item: person }"
+          x-component.url="'/public/person-card.html'"
+        ></div>
+      </li>
     </template>
   </ul>
 </div>
 ```
 
-Then we'd have a file `/public/person.html` which could look like this.
+### Dynamic Template Values
 
-```html
-<li>
-  <h2 x-text="item.name"></h2>
-
-  <p x-text="item.age"></p>
-
-  <ul>
-    <template x-for="skill in item.skills">
-      <li x-text="skill"></li>
-    </template>
-  </ul>
-</li>
-```
-
-## Dynamic Templates
-
-You can pass `template` or `url` as a dynamic value, here's an example.
+`x-component` and `x-component.url` support dynamic expressions.
 
 ```html
 <div
   x-data="{
-    components: [
-      {
-        template: '/public/person.html',
-        data: { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] }
-      },
-      {
-        template: '/public/person.html',
-        data: { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
-      },
-    ]
+    view: 'person-card',
+    remoteView: '/public/person-card.html'
   }"
 >
-  <ul>
-    <template x-for="component in components">
-      <x-component
-        :template="component.template"
-        x-data="{ item: component.data }"
-      ></x-component>
-
-      // Or
-
-      <x-component
-        :url="component.template"
-        x-data="{ item: component.data }"
-      ></x-component>
-    </template>
-  </ul>
+  <section x-component="view"></section>
+  <section x-component.url="remoteView"></section>
 </div>
 ```
 
-## Styling Components
+## Styles
 
-### Including Stylesheets
+Rendered component content is mounted in a Shadow DOM root.
 
-You can use `styles` attribute to specify which stylesheets to include.
+Use `x-component-styles` (or `styles`) to include selected document stylesheets
+by `title`.
 
 ```html
-<style title="person">
-  /* ... */
+<style title="person-card">
+  article {
+    border: 1px solid #ddd;
+  }
 </style>
 
-<x-component
-  template="person"
-  styles="person"
-  x-data="{ item: person }"
-></x-component>
+<div x-component="'person-card'" x-component-styles="person-card"></div>
 ```
 
-You can also include multiple stylesheets by separating them with a comma.
+Use `global` to include all local stylesheets:
 
 ```html
-<style title="person">
-  /* ... */
-</style>
-
-<style title="general">
-  /* ... */
-</style>
-
-<x-component
-  template="person"
-  styles="person,general"
-  x-data="{ item: person }"
-></x-component>
+<div x-component="'person-card'" x-component-styles="global"></div>
 ```
 
-Or, if you want to include all stylesheets you can use `styles="global"`
+## Slots
 
-### Inline Stylesheet
-
-You can add a `<style>` element with the components CSS to the component itself.
+Slot templates can be declared on the host element with `x-slot`.
 
 ```html
-<div>
-  <style>
-    .example {
-      background: #00f;
-    }
-  </style>
+<div x-component="'card-with-slot'">
+  <template x-slot>
+    <p>Default slot content</p>
+  </template>
 
-  <p class="example" x-text="message"> </p>
+  <template x-slot="actions">
+    <button>Save</button>
+  </template>
 </div>
+
+<template id="card-with-slot">
+  <article>
+    <slot></slot>
+    <footer>
+      <slot name="actions"></slot>
+    </footer>
+  </article>
+</template>
 ```
 
-## Renaming Component
+## Lifecycle Events
 
-If you need to change the name `x-component`, you can do so by setting the
-global `xComponent` object. This is necessary because blade components start
-with `x-`, which can cause conflicts.
+The host element emits lifecycle events:
 
-```js
-window.xComponent = {
-  name: 'a-component',
-}
-```
-
-You will then call components like this:
+- `x-component:loading` when URL loading starts
+- `x-component:loaded` when render completes
+- `x-component:error` when loading/rendering fails
 
 ```html
 <div
-  x-data="{
-    people: [
-      { name: 'John', age: '25', skills: ['JavaScript', 'CSS'] },
-      { name: 'Jane', age: '30', skills: ['Laravel', 'MySQL', 'jQuery'] }
-    ]
-  }"
->
-  <ul>
-    <template x-for="person in people">
-      <a-component
-        url="/public/person.html"
-        x-data="{ item: person }"
-      ></a-component>
-    </template>
-  </ul>
-</div>
+  x-component.url="'/public/person-card.html'"
+  x-on:x-component:loaded="console.log('component ready', $event.detail)"
+  x-on:x-component:error="console.error('component failed', $event.detail)"
+></div>
 ```
+
+## Notes
+
+- Missing templates and failed URL requests are handled with console
+  warnings/errors.
+- URL responses are cached by URL.
+- Template fragments are cached by template id.
+- Stylesheets are cached by style target list.
+
+## Migration From v1
+
+v1:
+
+```html
+<x-component template="person"></x-component>
+<x-component url="/public/person.html"></x-component>
+```
+
+v2:
+
+```html
+<div x-component="'person'"></div>
+<div x-component.url="/public/person.html"></div>
+```
+
+`window.xComponent.name` custom-element renaming is no longer used because v2 is
+directive-based.
 
 ### Stats
 
