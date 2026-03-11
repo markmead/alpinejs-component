@@ -4,18 +4,23 @@
   "description": "Directive-based Alpine.js components with Shadow DOM encapsulation, slots, and cached template rendering",
   "keywords": [
     "alpinejs",
-    "alpine.js",
-    "alpine-plugin",
-    "alpine-component",
+    "alpinejs-component",
     "shadow-dom",
     "web-components",
     "template-rendering",
-    "html-templates",
-    "slots",
-    "frontend"
+    "html-components",
+    "slots"
   ],
   "author": "Mark Mead",
   "license": "MIT",
+  "homepage": "https://github.com/markmead/alpinejs-component#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markmead/alpinejs-component.git"
+  },
+  "bugs": {
+    "url": "https://github.com/markmead/alpinejs-component/issues"
+  },
   "type": "module",
   "main": "dist/component.esm.js",
   "module": "dist/component.esm.js",
@@ -27,9 +32,13 @@
     }
   },
   "scripts": {
-    "build": "node scripts/build.js"
+    "build": "node scripts/build.js",
+    "lint": "eslint . --fix",
+    "prebuild": "npm run lint"
   },
   "devDependencies": {
-    "esbuild": "^0.27.3"
+    "@eslint/js": "^10.0.1",
+    "esbuild": "^0.27.3",
+    "eslint": "^10.0.3"
   }
 }
