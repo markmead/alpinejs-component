@@ -1,11 +1,17 @@
-import { adoptedStylesheetCache } from './cache'
+import { adoptedStylesheetCache, setBoundedCacheEntry } from './cache'
 
 function shouldIncludeStylesheet(stylesheetHref) {
   if (!stylesheetHref) {
     return true
   }
 
-  return stylesheetHref.includes(window.location.host)
+  try {
+    const stylesheetUrl = new URL(stylesheetHref, window.location.href)
+
+    return stylesheetUrl.origin === window.location.origin
+  } catch {
+    return false
+  }
 }
 
 function getCssTextFromStylesheet(targetStylesheet) {
@@ -58,7 +64,11 @@ export function initStyles(shadowRootNode, styleTargetList) {
 
     stylesheetInstance.replaceSync(combinedCssText)
 
-    adoptedStylesheetCache.set(styleCacheKey, stylesheetInstance)
+    setBoundedCacheEntry(
+      adoptedStylesheetCache,
+      styleCacheKey,
+      stylesheetInstance,
+    )
   }
 
   shadowRootNode.adoptedStyleSheets = [

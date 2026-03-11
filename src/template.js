@@ -1,4 +1,8 @@
-import { remoteTemplateCache, templateFragmentCache } from './cache'
+import {
+  remoteTemplateCache,
+  setBoundedCacheEntry,
+  templateFragmentCache,
+} from './cache'
 
 function htmlToFragment(htmlString) {
   const templateElement = document.createElement('template')
@@ -26,7 +30,8 @@ export function loadFromTemplate(templateIdentifier) {
       return null
     }
 
-    templateFragmentCache.set(
+    setBoundedCacheEntry(
+      templateFragmentCache,
       normalizedTemplateId,
       htmlToFragment(templateElementNode.innerHTML),
     )
@@ -43,7 +48,8 @@ export async function loadFromUrl(urlIdentifier) {
   }
 
   if (!remoteTemplateCache.has(normalizedUrl)) {
-    remoteTemplateCache.set(
+    setBoundedCacheEntry(
+      remoteTemplateCache,
       normalizedUrl,
       fetch(normalizedUrl).then((fetchResponse) => {
         if (!fetchResponse.ok) {

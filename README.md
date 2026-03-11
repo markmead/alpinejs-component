@@ -18,7 +18,9 @@ Reusable HTML components powered by Alpine JS reactivity.
 ### With a Package Manager
 
 ```shell
-npm install -D alpinejs-component
+npm install alpinejs-component
+yarn add alpinejs-component
+pnpm add alpinejs-component
 ```
 
 ```js

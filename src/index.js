@@ -50,6 +50,10 @@ export default function (Alpine) {
     const projectedSlotNodes = hostElement._x_componentSlots || []
 
     for (const projectedSlotNode of projectedSlotNodes) {
+      if (projectedSlotNode.nodeType === Node.ELEMENT_NODE) {
+        Alpine.destroyTree(projectedSlotNode)
+      }
+
       projectedSlotNode.remove()
     }
 
@@ -84,6 +88,12 @@ export default function (Alpine) {
 
       slotTemplateNode.after(slotContentFragment)
       projectedSlotNodes.push(...slotContentNodes)
+    }
+
+    for (const projectedSlotNode of projectedSlotNodes) {
+      if (projectedSlotNode.nodeType === Node.ELEMENT_NODE) {
+        Alpine.initTree(projectedSlotNode)
+      }
     }
 
     hostElement._x_componentSlots = projectedSlotNodes
