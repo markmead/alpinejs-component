@@ -19,9 +19,13 @@ export default function (Alpine) {
       }
 
       return String(evaluatedValue)
-    } catch {
-      // Keep support for non-quoted static values: x-component="person"
-      return sourceExpression.trim()
+    } catch (evaluationError) {
+      console.error(
+        `[alpinejs-component] Failed to evaluate expression: ${sourceExpression}`,
+        evaluationError,
+      )
+
+      return ''
     }
   }
 
@@ -41,6 +45,7 @@ export default function (Alpine) {
     hostElement.dispatchEvent(
       new CustomEvent(eventName, {
         bubbles: true,
+        composed: true,
         detail: eventDetail,
       }),
     )
@@ -135,7 +140,9 @@ export default function (Alpine) {
             }
 
             const componentFragment = usesUrlModifier
-              ? await loadFromUrl(componentSource)
+              ? await loadFromUrl(componentSource, {
+                  allowCrossOrigin: modifiers.includes('external'),
+                })
               : loadFromTemplate(componentSource)
 
             if (renderTokenAtStart !== currentRenderToken) {

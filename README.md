@@ -73,6 +73,9 @@ v2 uses an Alpine directive: `x-component`.
 
 Use the `.url` modifier when the expression resolves to a URL.
 
+By default, `.url` only allows `http(s)` URLs on the current origin. Add the
+`.external` modifier to allow cross-origin `http(s)` URLs.
+
 ```html
 <div
   x-data="{
@@ -189,6 +192,9 @@ The host element emits lifecycle events:
 - Only load templates from your own trusted servers
 - Validate/sanitize any dynamic template selection
 - Use CSP headers for additional protection
+- `x-component.url` accepts only `http(s)` URLs
+- `x-component.url` blocks cross-origin requests by default
+- Use `x-component.url.external` to opt into cross-origin `http(s)` requests
 
 ## Notes
 
