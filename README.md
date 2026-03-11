@@ -183,7 +183,7 @@ The host element emits lifecycle events:
 **Important:** Only load templates from trusted sources. This plugin:
 
 - Renders HTML content directly (no sanitization)
-- Fetches URLs without validation
+- Performs minimal URL validation (only `http(s)` and same-origin by default)
 - Is designed for developer-controlled content
 
 **Your responsibility:**
