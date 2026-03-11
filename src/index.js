@@ -101,27 +101,19 @@ export default function (Alpine) {
 
   Alpine.directive(
     'component',
-    (
-      hostElement,
-      { expression: sourceExpression, modifiers: directiveModifiers },
-      {
-        effect: createReactiveEffect,
-        cleanup: registerCleanup,
-        evaluate: evaluateExpression,
-      },
-    ) => {
+    (hostElement, { expression, modifiers }, { effect, cleanup, evaluate }) => {
       let currentRenderToken = 0
       let hasMountedTree = false
 
-      createReactiveEffect(() => {
-        const componentSource = resolveSourceValue(
-          sourceExpression,
-          evaluateExpression,
-        )
+      effect(() => {
+        const componentSource = resolveSourceValue(expression, evaluate)
 
         if (!componentSource.length) {
+          clearProjectedSlots(hostElement)
+
           if (hostElement.shadowRoot && hasMountedTree) {
             Alpine.destroyTree(hostElement.shadowRoot)
+
             hostElement.shadowRoot.replaceChildren()
 
             hasMountedTree = false
@@ -133,7 +125,7 @@ export default function (Alpine) {
         const renderTokenAtStart = ++currentRenderToken
 
         ;(async () => {
-          const usesUrlModifier = directiveModifiers.includes('url')
+          const usesUrlModifier = modifiers.includes('url')
 
           try {
             if (usesUrlModifier) {
@@ -195,7 +187,7 @@ export default function (Alpine) {
         })()
       })
 
-      registerCleanup(() => {
+      cleanup(() => {
         currentRenderToken += 1
 
         clearProjectedSlots(hostElement)

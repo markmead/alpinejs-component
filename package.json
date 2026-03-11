@@ -17,19 +17,19 @@
   "author": "Mark Mead",
   "license": "MIT",
   "type": "module",
-  "main": "dist/component.min.js",
+  "main": "dist/component.esm.js",
   "module": "dist/component.esm.js",
   "unpkg": "dist/component.min.js",
   "exports": {
     ".": {
       "import": "./dist/component.esm.js",
-      "default": "./dist/component.min.js"
+      "default": "./dist/component.esm.js"
     }
   },
   "scripts": {
     "build": "node scripts/build.js"
   },
   "devDependencies": {
-    "esbuild": "^0.25.0"
+    "esbuild": "^0.27.3"
   }
 }

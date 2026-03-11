@@ -18,12 +18,19 @@ function getCssTextFromStylesheet(targetStylesheet) {
   try {
     return [...targetStylesheet.cssRules]
       .filter((stylesheetRule) => {
+        if (
+          typeof CSSImportRule !== 'undefined' &&
+          stylesheetRule instanceof CSSImportRule
+        ) {
+          return false
+        }
+
         return !(
           stylesheetRule instanceof CSSStyleRule &&
           stylesheetRule.selectorText === ':root'
         )
       })
-      .map((stylesheetRule) => stylesheetRule.cssText)
+      .map(({ cssText }) => cssText)
       .join('\n')
   } catch {
     // Accessing cssRules can throw due to CORS-restricted stylesheets.
@@ -49,14 +56,12 @@ export function initStyles(shadowRootNode, styleTargetList) {
 
     const documentStyleSheets = useGlobalStyles
       ? [...document.styleSheets]
-      : [...document.styleSheets].filter(({ title: styleTitle }) =>
-          normalizedStyleTargets.includes(styleTitle),
+      : [...document.styleSheets].filter(({ title }) =>
+          normalizedStyleTargets.includes(title),
         )
 
     const combinedCssText = documentStyleSheets
-      .filter(({ href: stylesheetHref }) =>
-        shouldIncludeStylesheet(stylesheetHref),
-      )
+      .filter(({ href }) => shouldIncludeStylesheet(href))
       .map((documentStylesheet) => getCssTextFromStylesheet(documentStylesheet))
       .join('\n')
 
