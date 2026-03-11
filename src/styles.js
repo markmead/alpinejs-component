@@ -14,23 +14,39 @@ function shouldIncludeStylesheet(stylesheetHref) {
   }
 }
 
-function getCssTextFromStylesheet(targetStylesheet) {
+function getCssTextFromStylesheet(
+  targetStylesheet,
+  visitedStylesheets = new Set(),
+) {
+  if (!targetStylesheet || visitedStylesheets.has(targetStylesheet)) {
+    return ''
+  }
+
+  visitedStylesheets.add(targetStylesheet)
+
   try {
     return [...targetStylesheet.cssRules]
-      .filter((stylesheetRule) => {
+      .map((stylesheetRule) => {
         if (
           typeof CSSImportRule !== 'undefined' &&
           stylesheetRule instanceof CSSImportRule
         ) {
-          return false
+          return getCssTextFromStylesheet(
+            stylesheetRule.styleSheet,
+            visitedStylesheets,
+          )
         }
 
-        return !(
+        if (
           stylesheetRule instanceof CSSStyleRule &&
           stylesheetRule.selectorText === ':root'
-        )
+        ) {
+          return ''
+        }
+
+        return stylesheetRule.cssText
       })
-      .map(({ cssText }) => cssText)
+      .filter(Boolean)
       .join('\n')
   } catch {
     // Accessing cssRules can throw due to CORS-restricted stylesheets.

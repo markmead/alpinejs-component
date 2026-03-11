@@ -211,7 +211,7 @@ v2:
 
 ```html
 <div x-component="'person'"></div>
-<div x-component.url="/public/person.html"></div>
+<div x-component.url="'/public/person.html'"></div>
 ```
 
 `window.xComponent.name` custom-element renaming is no longer used because v2 is

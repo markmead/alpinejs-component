@@ -138,10 +138,34 @@ export default function (Alpine) {
               ? await loadFromUrl(componentSource)
               : loadFromTemplate(componentSource)
 
-            if (
-              !componentFragment ||
-              renderTokenAtStart !== currentRenderToken
-            ) {
+            if (renderTokenAtStart !== currentRenderToken) {
+              return
+            }
+
+            if (!componentFragment) {
+              const renderError = new Error(
+                `Component source resolved but no fragment was returned: ${componentSource}`,
+              )
+
+              clearProjectedSlots(hostElement)
+
+              if (hostElement.shadowRoot && hasMountedTree) {
+                Alpine.destroyTree(hostElement.shadowRoot)
+                hostElement.shadowRoot.replaceChildren()
+
+                hasMountedTree = false
+              }
+
+              console.error(
+                `[alpinejs-component] Failed to render component: ${componentSource}`,
+                renderError,
+              )
+
+              dispatchLifecycleEvent(hostElement, 'x-component:error', {
+                source: componentSource,
+                error: renderError,
+              })
+
               return
             }
 
