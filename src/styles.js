@@ -38,6 +38,7 @@ function getCssTextFromStylesheet(
         }
 
         if (
+          typeof CSSStyleRule !== 'undefined' &&
           stylesheetRule instanceof CSSStyleRule &&
           stylesheetRule.selectorText === ':root'
         ) {
