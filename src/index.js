@@ -25,7 +25,10 @@ export default function (Alpine) {
         evaluationError,
       )
 
-      return ''
+      return {
+        value: '',
+        error: evaluationError,
+      }
     }
   }
 
@@ -111,7 +114,18 @@ export default function (Alpine) {
       let hasMountedTree = false
 
       effect(() => {
-        const componentSource = resolveSourceValue(expression, evaluate)
+        const resolvedSource = resolveSourceValue(expression, evaluate)
+        const componentSource =
+          typeof resolvedSource === 'string'
+            ? resolvedSource
+            : resolvedSource.value
+
+        if (typeof resolvedSource === 'object' && resolvedSource.error) {
+          dispatchLifecycleEvent(hostElement, 'x-component:error', {
+            source: expression,
+            error: resolvedSource.error,
+          })
+        }
 
         if (!componentSource.length) {
           clearProjectedSlots(hostElement)

@@ -2,6 +2,17 @@
 
 Reusable HTML components powered by Alpine JS reactivity.
 
+## V2 Overview
+
+v2 is directive-based and built around `x-component`.
+
+- No custom element registration required
+- Supports on-page templates and remote templates
+- Renders into Shadow DOM for style encapsulation
+- Supports default and named slots from host templates
+- Emits lifecycle events for loading, loaded, and error states
+- Uses bounded caches for templates, remote responses, and stylesheets
+
 ## Install
 
 ### With a CDN
@@ -34,6 +45,22 @@ Alpine.start()
 ## Usage
 
 v2 uses an Alpine directive: `x-component`.
+
+## Directive Reference
+
+- `x-component="expression"`: render from an on-page `<template id="...">`
+- `x-component.url="expression"`: render from a URL
+- `x-component.url.external="expression"`: allow cross-origin `http(s)` URLs
+- `x-component-styles="title-a,title-b"`: include matching document stylesheets
+- `styles="..."`: alias for `x-component-styles`
+
+The directive expression can be static or dynamic. Values are normalized as:
+
+- `string`: trimmed and used directly
+- `number` / `boolean` / other primitives: converted with `String(...)`
+- `null` / `undefined` / empty string: treated as empty source
+
+When the resolved source is empty, the mounted component is unmounted/cleared.
 
 ### Render From an On-Page Template
 
@@ -168,7 +195,23 @@ The host element emits lifecycle events:
 
 - `x-component:loading` when URL loading starts
 - `x-component:loaded` when render completes
-- `x-component:error` when loading/rendering fails
+- `x-component:error` when expression evaluation, loading, or rendering fails
+
+Event detail payloads:
+
+- `x-component:loading`: `{ source }`
+- `x-component:loaded`: `{ source }`
+- `x-component:error`: `{ source, error }`
+
+`source` is the resolved template id/URL for load/render failures, and the raw
+directive expression for expression-evaluation failures.
+
+Evaluation failure behavior:
+
+- If directive expression evaluation throws, the plugin emits
+  `x-component:error` with the evaluation error.
+- The component source is treated as empty, so any currently mounted content is
+  cleared.
 
 ```html
 <div
@@ -196,10 +239,48 @@ The host element emits lifecycle events:
 - `x-component.url` blocks cross-origin requests by default
 - Use `x-component.url.external` to opt into cross-origin `http(s)` requests
 
+## Browser Support
+
+This plugin targets modern browsers with support for:
+
+- Shadow DOM
+- `adoptedStyleSheets` (when using `x-component-styles` / `styles`)
+- `CSSStyleSheet` (when using `x-component-styles` / `styles`)
+- `template.content`
+
+If your target environment lacks these APIs, use a compatibility strategy or
+avoid Shadow DOM style adoption features.
+
+## Caching
+
+The plugin maintains bounded in-memory caches:
+
+- Template fragments by template id (limit: 200)
+- Remote template fetch promises by normalized URL (limit: 200)
+- Adopted stylesheets by style target list (limit: 100)
+
+When a cache exceeds its limit, oldest entries are evicted.
+
+For URL mode, failed fetches are removed from cache so retries can succeed.
+
+## Development
+
+```shell
+npm install
+npm run build
+```
+
+Available scripts:
+
+- `npm run build`: lint then build minified CDN + ESM outputs in `dist/`
+- `npm run lint`: run ESLint with `--fix`
+
 ## Notes
 
 - Missing templates and failed URL requests are handled with console
-  warnings/errors.
+  warnings/errors and lifecycle error events.
+- Expression evaluation failures dispatch `x-component:error` and clear mounted
+  content for that host.
 - URL responses are cached by URL.
 - Template fragments are cached by template id.
 - Stylesheets are cached by style target list.
