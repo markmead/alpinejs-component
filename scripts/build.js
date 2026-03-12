@@ -1,3 +1,5 @@
+import { buildSync } from 'esbuild'
+
 buildPlugin({
   entryPoints: ['builds/cdn.js'],
   outfile: 'dist/component.min.js',
@@ -11,7 +13,7 @@ buildPlugin({
 })
 
 function buildPlugin(buildOptions) {
-  return require('esbuild').buildSync({
+  return buildSync({
     ...buildOptions,
     minify: true,
     bundle: true,

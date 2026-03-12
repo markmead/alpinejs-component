@@ -1,24 +1,44 @@
 {
   "name": "alpinejs-component",
-  "version": "1.2.12",
-  "description": "Reusable HTML components powered by Alpine JS reactivity 🛸",
+  "version": "2.0.0",
+  "description": "Directive-based Alpine.js components with Shadow DOM encapsulation, slots, and cached template rendering",
   "keywords": [
-    "Alpine",
-    "Alpine JS",
-    "Alpine JS Plugin",
-    "Alpine JS Plugins",
-    "Alpine JS Component",
-    "Alpine JS Components",
-    "HTML Components"
+    "alpinejs",
+    "alpinejs-component",
+    "shadow-dom",
+    "web-components",
+    "template-rendering",
+    "html-components",
+    "slots"
   ],
   "author": "Mark Mead",
   "license": "MIT",
+  "homepage": "https://github.com/markmead/alpinejs-component#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markmead/alpinejs-component.git"
+  },
+  "bugs": {
+    "url": "https://github.com/markmead/alpinejs-component/issues"
+  },
+  "type": "module",
+  "main": "dist/component.esm.js",
   "module": "dist/component.esm.js",
   "unpkg": "dist/component.min.js",
+  "exports": {
+    ".": {
+      "import": "./dist/component.esm.js",
+      "default": "./dist/component.esm.js"
+    }
+  },
   "scripts": {
-    "build": "node scripts/build.js"
+    "build": "node scripts/build.js",
+    "lint": "eslint . --fix",
+    "prebuild": "npm run lint"
   },
   "devDependencies": {
-    "esbuild": "^0.25.0"
+    "@eslint/js": "^10.0.1",
+    "esbuild": "^0.27.3",
+    "eslint": "^10.0.3"
   }
 }
