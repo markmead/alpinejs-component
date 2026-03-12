@@ -2,6 +2,8 @@
 
 Reusable HTML components powered by Alpine JS reactivity.
 
+✨ Demos: <https://alpinejs-component-demo.vercel.app/>.
+
 ## V2 Overview
 
 v2 is directive-based and built around `x-component`.
