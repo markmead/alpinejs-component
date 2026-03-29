@@ -1,6 +1,11 @@
 # Alpine JS Component
 
-Reusable HTML components powered by Alpine JS reactivity.
+![](https://img.shields.io/npm/v/alpinejs-component)
+![](https://img.shields.io/npm/dt/alpinejs-component)
+![](https://img.shields.io/github/license/markmead/alpinejs-component)
+
+Directive-based Alpine.js components with Shadow DOM encapsulation, slots, and
+cached template rendering.
 
 ✨ Demos: <https://alpinejs-component-demo.vercel.app/>.
 
@@ -305,10 +310,3 @@ v2:
 
 `window.xComponent.name` custom-element renaming is no longer used because v2 is
 directive-based.
-
-### Stats
-
-![](https://img.shields.io/bundlephobia/min/alpinejs-component)
-![](https://img.shields.io/npm/v/alpinejs-component)
-![](https://img.shields.io/npm/dt/alpinejs-component)
-![](https://img.shields.io/github/license/markmead/alpinejs-component)
