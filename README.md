@@ -7,7 +7,7 @@
 Directive-based Alpine.js components with Shadow DOM encapsulation, slots, and
 cached template rendering.
 
-✨ Demos: <https://alpinejs-component-demo.vercel.app/>.
+✨ Demos: <https://alpinejs-component-demo.mm-dev.workers.dev//>.
 
 ## V2 Overview
 
