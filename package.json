@@ -1,12 +1,10 @@
 {
   "name": "alpinejs-component",
-  "version": "2.0.2",
-  "description": "Directive-based Alpine.js components with Shadow DOM encapsulation, slots, and cached template rendering",
+  "version": "3.0.0",
+  "description": "Directive-based Alpine.js components with slots and cached template rendering",
   "keywords": [
     "alpinejs",
     "alpinejs-component",
-    "shadow-dom",
-    "web-components",
     "template-rendering",
     "html-components",
     "slots"

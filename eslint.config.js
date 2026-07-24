@@ -9,9 +9,6 @@ export default [
       globals: {
         Alpine: 'readonly',
         console: 'readonly',
-        CSSImportRule: 'readonly',
-        CSSStyleRule: 'readonly',
-        CSSStyleSheet: 'readonly',
         CustomEvent: 'readonly',
         document: 'readonly',
         fetch: 'readonly',

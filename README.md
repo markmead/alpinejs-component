@@ -4,21 +4,20 @@
 ![](https://img.shields.io/npm/dt/alpinejs-component)
 ![](https://img.shields.io/github/license/markmead/alpinejs-component)
 
-Directive-based Alpine.js components with Shadow DOM encapsulation, slots, and
-cached template rendering.
+Directive-based Alpine.js components with slots and cached template rendering.
 
 **[✨ View the demos on CodePen](https://codepen.io/editor/markmead/pen/019d86f8-ed3f-7342-b0c1-b890dec04c9c?file=%2Findex.html&orientation=left&show=preview)**
 
-## V2 Overview
+## V3 Overview
 
-v2 is directive-based and built around `x-component`.
+v3 is directive-based and built around `x-component`.
 
 - No custom element registration required
 - Supports on-page templates and remote templates
-- Renders into Shadow DOM for style encapsulation
+- Renders into the light DOM, so your page's CSS applies as-is
 - Supports default and named slots from host templates
 - Emits lifecycle events for loading, loaded, and error states
-- Uses bounded caches for templates, remote responses, and stylesheets
+- Uses bounded caches for templates and remote responses
 
 ## Install
 
@@ -51,15 +50,13 @@ Alpine.start()
 
 ## Usage
 
-v2 uses an Alpine directive: `x-component`.
+v3 uses an Alpine directive: `x-component`.
 
 ## Directive Reference
 
 - `x-component="expression"`: render from an on-page `<template id="...">`
 - `x-component.url="expression"`: render from a URL
 - `x-component.url.external="expression"`: allow cross-origin `http(s)` URLs
-- `x-component-styles="title-a,title-b"`: include matching document stylesheets
-- `styles="..."`: alias for `x-component-styles`
 
 The directive expression can be static or dynamic. Values are normalized as:
 
@@ -150,30 +147,42 @@ By default, `.url` only allows `http(s)` URLs on the current origin. Add the
 
 ## Styles
 
-Rendered component content is mounted in a Shadow DOM root.
-
-Use `x-component-styles` (or `styles`) to include selected document stylesheets
-by `title`.
+Rendered content is mounted in the light DOM, so your stylesheets apply to it
+with no extra setup. Style components the same way you style the rest of the
+page.
 
 ```html
-<style title="person-card">
-  article {
+<style>
+  .person-card {
     border: 1px solid #ddd;
   }
 </style>
 
-<div x-component="'person-card'" x-component-styles="person-card"></div>
+<div x-component="'person-card'"></div>
 ```
 
-Use `global` to include all local stylesheets:
+If you want styles scoped to one component, reach for `@scope` or a class
+convention rather than the plugin:
 
 ```html
-<div x-component="'person-card'" x-component-styles="global"></div>
+<style>
+  @scope (.person-card) {
+    h2 {
+      font-size: 1.25rem;
+    }
+  }
+</style>
 ```
 
 ## Slots
 
 Slot templates can be declared on the host element with `x-slot`.
+
+Each `<slot>` in the component is replaced with the matching `x-slot` content.
+A `<slot>` with no matching content keeps its own children as fallback.
+
+Slot content is authored on the host, so it evaluates against the host's Alpine
+scope, not the scope of the component it is rendered into.
 
 ```html
 <div x-component="'card-with-slot'">
@@ -250,13 +259,8 @@ Evaluation failure behavior:
 
 This plugin targets modern browsers with support for:
 
-- Shadow DOM
-- `adoptedStyleSheets` (when using `x-component-styles` / `styles`)
-- `CSSStyleSheet` (when using `x-component-styles` / `styles`)
 - `template.content`
-
-If your target environment lacks these APIs, use a compatibility strategy or
-avoid Shadow DOM style adoption features.
+- `Element.replaceChildren`
 
 ## Caching
 
@@ -264,7 +268,6 @@ The plugin maintains bounded in-memory caches:
 
 - Template fragments by template id (limit: 200)
 - Remote template fetch promises by normalized URL (limit: 200)
-- Adopted stylesheets by style target list (limit: 100)
 
 When a cache exceeds its limit, oldest entries are evicted.
 
@@ -273,14 +276,15 @@ For URL mode, failed fetches are removed from cache so retries can succeed.
 ## Development
 
 ```shell
-npm install
-npm run build
+pnpm install
+pnpm build
 ```
 
 Available scripts:
 
-- `npm run build`: lint then build minified CDN + ESM outputs in `dist/`
-- `npm run lint`: run ESLint with `--fix`
+- `pnpm build`: lint then build minified CDN + ESM outputs in `dist/`
+- `pnpm lint`: run ESLint with `--fix`
+- `pnpm format`: run Prettier over the repo
 
 ## Notes
 
@@ -290,7 +294,35 @@ Available scripts:
   content for that host.
 - URL responses are cached by URL.
 - Template fragments are cached by template id.
-- Stylesheets are cached by style target list.
+
+## Migration From v2
+
+v3 renders into the light DOM instead of a Shadow DOM root.
+
+Remove `x-component-styles` and `styles`. They no longer exist, because document
+styles now reach component content on their own.
+
+```html
+<!-- v2 -->
+<div x-component="'person-card'" x-component-styles="person-card"></div>
+
+<!-- v3 -->
+<div x-component="'person-card'"></div>
+```
+
+If you relied on Shadow DOM to keep page styles _out_ of a component, scope your
+CSS with `@scope` or a class convention instead.
+
+Everything else carries over. Templates, `.url`, `.external`, `x-slot`, and the
+lifecycle events are unchanged.
+
+What you gain by dropping the shadow boundary:
+
+- Page styles apply to component content with no configuration
+- `$refs` and `$root` resolve across the host boundary
+- `label[for]`, `aria-describedby`, and friends can reference component content
+- Form controls inside a component submit with an ancestor `<form>`
+- `document.querySelector` finds component content
 
 ## Migration From v1
 
@@ -301,12 +333,12 @@ v1:
 <x-component url="/public/person.html"></x-component>
 ```
 
-v2:
+v2 and v3:
 
 ```html
 <div x-component="'person'"></div>
 <div x-component.url="'/public/person.html'"></div>
 ```
 
-`window.xComponent.name` custom-element renaming is no longer used because v2 is
-directive-based.
+`window.xComponent.name` custom-element renaming is no longer used because v2
+and v3 are directive-based.

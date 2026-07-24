@@ -1,5 +1,6 @@
-import { initStyles } from './styles'
 import { loadFromTemplate, loadFromUrl } from './template'
+
+const DEFAULT_SLOT_NAME = 'default'
 
 export default function (Alpine) {
   function resolveSourceValue(sourceExpression, evaluateExpression) {
@@ -32,16 +33,6 @@ export default function (Alpine) {
     }
   }
 
-  function getStyleTargets(hostElement) {
-    const styleValue =
-      hostElement.getAttribute('x-component-styles') || hostElement.getAttribute('styles') || ''
-
-    return styleValue
-      .split(',')
-      .map((styleTargetName) => styleTargetName.trim())
-      .filter(Boolean)
-  }
-
   function dispatchLifecycleEvent(hostElement, eventName, eventDetail = {}) {
     hostElement.dispatchEvent(
       new CustomEvent(eventName, {
@@ -52,62 +43,100 @@ export default function (Alpine) {
     )
   }
 
-  function clearProjectedSlots(hostElement) {
-    const projectedSlotNodes = hostElement._x_componentSlots || []
-
-    for (const projectedSlotNode of projectedSlotNodes) {
-      if (projectedSlotNode.nodeType === Node.ELEMENT_NODE) {
-        Alpine.destroyTree(projectedSlotNode)
-      }
-
-      projectedSlotNode.remove()
-    }
-
-    hostElement._x_componentSlots = []
-  }
-
-  function projectSlots(hostElement) {
-    clearProjectedSlots(hostElement)
-
+  // Slot templates are removed from the host up front because rendering takes over its children.
+  function captureSlotContent(hostElement) {
     const slotTemplateNodes = [...hostElement.querySelectorAll(':scope > template[x-slot]')]
-
-    if (!slotTemplateNodes.length) {
-      return
-    }
-
-    const projectedSlotNodes = []
+    const capturedSlotContent = new Map()
 
     for (const slotTemplateNode of slotTemplateNodes) {
-      const slotName = (slotTemplateNode.getAttribute('x-slot') || '').trim()
-      const slotContentFragment = slotTemplateNode.content.cloneNode(true)
-      const slotContentNodes = [...slotContentFragment.childNodes]
+      const slotName = (slotTemplateNode.getAttribute('x-slot') || '').trim() || DEFAULT_SLOT_NAME
+      const existingSlotContent = capturedSlotContent.get(slotName)
 
-      if (slotName.length) {
-        for (const slotContentNode of slotContentNodes) {
-          if (slotContentNode.nodeType === Node.ELEMENT_NODE) {
-            slotContentNode.setAttribute('slot', slotName)
-          }
+      if (existingSlotContent) {
+        existingSlotContent.append(...slotTemplateNode.content.childNodes)
+      } else {
+        capturedSlotContent.set(slotName, slotTemplateNode.content)
+      }
+
+      slotTemplateNode.remove()
+    }
+
+    return capturedSlotContent
+  }
+
+  function fillSlots(componentFragment, capturedSlotContent, hostElement) {
+    const slotNodes = [...componentFragment.querySelectorAll('slot')]
+
+    for (const slotNode of slotNodes) {
+      const slotName = (slotNode.getAttribute('name') || '').trim() || DEFAULT_SLOT_NAME
+      const slotContent = capturedSlotContent.get(slotName)
+
+      if (!slotContent) {
+        // Unfilled slots fall back to their own children, the same as a native <slot>.
+        slotNode.replaceWith(...slotNode.childNodes)
+
+        continue
+      }
+
+      const slotContentClone = slotContent.cloneNode(true)
+      const projectedNodes = [...slotContentClone.childNodes]
+
+      slotNode.replaceWith(slotContentClone)
+
+      // Slot content is authored on the host, so it keeps evaluating against the host's scope
+      // instead of the scope of whatever component it lands in.
+      for (const projectedNode of projectedNodes) {
+        if (projectedNode.nodeType === Node.ELEMENT_NODE) {
+          Alpine.addScopeToNode(projectedNode, {}, hostElement)
         }
       }
-
-      slotTemplateNode.after(slotContentFragment)
-      projectedSlotNodes.push(...slotContentNodes)
     }
-
-    for (const projectedSlotNode of projectedSlotNodes) {
-      if (projectedSlotNode.nodeType === Node.ELEMENT_NODE) {
-        Alpine.initTree(projectedSlotNode)
-      }
-    }
-
-    hostElement._x_componentSlots = projectedSlotNodes
   }
 
   Alpine.directive(
     'component',
     (hostElement, { expression, modifiers }, { effect, cleanup, evaluate }) => {
+      const capturedSlotContent = captureSlotContent(hostElement)
+
       let currentRenderToken = 0
-      let hasMountedTree = false
+      let mountedNodes = []
+
+      function unmountComponent() {
+        if (!mountedNodes.length) {
+          return
+        }
+
+        // Alpine's mutation observer is paused so it can't double-handle these nodes.
+        Alpine.mutateDom(() => {
+          for (const mountedNode of mountedNodes) {
+            if (mountedNode.nodeType === Node.ELEMENT_NODE) {
+              Alpine.destroyTree(mountedNode)
+            }
+
+            mountedNode.remove()
+          }
+        })
+
+        mountedNodes = []
+      }
+
+      function mountComponent(componentFragment) {
+        const componentNodes = [...componentFragment.childNodes]
+
+        unmountComponent()
+
+        Alpine.mutateDom(() => {
+          hostElement.replaceChildren(componentFragment)
+
+          for (const componentNode of componentNodes) {
+            if (componentNode.nodeType === Node.ELEMENT_NODE) {
+              Alpine.initTree(componentNode)
+            }
+          }
+        })
+
+        mountedNodes = componentNodes
+      }
 
       effect(() => {
         const resolvedSource = resolveSourceValue(expression, evaluate)
@@ -122,15 +151,7 @@ export default function (Alpine) {
         }
 
         if (!componentSource.length) {
-          clearProjectedSlots(hostElement)
-
-          if (hostElement.shadowRoot && hasMountedTree) {
-            Alpine.destroyTree(hostElement.shadowRoot)
-
-            hostElement.shadowRoot.replaceChildren()
-
-            hasMountedTree = false
-          }
+          unmountComponent()
 
           return
         }
@@ -162,14 +183,7 @@ export default function (Alpine) {
                 `Component source resolved but no fragment was returned: ${componentSource}`,
               )
 
-              clearProjectedSlots(hostElement)
-
-              if (hostElement.shadowRoot && hasMountedTree) {
-                Alpine.destroyTree(hostElement.shadowRoot)
-                hostElement.shadowRoot.replaceChildren()
-
-                hasMountedTree = false
-              }
+              unmountComponent()
 
               console.error(
                 `[alpinejs-component] Failed to render component: ${componentSource}`,
@@ -184,29 +198,9 @@ export default function (Alpine) {
               return
             }
 
-            const shadowRootNode =
-              hostElement.shadowRoot || hostElement.attachShadow({ mode: 'open' })
+            fillSlots(componentFragment, capturedSlotContent, hostElement)
 
-            if (hasMountedTree) {
-              Alpine.destroyTree(shadowRootNode)
-            }
-
-            // Allow component templates to access host Alpine scopes.
-            Alpine.addScopeToNode(shadowRootNode, {}, hostElement)
-
-            projectSlots(hostElement)
-
-            shadowRootNode.replaceChildren(componentFragment)
-
-            const styleTargetNames = getStyleTargets(hostElement)
-
-            if (styleTargetNames.length) {
-              initStyles(shadowRootNode, styleTargetNames)
-            }
-
-            Alpine.initTree(shadowRootNode)
-
-            hasMountedTree = true
+            mountComponent(componentFragment)
 
             dispatchLifecycleEvent(hostElement, 'x-component:loaded', {
               source: componentSource,
@@ -228,11 +222,7 @@ export default function (Alpine) {
       cleanup(() => {
         currentRenderToken += 1
 
-        clearProjectedSlots(hostElement)
-
-        if (hostElement.shadowRoot && hasMountedTree) {
-          Alpine.destroyTree(hostElement.shadowRoot)
-        }
+        unmountComponent()
       })
     },
   )
