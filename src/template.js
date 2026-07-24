@@ -1,8 +1,4 @@
-import {
-  remoteTemplateCache,
-  setBoundedCacheEntry,
-  templateFragmentCache,
-} from './cache'
+import { remoteTemplateCache, setBoundedCacheEntry, templateFragmentCache } from './cache'
 
 function htmlToFragment(htmlString) {
   const templateElement = document.createElement('template')
@@ -28,15 +24,11 @@ function resolveTemplateUrl(urlIdentifier, { allowCrossOrigin = false } = {}) {
   }
 
   if (!['http:', 'https:'].includes(resolvedUrl.protocol)) {
-    throw new Error(
-      `Unsupported URL protocol for x-component.url: ${resolvedUrl.protocol}`,
-    )
+    throw new Error(`Unsupported URL protocol for x-component.url: ${resolvedUrl.protocol}`)
   }
 
   if (!allowCrossOrigin && resolvedUrl.origin !== window.location.origin) {
-    throw new Error(
-      `Cross-origin URL blocked for x-component.url: ${resolvedUrl.href}`,
-    )
+    throw new Error(`Cross-origin URL blocked for x-component.url: ${resolvedUrl.href}`)
   }
 
   return resolvedUrl.href
@@ -53,9 +45,7 @@ export function loadFromTemplate(templateIdentifier) {
     const templateElementNode = document.getElementById(normalizedTemplateId)
 
     if (!templateElementNode) {
-      console.warn(
-        `[alpinejs-component] Missing template: "${normalizedTemplateId}"`,
-      )
+      console.warn(`[alpinejs-component] Missing template: "${normalizedTemplateId}"`)
 
       return null
     }
@@ -83,9 +73,7 @@ export async function loadFromUrl(urlIdentifier, urlOptions = {}) {
       normalizedUrl,
       fetch(normalizedUrl).then((fetchResponse) => {
         if (!fetchResponse.ok) {
-          throw new Error(
-            `Request failed (${fetchResponse.status}) for ${normalizedUrl}`,
-          )
+          throw new Error(`Request failed (${fetchResponse.status}) for ${normalizedUrl}`)
         }
 
         return fetchResponse.text()

@@ -1,0 +1,6 @@
+# 2880 minutes = 48h: hold back newly published versions to dodge fresh supply-chain attacks.
+minimumReleaseAge: 2880
+
+# esbuild's postinstall fetches its platform binary; pnpm blocks build scripts by default.
+allowBuilds:
+  esbuild: true
