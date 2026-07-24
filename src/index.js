@@ -34,9 +34,7 @@ export default function (Alpine) {
 
   function getStyleTargets(hostElement) {
     const styleValue =
-      hostElement.getAttribute('x-component-styles') ||
-      hostElement.getAttribute('styles') ||
-      ''
+      hostElement.getAttribute('x-component-styles') || hostElement.getAttribute('styles') || ''
 
     return styleValue
       .split(',')
@@ -71,9 +69,7 @@ export default function (Alpine) {
   function projectSlots(hostElement) {
     clearProjectedSlots(hostElement)
 
-    const slotTemplateNodes = [
-      ...hostElement.querySelectorAll(':scope > template[x-slot]'),
-    ]
+    const slotTemplateNodes = [...hostElement.querySelectorAll(':scope > template[x-slot]')]
 
     if (!slotTemplateNodes.length) {
       return
@@ -116,9 +112,7 @@ export default function (Alpine) {
       effect(() => {
         const resolvedSource = resolveSourceValue(expression, evaluate)
         const componentSource =
-          typeof resolvedSource === 'string'
-            ? resolvedSource
-            : resolvedSource.value
+          typeof resolvedSource === 'string' ? resolvedSource : resolvedSource.value
 
         if (typeof resolvedSource === 'object' && resolvedSource.error) {
           dispatchLifecycleEvent(hostElement, 'x-component:error', {
@@ -191,8 +185,7 @@ export default function (Alpine) {
             }
 
             const shadowRootNode =
-              hostElement.shadowRoot ||
-              hostElement.attachShadow({ mode: 'open' })
+              hostElement.shadowRoot || hostElement.attachShadow({ mode: 'open' })
 
             if (hasMountedTree) {
               Alpine.destroyTree(shadowRootNode)

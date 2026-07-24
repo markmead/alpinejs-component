@@ -25,10 +25,7 @@ v2 is directive-based and built around `x-component`.
 ### With a CDN
 
 ```html
-<script
-  defer
-  src="https://unpkg.com/alpinejs-component@latest/dist/component.min.js"
-></script>
+<script defer src="https://unpkg.com/alpinejs-component@latest/dist/component.min.js"></script>
 
 <script defer src="https://unpkg.com/alpinejs@latest/dist/cdn.min.js"></script>
 ```
@@ -122,10 +119,7 @@ By default, `.url` only allows `http(s)` URLs on the current origin. Add the
   <ul>
     <template x-for="person in people" :key="person.name">
       <li>
-        <div
-          x-data="{ item: person }"
-          x-component.url="'/public/person-card.html'"
-        ></div>
+        <div x-data="{ item: person }" x-component.url="'/public/person-card.html'"></div>
       </li>
     </template>
   </ul>
@@ -297,8 +291,7 @@ Available scripts:
 v1:
 
 ```html
-<x-component template="person"></x-component>
-<x-component url="/public/person.html"></x-component>
+<x-component template="person"></x-component> <x-component url="/public/person.html"></x-component>
 ```
 
 v2:

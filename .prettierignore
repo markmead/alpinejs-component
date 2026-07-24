@@ -1,0 +1,9 @@
+# Build output
+dist/
+
+# Vendored skills, pinned by hash in skills-lock.json
+.agents/
+skills-lock.json
+
+# Generated
+pnpm-lock.yaml

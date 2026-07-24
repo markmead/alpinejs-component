@@ -38,12 +38,14 @@
   ],
   "scripts": {
     "build": "node scripts/build.js",
+    "format": "prettier --write .",
     "lint": "eslint . --fix",
     "prebuild": "pnpm run lint"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "esbuild": "^0.27.7",
-    "eslint": "^10.7.0"
+    "eslint": "^10.7.0",
+    "prettier": "^3.9.6"
   }
 }

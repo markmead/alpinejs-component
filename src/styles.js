@@ -14,10 +14,7 @@ function shouldIncludeStylesheet(stylesheetHref) {
   }
 }
 
-function getCssTextFromStylesheet(
-  targetStylesheet,
-  visitedStylesheets = new Set(),
-) {
+function getCssTextFromStylesheet(targetStylesheet, visitedStylesheets = new Set()) {
   if (!targetStylesheet || visitedStylesheets.has(targetStylesheet)) {
     return ''
   }
@@ -27,14 +24,8 @@ function getCssTextFromStylesheet(
   try {
     return [...targetStylesheet.cssRules]
       .map((stylesheetRule) => {
-        if (
-          typeof CSSImportRule !== 'undefined' &&
-          stylesheetRule instanceof CSSImportRule
-        ) {
-          return getCssTextFromStylesheet(
-            stylesheetRule.styleSheet,
-            visitedStylesheets,
-          )
+        if (typeof CSSImportRule !== 'undefined' && stylesheetRule instanceof CSSImportRule) {
+          return getCssTextFromStylesheet(stylesheetRule.styleSheet, visitedStylesheets)
         }
 
         if (
@@ -57,9 +48,7 @@ function getCssTextFromStylesheet(
 
 export function initStyles(shadowRootNode, styleTargetList) {
   const normalizedStyleTargets = [
-    ...new Set(
-      styleTargetList.map((styleTarget) => styleTarget.trim()).filter(Boolean),
-    ),
+    ...new Set(styleTargetList.map((styleTarget) => styleTarget.trim()).filter(Boolean)),
   ]
 
   if (!normalizedStyleTargets.length) {
@@ -73,9 +62,7 @@ export function initStyles(shadowRootNode, styleTargetList) {
 
     const documentStyleSheets = useGlobalStyles
       ? [...document.styleSheets]
-      : [...document.styleSheets].filter(({ title }) =>
-          normalizedStyleTargets.includes(title),
-        )
+      : [...document.styleSheets].filter(({ title }) => normalizedStyleTargets.includes(title))
 
     const combinedCssText = documentStyleSheets
       .filter(({ href }) => shouldIncludeStylesheet(href))
@@ -86,14 +73,8 @@ export function initStyles(shadowRootNode, styleTargetList) {
 
     stylesheetInstance.replaceSync(combinedCssText)
 
-    setBoundedCacheEntry(
-      adoptedStylesheetCache,
-      styleCacheKey,
-      stylesheetInstance,
-    )
+    setBoundedCacheEntry(adoptedStylesheetCache, styleCacheKey, stylesheetInstance)
   }
 
-  shadowRootNode.adoptedStyleSheets = [
-    adoptedStylesheetCache.get(styleCacheKey),
-  ]
+  shadowRootNode.adoptedStyleSheets = [adoptedStylesheetCache.get(styleCacheKey)]
 }
