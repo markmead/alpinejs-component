@@ -1,3 +1,3 @@
 import component from '../src/index.js'
 
-document.addEventListener('alpine:init', () => window.Alpine.plugin(component))
+document.addEventListener('alpine:init', () => globalThis.Alpine.plugin(component))

@@ -18,7 +18,7 @@ function resolveTemplateUrl(urlIdentifier, { allowCrossOrigin = false } = {}) {
   let resolvedUrl
 
   try {
-    resolvedUrl = new URL(normalizedUrl, window.location.href)
+    resolvedUrl = new URL(normalizedUrl, globalThis.location.href)
   } catch {
     throw new Error(`Invalid URL for x-component.url: ${normalizedUrl}`)
   }
@@ -27,7 +27,7 @@ function resolveTemplateUrl(urlIdentifier, { allowCrossOrigin = false } = {}) {
     throw new Error(`Unsupported URL protocol for x-component.url: ${resolvedUrl.protocol}`)
   }
 
-  if (!allowCrossOrigin && resolvedUrl.origin !== window.location.origin) {
+  if (!allowCrossOrigin && resolvedUrl.origin !== globalThis.location.origin) {
     throw new Error(`Cross-origin URL blocked for x-component.url: ${resolvedUrl.href}`)
   }
 

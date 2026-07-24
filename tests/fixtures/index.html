@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>alpinejs-component</title>
+
+    <script src="/dist/component.min.js"></script>
+    <script defer src="/node_modules/alpinejs/dist/cdn.min.js"></script>
+
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        line-height: 1.5;
+        margin: 0 auto;
+        max-width: 60rem;
+        padding: 2rem 1rem 4rem;
+      }
+
+      section {
+        border-top: 1px solid #ddd;
+        margin-top: 2rem;
+        padding-top: 1rem;
+      }
+
+      h2 {
+        font-size: 1rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      p.hint {
+        color: #666;
+        margin-top: -0.5rem;
+      }
+
+      /* No opt-in needed: v3 renders into the light DOM, so this reaches component content. */
+      .card {
+        background: #fafafa;
+        border: 1px solid #ddd;
+        border-radius: 0.5rem;
+        margin: 0.5rem 0;
+        padding: 0.75rem 1rem;
+      }
+
+      .card h3 {
+        margin: 0 0 0.25rem;
+      }
+
+      .styled {
+        color: rgb(0, 128, 0);
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>alpinejs-component</h1>
+
+    <p class="hint">
+      A playground you can open by hand, and the fixture the Playwright suite drives. The sections
+      under "Failure handling" render nothing and log to the console on purpose.
+    </p>
+
+    <section id="templates">
+      <h2>On-page templates</h2>
+      <p class="hint">Host scope reaches the component, including <code>x-for</code>.</p>
+
+      <div x-data="{ item: { name: 'John', age: 25, skills: ['JavaScript', 'CSS'] } }">
+        <div data-testid="basic" x-component="'person-card'"></div>
+      </div>
+    </section>
+
+    <section id="styles">
+      <h2>Styling</h2>
+      <p class="hint">
+        <code>.card</code> and <code>.styled</code> are plain document rules. In v2 this needed
+        <code>x-component-styles</code>; in v3 the light DOM makes it automatic.
+      </p>
+
+      <div x-data>
+        <div data-testid="styled" x-component="'styled-card'"></div>
+      </div>
+    </section>
+
+    <section id="slots">
+      <h2>Slots</h2>
+      <p class="hint">
+        Default, named, and unfilled slots. Slot content evaluates in the <em>host</em> scope, so
+        <code>owner</code> resolves to the host's value even though the component declares its own.
+      </p>
+
+      <div x-data="{ owner: 'Ada' }">
+        <div data-testid="slots" x-component="'slotted-card'">
+          <template x-slot>
+            <p>Owned by <strong data-testid="slot-owner" x-text="owner"></strong></p>
+          </template>
+
+          <template x-slot="actions">
+            <button data-testid="rename-owner" type="button" @click="owner = 'Grace'">
+              Rename owner
+            </button>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <section id="duplicate-slots">
+      <h2>Duplicate slot names</h2>
+      <p class="hint">Both templates fill the one slot, in document order, like a native slot.</p>
+
+      <div x-data>
+        <div data-testid="duplicate" x-component="'slotted-card'">
+          <template x-slot="actions"><b class="dupe">one</b></template>
+          <template x-slot="actions"><b class="dupe">two</b></template>
+        </div>
+      </div>
+    </section>
+
+    <section id="dynamic">
+      <h2>Dynamic source</h2>
+      <p class="hint">
+        Swapping the expression re-renders and destroys the previous tree. Slot content is
+        re-projected each time, including after a component that has no slots at all.
+      </p>
+
+      <div x-data="{ view: 'view-a', label: 'first' }">
+        <button data-testid="view-a" type="button" @click="view = 'view-a'">View A</button>
+        <button data-testid="view-b" type="button" @click="view = 'view-b'">View B</button>
+        <button data-testid="view-slotless" type="button" @click="view = 'slotless'">
+          Slotless
+        </button>
+        <button data-testid="view-clear" type="button" @click="view = ''">Clear</button>
+        <button data-testid="relabel" type="button" @click="label = 'updated'">Relabel slot</button>
+
+        <div data-testid="dynamic" x-component="view">
+          <template x-slot>
+            <span data-testid="dynamic-label" x-text="label"></span>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <section id="lifecycle">
+      <h2>Lifecycle events</h2>
+      <p class="hint">Listeners sit on the wrapper, because the events bubble.</p>
+
+      <div
+        x-data="{ log: [] }"
+        @x-component:loading="log.push('loading')"
+        @x-component:loaded="log.push('loaded')"
+      >
+        <div
+          data-testid="lifecycle"
+          x-data="{ item: { name: 'Watched' } }"
+          x-component.url="'remote-card.html'"
+        >
+          <template x-slot="actions"><button type="button">Go</button></template>
+        </div>
+
+        <output data-testid="lifecycle-log" x-text="log.join(' → ')"></output>
+      </div>
+    </section>
+
+    <section id="light-dom">
+      <h2>Light DOM wins</h2>
+      <p class="hint">Every one of these was broken by the shadow boundary in v2.</p>
+
+      <div x-data>
+        <span x-ref="target" hidden>from-host</span>
+
+        <form
+          data-testid="form"
+          action="#"
+          @submit.prevent="
+            $refs.result.value = [...new FormData($el)].map((entry) => entry.join('=')).join(', ')
+          "
+        >
+          <label for="proof-input">A label outside the component targets this input</label>
+
+          <div data-testid="proof" x-component="'proof-card'"></div>
+
+          <button data-testid="submit" type="submit">Submit the form</button>
+        </form>
+
+        <output data-testid="form-result" x-ref="result"></output>
+      </div>
+    </section>
+
+    <section id="tracking">
+      <h2>Init and effect tracking</h2>
+      <p class="hint">
+        Counts initializations and effect runs, so double-initialization and effects leaking from an
+        unmounted tree both become visible.
+      </p>
+
+      <div x-data="{ view: 'tracked' }">
+        <button data-testid="untrack" type="button" @click="view = 'slotless'">Swap away</button>
+        <button data-testid="bump-store" type="button" @click="$store.probe.tick++">
+          Bump store
+        </button>
+
+        <div data-testid="tracked" x-component="view"></div>
+
+        <output
+          data-testid="counts"
+          x-text="`inits: ${$store.probe.inits}, effects: ${$store.probe.effects}`"
+        ></output>
+      </div>
+    </section>
+
+    <section id="failures">
+      <h2>Failure handling</h2>
+      <p class="hint">These render nothing on purpose. Expect console noise from this section.</p>
+
+      <div x-data>
+        <p>Missing template: <span data-testid="missing" x-component="'does-not-exist'"></span></p>
+
+        <p>
+          Cross-origin, blocked by default:
+          <span
+            data-testid="blocked"
+            x-component.url="'http://localhost:3211/tests/fixtures/remote-card.html'"
+          ></span>
+        </p>
+
+        <p>
+          Cross-origin, allowed with <code>.external</code>:
+          <span
+            data-testid="external"
+            x-data="{ item: { name: 'External' } }"
+            x-component.url.external="'http://localhost:3211/tests/fixtures/remote-card.html'"
+          ></span>
+        </p>
+
+        <p>
+          Unsupported protocol:
+          <span data-testid="protocol" x-component.url="'ftp://example.com/card.html'"></span>
+        </p>
+
+        <p>
+          Throwing expression:
+          <span data-testid="throwing" x-component="nope.deeply.missing"></span>
+        </p>
+      </div>
+
+      <div x-data="{ url: 'missing-card.html', item: { name: 'Retried' } }">
+        <p>
+          Failed fetch, then retried:
+          <span data-testid="retry" x-component.url="url"></span>
+
+          <button data-testid="retry-fix" type="button" @click="url = 'remote-card.html'">
+            Retry with a real URL
+          </button>
+        </p>
+      </div>
+    </section>
+
+    <template id="person-card">
+      <article class="card">
+        <h3 x-text="item.name"></h3>
+        <p x-text="`Age ${item.age}`"></p>
+
+        <ul>
+          <template x-for="skill in item.skills" :key="skill">
+            <li x-text="skill"></li>
+          </template>
+        </ul>
+      </article>
+    </template>
+
+    <template id="styled-card"><p class="card styled">Styled by a document stylesheet</p></template>
+
+    <template id="slotted-card">
+      <article class="card" x-data="{ owner: 'component-scope' }">
+        <slot></slot>
+        <footer><slot name="actions"></slot></footer>
+        <aside><slot name="unfilled">Fallback content for an unfilled slot</slot></aside>
+      </article>
+    </template>
+
+    <template id="view-a"
+      ><p class="card">View A [<slot></slot>]</p></template
+    >
+    <template id="view-b"
+      ><p class="card">View B [<slot></slot>]</p></template
+    >
+    <template id="slotless"><p class="card">A component with no slots</p></template>
+
+    <template id="proof-card">
+      <div class="card">
+        <input id="proof-input" name="field" value="submitted" />
+
+        <p>$refs across the boundary: <strong x-text="$refs.target.textContent"></strong></p>
+        <p>$root across the boundary: <strong x-text="$root.tagName"></strong></p>
+      </div>
+    </template>
+
+    <template id="tracked">
+      <p
+        class="card"
+        x-data
+        x-init="$store.probe.inits++"
+        x-effect="$store.probe.tick; $store.probe.effects++"
+      >
+        Tracked component
+      </p>
+    </template>
+
+    <script>
+      document.addEventListener('alpine:init', () => {
+        Alpine.store('probe', { tick: 0, inits: 0, effects: 0 })
+      })
+
+      // Recorded from the document so nothing depends on directive init order.
+      globalThis.lifecycleEvents = []
+
+      for (const eventName of ['x-component:loading', 'x-component:loaded', 'x-component:error']) {
+        document.addEventListener(eventName, ({ target, type, detail }) => {
+          globalThis.lifecycleEvents.push({
+            testId: target.dataset.testid || null,
+            type,
+            source: detail.source,
+            error: detail.error ? String(detail.error.message || detail.error) : null,
+          })
+        })
+      }
+    </script>
+  </body>
+</html>

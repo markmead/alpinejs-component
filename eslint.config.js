@@ -13,14 +13,30 @@ export default [
         document: 'readonly',
         fetch: 'readonly',
         Node: 'readonly',
+        globalThis: 'readonly',
         process: 'readonly',
         URL: 'readonly',
-        window: 'readonly',
       },
     },
     files: ['src/**/*.js', 'builds/**/*.js', 'scripts/**/*.js'],
   },
   {
-    ignores: ['dist/**', 'node_modules/**'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        Alpine: 'readonly',
+        console: 'readonly',
+        document: 'readonly',
+        FormData: 'readonly',
+        globalThis: 'readonly',
+        process: 'readonly',
+        URL: 'readonly',
+      },
+    },
+    files: ['tests/**/*.js', 'playwright.config.js'],
+  },
+  {
+    ignores: ['dist/**', 'node_modules/**', 'playwright-report/**', 'test-results/**'],
   },
 ]

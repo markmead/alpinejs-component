@@ -211,7 +211,7 @@ The host element emits lifecycle events:
 
 - `x-component:loading` when URL loading starts
 - `x-component:loaded` when render completes
-- `x-component:error` when expression evaluation, loading, or rendering fails
+- `x-component:error` when loading or rendering fails
 
 Event detail payloads:
 
@@ -219,15 +219,16 @@ Event detail payloads:
 - `x-component:loaded`: `{ source }`
 - `x-component:error`: `{ source, error }`
 
-`source` is the resolved template id/URL for load/render failures, and the raw
-directive expression for expression-evaluation failures.
+`source` is the resolved template id/URL.
 
-Evaluation failure behavior:
+Attach listeners to an ancestor rather than the host element itself.
+`x-component:loading` is dispatched while the host's own directives are still
+being processed, so an `x-on` binding on the host can miss it. The events
+bubble, so an ancestor always sees them.
 
-- If directive expression evaluation throws, the plugin emits
-  `x-component:error` with the evaluation error.
-- The component source is treated as empty, so any currently mounted content is
-  cleared.
+If the directive expression itself throws, Alpine reports the error through its
+own handler and the component source is treated as empty, so any mounted
+content is cleared. No `x-component:error` is emitted in that case.
 
 ```html
 <div
@@ -285,6 +286,31 @@ Available scripts:
 - `pnpm build`: lint then build minified CDN + ESM outputs in `dist/`
 - `pnpm lint`: run ESLint with `--fix`
 - `pnpm format`: run Prettier over the repo
+- `pnpm test`: run the Playwright suite against `dist/`
+- `pnpm test:ui`: run the suite in Playwright's UI mode
+- `pnpm test:serve`: serve the repo so you can open the fixture by hand
+
+## Testing
+
+Tests run in a real browser with Playwright, against the built `dist/` output
+rather than `src/`, so they cover what consumers actually install.
+
+```shell
+pnpm exec playwright install chromium
+pnpm test
+```
+
+`tests/fixtures/index.html` is a single page exercising every feature, wired up
+with `data-testid` hooks and buttons. The specs drive it, and you can open it
+yourself:
+
+```shell
+pnpm test:serve
+# then visit http://localhost:3210/tests/fixtures/index.html
+```
+
+The page is served on ports 3210 and 3211 so the cross-origin `.url` behaviour
+is testable against a real second origin.
 
 ## Notes
 

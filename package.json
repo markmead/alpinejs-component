@@ -38,12 +38,18 @@
     "build": "node scripts/build.js",
     "format": "prettier --write .",
     "lint": "eslint . --fix",
-    "prebuild": "pnpm run lint"
+    "prebuild": "pnpm run lint",
+    "test": "playwright test",
+    "test:serve": "serve . --config tests/serve.json --listen 3210 --listen 3211 --cors --no-clipboard --no-request-logging",
+    "test:ui": "playwright test --ui"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.61.1",
+    "alpinejs": "^3.15.12",
     "esbuild": "^0.27.7",
     "eslint": "^10.7.0",
-    "prettier": "^3.9.6"
+    "prettier": "^3.9.6",
+    "serve": "^14.2.6"
   }
 }
