@@ -11,21 +11,23 @@
     <link rel="stylesheet" href="/tests/fixtures/tailwind.css" />
   </head>
 
-  <body class="mx-auto max-w-5xl px-4 pt-8 pb-16 font-sans text-slate-900 antialiased">
-    <h1 class="text-2xl font-bold tracking-tight">alpinejs-component</h1>
+  <body class="mx-auto grid max-w-3xl gap-10 px-6 py-12 text-slate-900 antialiased">
+    <header class="grid gap-2">
+      <h1 class="text-2xl font-bold tracking-tight">alpinejs-component</h1>
 
-    <p class="mt-1 text-sm text-slate-600">
-      A playground you can open by hand, and the fixture the Playwright suite drives. The sections
-      under "Failure handling" render nothing and log to the console on purpose.
-    </p>
+      <p class="text-sm text-slate-600">
+        A playground you can open by hand, and the fixture the Playwright suite drives. Everything
+        under Failure handling renders nothing and logs to the console on purpose.
+      </p>
+    </header>
 
-    <section class="mt-8 border-t border-slate-200 pt-4" id="templates">
-      <h2 class="text-sm font-semibold tracking-wider text-slate-500 uppercase">
+    <section class="grid gap-3 border-t border-slate-200 pt-6" id="templates">
+      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
         On-page templates
       </h2>
-      <p class="mt-1 text-sm text-slate-600">
-        Host scope reaches the component, including
-        <code class="rounded bg-slate-100 px-1 py-0.5 font-mono text-xs">x-for</code>.
+
+      <p class="text-sm text-slate-600">
+        Host scope reaches the component, including <code class="font-mono text-xs">x-for</code>.
       </p>
 
       <div x-data="{ item: { name: 'John', age: 25, skills: ['JavaScript', 'CSS'] } }">
@@ -33,13 +35,13 @@
       </div>
     </section>
 
-    <section class="mt-8 border-t border-slate-200 pt-4" id="styles">
-      <h2 class="text-sm font-semibold tracking-wider text-slate-500 uppercase">Styling</h2>
-      <p class="mt-1 text-sm text-slate-600">
-        This whole page is styled by a compiled Tailwind build, and the utilities below are used
-        only inside component templates. In v2 they could not reach that content without
-        <code class="rounded bg-slate-100 px-1 py-0.5 font-mono text-xs">x-component-styles</code>;
-        in v3 the light DOM makes it automatic.
+    <section class="grid gap-3 border-t border-slate-200 pt-6" id="styles">
+      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Styling</h2>
+
+      <p class="text-sm text-slate-600">
+        This page is styled by a compiled Tailwind build, and the utilities on the card below are
+        used only inside a component template. In v2 they could not reach that content without
+        <code class="font-mono text-xs">x-component-styles</code>. This is issue #41.
       </p>
 
       <div x-data>
@@ -47,12 +49,13 @@
       </div>
     </section>
 
-    <section class="mt-8 border-t border-slate-200 pt-4" id="slots">
-      <h2 class="text-sm font-semibold tracking-wider text-slate-500 uppercase">Slots</h2>
-      <p class="mt-1 text-sm text-slate-600">
+    <section class="grid gap-3 border-t border-slate-200 pt-6" id="slots">
+      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Slots</h2>
+
+      <p class="text-sm text-slate-600">
         Default, named, and unfilled slots. Slot content evaluates in the <em>host</em> scope, so
-        <code class="rounded bg-slate-100 px-1 py-0.5 font-mono text-xs">owner</code> resolves to
-        the host's value even though the component declares its own.
+        <code class="font-mono text-xs">owner</code> resolves to the host's value even though the
+        component declares its own.
       </p>
 
       <div x-data="{ owner: 'Ada' }">
@@ -64,8 +67,8 @@
           <template x-slot="actions">
             <button
               data-testid="rename-owner"
+              class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
               type="button"
-              class="mr-1 mb-1 rounded border border-slate-300 bg-white px-2 py-1 text-sm hover:bg-slate-100"
               @click="owner = 'Grace'"
             >
               Rename owner
@@ -75,11 +78,12 @@
       </div>
     </section>
 
-    <section class="mt-8 border-t border-slate-200 pt-4" id="duplicate-slots">
-      <h2 class="text-sm font-semibold tracking-wider text-slate-500 uppercase">
+    <section class="grid gap-3 border-t border-slate-200 pt-6" id="duplicate-slots">
+      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
         Duplicate slot names
       </h2>
-      <p class="mt-1 text-sm text-slate-600">
+
+      <p class="text-sm text-slate-600">
         Both templates fill the one slot, in document order, like a native slot.
       </p>
 
@@ -91,54 +95,61 @@
       </div>
     </section>
 
-    <section class="mt-8 border-t border-slate-200 pt-4" id="dynamic">
-      <h2 class="text-sm font-semibold tracking-wider text-slate-500 uppercase">Dynamic source</h2>
-      <p class="mt-1 text-sm text-slate-600">
+    <section class="grid gap-3 border-t border-slate-200 pt-6" id="dynamic">
+      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Dynamic source</h2>
+
+      <p class="text-sm text-slate-600">
         Swapping the expression re-renders and destroys the previous tree. Slot content is
         re-projected each time, including after a component that has no slots at all.
       </p>
 
-      <div x-data="{ view: 'view-a', label: 'first' }">
-        <button
-          data-testid="view-a"
-          type="button"
-          class="mr-1 mb-1 rounded border border-slate-300 bg-white px-2 py-1 text-sm hover:bg-slate-100"
-          @click="view = 'view-a'"
-        >
-          View A
-        </button>
-        <button
-          data-testid="view-b"
-          type="button"
-          class="mr-1 mb-1 rounded border border-slate-300 bg-white px-2 py-1 text-sm hover:bg-slate-100"
-          @click="view = 'view-b'"
-        >
-          View B
-        </button>
-        <button
-          data-testid="view-slotless"
-          type="button"
-          class="mr-1 mb-1 rounded border border-slate-300 bg-white px-2 py-1 text-sm hover:bg-slate-100"
-          @click="view = 'slotless'"
-        >
-          Slotless
-        </button>
-        <button
-          data-testid="view-clear"
-          type="button"
-          class="mr-1 mb-1 rounded border border-slate-300 bg-white px-2 py-1 text-sm hover:bg-slate-100"
-          @click="view = ''"
-        >
-          Clear
-        </button>
-        <button
-          data-testid="relabel"
-          type="button"
-          class="mr-1 mb-1 rounded border border-slate-300 bg-white px-2 py-1 text-sm hover:bg-slate-100"
-          @click="label = 'updated'"
-        >
-          Relabel slot
-        </button>
+      <div class="grid gap-3" x-data="{ view: 'view-a', label: 'first' }">
+        <div class="flex flex-wrap gap-2">
+          <button
+            data-testid="view-a"
+            class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+            type="button"
+            @click="view = 'view-a'"
+          >
+            View A
+          </button>
+
+          <button
+            data-testid="view-b"
+            class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+            type="button"
+            @click="view = 'view-b'"
+          >
+            View B
+          </button>
+
+          <button
+            data-testid="view-slotless"
+            class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+            type="button"
+            @click="view = 'slotless'"
+          >
+            Slotless
+          </button>
+
+          <button
+            data-testid="view-clear"
+            class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+            type="button"
+            @click="view = ''"
+          >
+            Clear
+          </button>
+
+          <button
+            data-testid="relabel"
+            class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+            type="button"
+            @click="label = 'updated'"
+          >
+            Relabel slot
+          </button>
+        </div>
 
         <div data-testid="dynamic" x-component="view">
           <template x-slot>
@@ -148,15 +159,15 @@
       </div>
     </section>
 
-    <section class="mt-8 border-t border-slate-200 pt-4" id="lifecycle">
-      <h2 class="text-sm font-semibold tracking-wider text-slate-500 uppercase">
+    <section class="grid gap-3 border-t border-slate-200 pt-6" id="lifecycle">
+      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
         Lifecycle events
       </h2>
-      <p class="mt-1 text-sm text-slate-600">
-        Listeners sit on the wrapper, because the events bubble.
-      </p>
+
+      <p class="text-sm text-slate-600">Listeners sit on the wrapper, because the events bubble.</p>
 
       <div
+        class="grid gap-2"
         x-data="{ log: [] }"
         @x-component:loading="log.push('loading')"
         @x-component:loaded="log.push('loaded')"
@@ -166,216 +177,247 @@
           x-data="{ item: { name: 'Watched' } }"
           x-component.url="'remote-card.html'"
         >
-          <template x-slot="actions"
-            ><button
+          <template x-slot="actions">
+            <button
+              class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
               type="button"
-              class="mr-1 mb-1 rounded border border-slate-300 bg-white px-2 py-1 text-sm hover:bg-slate-100"
             >
               Go
-            </button></template
-          >
+            </button>
+          </template>
         </div>
 
         <output
-          class="text-sm text-slate-600"
+          class="font-mono text-xs text-slate-600"
           data-testid="lifecycle-log"
           x-text="log.join(' → ')"
         ></output>
       </div>
     </section>
 
-    <section class="mt-8 border-t border-slate-200 pt-4" id="light-dom">
-      <h2 class="text-sm font-semibold tracking-wider text-slate-500 uppercase">Light DOM wins</h2>
-      <p class="mt-1 text-sm text-slate-600">
+    <section class="grid gap-3 border-t border-slate-200 pt-6" id="light-dom">
+      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Light DOM wins</h2>
+
+      <p class="text-sm text-slate-600">
         Every one of these was broken by the shadow boundary in v2.
       </p>
 
-      <div x-data>
+      <div class="grid gap-2" x-data>
         <span x-ref="target" hidden>from-host</span>
 
         <form
+          class="grid gap-3"
           data-testid="form"
           action="#"
           @submit.prevent="
             $refs.result.value = [...new FormData($el)].map((entry) => entry.join('=')).join(', ')
           "
         >
-          <label class="block text-sm" for="proof-input"
-            >A label outside the component targets this input</label
-          >
+          <label class="text-sm font-medium" for="proof-input">
+            A label outside the component targets this input
+          </label>
 
           <div data-testid="proof" x-component="'proof-card'"></div>
 
           <button
+            class="justify-self-start rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
             data-testid="submit"
-            class="mr-1 mb-1 rounded border border-slate-300 bg-white px-2 py-1 text-sm hover:bg-slate-100"
             type="submit"
           >
             Submit the form
           </button>
         </form>
 
-        <output class="text-sm text-slate-600" data-testid="form-result" x-ref="result"></output>
+        <output
+          class="font-mono text-xs text-slate-600"
+          data-testid="form-result"
+          x-ref="result"
+        ></output>
       </div>
     </section>
 
-    <section class="mt-8 border-t border-slate-200 pt-4" id="tracking">
-      <h2 class="text-sm font-semibold tracking-wider text-slate-500 uppercase">
+    <section class="grid gap-3 border-t border-slate-200 pt-6" id="tracking">
+      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
         Init and effect tracking
       </h2>
-      <p class="mt-1 text-sm text-slate-600">
+
+      <p class="text-sm text-slate-600">
         Counts initializations and effect runs, so double-initialization and effects leaking from an
         unmounted tree both become visible.
       </p>
 
-      <div x-data="{ view: 'tracked' }">
-        <button
-          data-testid="untrack"
-          type="button"
-          class="mr-1 mb-1 rounded border border-slate-300 bg-white px-2 py-1 text-sm hover:bg-slate-100"
-          @click="view = 'slotless'"
-        >
-          Swap away
-        </button>
-        <button
-          data-testid="bump-store"
-          type="button"
-          class="mr-1 mb-1 rounded border border-slate-300 bg-white px-2 py-1 text-sm hover:bg-slate-100"
-          @click="$store.probe.tick++"
-        >
-          Bump store
-        </button>
+      <div class="grid gap-3" x-data="{ view: 'tracked' }">
+        <div class="flex flex-wrap gap-2">
+          <button
+            data-testid="untrack"
+            class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+            type="button"
+            @click="view = 'slotless'"
+          >
+            Swap away
+          </button>
+
+          <button
+            data-testid="bump-store"
+            class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+            type="button"
+            @click="$store.probe.tick++"
+          >
+            Bump store
+          </button>
+        </div>
 
         <div data-testid="tracked" x-component="view"></div>
 
         <output
-          class="text-sm text-slate-600"
+          class="font-mono text-xs text-slate-600"
           data-testid="counts"
           x-text="`inits: ${$store.probe.inits}, effects: ${$store.probe.effects}`"
         ></output>
       </div>
     </section>
 
-    <section class="mt-8 border-t border-slate-200 pt-4" id="failures">
-      <h2 class="text-sm font-semibold tracking-wider text-slate-500 uppercase">
+    <section class="grid gap-3 border-t border-slate-200 pt-6" id="failures">
+      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
         Failure handling
       </h2>
-      <p class="mt-1 text-sm text-slate-600">
+
+      <p class="text-sm text-slate-600">
         These render nothing on purpose. Expect console noise from this section.
       </p>
 
-      <div x-data>
-        <p>Missing template: <span data-testid="missing" x-component="'does-not-exist'"></span></p>
+      <dl class="grid gap-3 text-sm *:grid *:gap-2" x-data>
+        <div>
+          <dt class="text-slate-600">Missing template</dt>
+          <dd data-testid="missing" x-component="'does-not-exist'"></dd>
+        </div>
 
-        <p>
-          Cross-origin, blocked by default:
-          <span
+        <div>
+          <dt class="text-slate-600">Cross-origin, blocked by default</dt>
+          <dd
             data-testid="blocked"
             x-component.url="'http://localhost:3211/tests/fixtures/remote-card.html'"
-          ></span>
-        </p>
+          ></dd>
+        </div>
 
-        <p>
-          Cross-origin, allowed with
-          <code class="rounded bg-slate-100 px-1 py-0.5 font-mono text-xs">.external</code>:
-          <span
+        <div>
+          <dt class="text-slate-600">
+            Cross-origin, allowed with <code class="font-mono text-xs">.external</code>
+          </dt>
+          <dd
             data-testid="external"
             x-data="{ item: { name: 'External' } }"
             x-component.url.external="'http://localhost:3211/tests/fixtures/remote-card.html'"
-          ></span>
-        </p>
+          ></dd>
+        </div>
 
-        <p>
-          Unsupported protocol:
-          <span data-testid="protocol" x-component.url="'ftp://example.com/card.html'"></span>
-        </p>
+        <div>
+          <dt class="text-slate-600">Unsupported protocol</dt>
+          <dd data-testid="protocol" x-component.url="'ftp://example.com/card.html'"></dd>
+        </div>
 
-        <p>
-          Throwing expression:
-          <span data-testid="throwing" x-component="nope.deeply.missing"></span>
-        </p>
-      </div>
+        <div>
+          <dt class="text-slate-600">Throwing expression</dt>
+          <dd data-testid="throwing" x-component="nope.deeply.missing"></dd>
+        </div>
+      </dl>
 
-      <div x-data="{ url: 'missing-card.html', item: { name: 'Retried' } }">
-        <p>
-          Failed fetch, then retried:
-          <span data-testid="retry" x-component.url="url"></span>
+      <div
+        class="flex flex-wrap items-center gap-3"
+        x-data="{ url: 'missing-card.html', item: { name: 'Retried' } }"
+      >
+        <span class="text-sm text-slate-600">Failed fetch, then retried</span>
 
-          <button
-            data-testid="retry-fix"
-            type="button"
-            class="mr-1 mb-1 rounded border border-slate-300 bg-white px-2 py-1 text-sm hover:bg-slate-100"
-            @click="url = 'remote-card.html'"
-          >
-            Retry with a real URL
-          </button>
-        </p>
+        <button
+          data-testid="retry-fix"
+          class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+          type="button"
+          @click="url = 'remote-card.html'"
+        >
+          Retry with a real URL
+        </button>
+
+        <span class="basis-full" data-testid="retry" x-component.url="url"></span>
       </div>
     </section>
 
     <template id="person-card">
-      <article class="card my-2 rounded-lg border border-slate-200 bg-slate-50 p-4">
-        <h3 class="font-semibold" x-text="item.name"></h3>
-        <p x-text="`Age ${item.age}`"></p>
+      <article class="card grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <div class="grid gap-0.5">
+          <h3 class="font-semibold" x-text="item.name"></h3>
+          <p class="text-sm text-slate-600" x-text="`Age ${item.age}`"></p>
+        </div>
 
-        <ul>
+        <ul class="flex flex-wrap gap-2">
           <template x-for="skill in item.skills" :key="skill">
-            <li x-text="skill"></li>
+            <li
+              class="rounded-full bg-slate-200 px-2.5 py-0.5 text-xs font-medium"
+              x-text="skill"
+            ></li>
           </template>
         </ul>
       </article>
     </template>
 
-    <template id="styled-card"
-      ><p class="card styled my-2 rounded-lg border border-slate-200 bg-slate-50 p-4 text-proof">
-        Styled by Tailwind utilities in the page stylesheet
-      </p></template
-    >
+    <template id="styled-card">
+      <p class="card styled rounded-xl border border-slate-200 bg-slate-50 p-4 text-proof">
+        Styled by Tailwind utilities from the page stylesheet
+      </p>
+    </template>
 
     <template id="slotted-card">
       <article
-        class="card my-2 rounded-lg border border-slate-200 bg-slate-50 p-4"
+        class="card grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4"
         x-data="{ owner: 'component-scope' }"
       >
         <slot></slot>
-        <footer><slot name="actions"></slot></footer>
-        <aside><slot name="unfilled">Fallback content for an unfilled slot</slot></aside>
+
+        <footer class="flex flex-wrap gap-2"><slot name="actions"></slot></footer>
+
+        <aside class="text-sm text-slate-500">
+          <slot name="unfilled">Fallback content for an unfilled slot</slot>
+        </aside>
       </article>
     </template>
 
-    <template id="view-a"
-      ><p class="card my-2 rounded-lg border border-slate-200 bg-slate-50 p-4">
-        View A [<slot></slot>]
-      </p></template
-    >
-    <template id="view-b"
-      ><p class="card my-2 rounded-lg border border-slate-200 bg-slate-50 p-4">
-        View B [<slot></slot>]
-      </p></template
-    >
-    <template id="slotless"
-      ><p class="card my-2 rounded-lg border border-slate-200 bg-slate-50 p-4">
+    <template id="view-a">
+      <p class="card rounded-xl border border-slate-200 bg-slate-50 p-4">View A [<slot></slot>]</p>
+    </template>
+
+    <template id="view-b">
+      <p class="card rounded-xl border border-slate-200 bg-slate-50 p-4">View B [<slot></slot>]</p>
+    </template>
+
+    <template id="slotless">
+      <p class="card rounded-xl border border-slate-200 bg-slate-50 p-4">
         A component with no slots
-      </p></template
-    >
+      </p>
+    </template>
 
     <template id="proof-card">
-      <div class="card my-2 space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-4">
+      <div class="card grid gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4">
         <input
           id="proof-input"
-          class="rounded border border-slate-300 px-2 py-1"
+          class="justify-self-start rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm"
           name="field"
           value="submitted"
         />
 
-        <p>$refs across the boundary: <strong x-text="$refs.target.textContent"></strong></p>
-        <p>$root across the boundary: <strong x-text="$root.tagName"></strong></p>
+        <p class="text-sm">
+          <span class="text-slate-600">$refs across the boundary:</span>
+          <strong x-text="$refs.target.textContent"></strong>
+        </p>
+
+        <p class="text-sm">
+          <span class="text-slate-600">$root across the boundary:</span>
+          <strong x-text="$root.tagName"></strong>
+        </p>
       </div>
     </template>
 
     <template id="tracked">
       <p
-        class="card my-2 rounded-lg border border-slate-200 bg-slate-50 p-4"
+        class="card rounded-xl border border-slate-200 bg-slate-50 p-4"
         x-data
         x-init="$store.probe.inits++"
         x-effect="$store.probe.tick; $store.probe.effects++"
