@@ -31,10 +31,15 @@
       "default": "./dist/component.esm.js"
     }
   },
+  "files": [
+    "dist/",
+    "src/",
+    "builds/"
+  ],
   "scripts": {
     "build": "node scripts/build.js",
     "lint": "eslint . --fix",
-    "prebuild": "npm run lint"
+    "prebuild": "pnpm run lint"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

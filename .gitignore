@@ -13,6 +13,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+
+# local tooling config
+.claude/settings.local.json
 
 # local env files
 .env.local
