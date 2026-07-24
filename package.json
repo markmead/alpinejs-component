@@ -36,20 +36,23 @@
   ],
   "scripts": {
     "build": "node scripts/build.js",
+    "build:css": "tailwindcss --input tests/fixtures/app.css --output tests/fixtures/tailwind.css",
     "format": "prettier --write .",
     "lint": "eslint . --fix",
     "prebuild": "pnpm run lint",
     "test": "playwright test",
-    "test:serve": "serve . --config tests/serve.json --listen 3210 --listen 3211 --cors --no-clipboard --no-request-logging",
+    "test:serve": "pnpm run build:css && serve . --config tests/serve.json --listen 3210 --listen 3211 --cors --no-clipboard --no-request-logging",
     "test:ui": "playwright test --ui"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.61.1",
+    "@tailwindcss/cli": "^4.3.3",
     "alpinejs": "^3.15.12",
     "esbuild": "^0.27.7",
     "eslint": "^10.7.0",
     "prettier": "^3.9.6",
-    "serve": "^14.2.6"
+    "serve": "^14.2.6",
+    "tailwindcss": "^4.3.3"
   }
 }

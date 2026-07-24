@@ -29,3 +29,6 @@ pnpm-debug.log*
 /playwright-report
 /blob-report
 /playwright/.cache
+
+# Compiled by pnpm build:css
+tests/fixtures/tailwind.css

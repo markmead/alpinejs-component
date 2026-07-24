@@ -1,0 +1,8 @@
+@import 'tailwindcss';
+
+@source './';
+
+@theme {
+  /* A fixed hex so the light DOM style test can assert an exact computed colour. */
+  --color-proof: #008000;
+}

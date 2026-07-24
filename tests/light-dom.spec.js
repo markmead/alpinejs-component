@@ -15,8 +15,15 @@ test('$root resolves from inside a component', async ({ page }) => {
   await expect(page.getByTestId('proof').locator('strong').last()).toHaveText('DIV')
 })
 
-test('document stylesheets apply without any opt-in', async ({ page }) => {
-  await expect(page.getByTestId('styled').locator('.styled')).toHaveCSS('color', 'rgb(0, 128, 0)')
+// This is issue #41 in test form. The page is styled with a compiled Tailwind build, and these
+// utilities are used only inside component templates. Under the shadow root they could not
+// reach that content at all without naming a stylesheet and adopting it.
+test('Tailwind utilities apply to component content without any opt-in', async ({ page }) => {
+  const styledCard = page.getByTestId('styled').locator('.styled')
+
+  await expect(styledCard).toHaveCSS('padding', '16px')
+  await expect(styledCard).toHaveCSS('background-color', 'oklch(0.984 0.003 247.858)')
+  await expect(styledCard).toHaveCSS('color', 'rgb(0, 128, 0)')
 })
 
 test('document.querySelector finds component content', async ({ page }) => {
