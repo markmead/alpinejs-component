@@ -1,7 +1,11 @@
 import { expect, test } from '@playwright/test'
 
-const eventsFor = (page, testId) =>
-  page.evaluate((id) => globalThis.lifecycleEvents.filter((event) => event.testId === id), testId)
+function eventsFor(page, testId) {
+  return page.evaluate(
+    (targetTestId) => globalThis.lifecycleEvents.filter((event) => event.testId === targetTestId),
+    testId,
+  )
+}
 
 test.beforeEach(async ({ page }) => {
   await page.goto('index.html')

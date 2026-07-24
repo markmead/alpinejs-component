@@ -33,9 +33,13 @@ commas, 100 columns (80 for Markdown). Run `pnpm format` rather than hand-aligni
 
 ## Architecture
 
-- `src/index.js` — the `x-component` directive: source resolution, slot capture and
-  projection, mount/unmount, lifecycle events.
+- `src/index.js` — directive wiring only: reads the expression, decides what to
+  render, delegates the rest.
+- `src/source.js` — turning a directive expression into a source string.
 - `src/template.js` — resolving and loading templates from the page or a URL.
+- `src/slots.js` — capturing `x-slot` templates and projecting them into `<slot>`.
+- `src/render.js` — mounting and unmounting a component into its host.
+- `src/events.js` — lifecycle event dispatch and render error reporting.
 - `src/cache.js` — bounded caches shared by the loaders.
 - `builds/` — the two entry points esbuild consumes.
 - `dist/` — **committed to the repo** and published. Rebuild with `pnpm build`
