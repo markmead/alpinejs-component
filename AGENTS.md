@@ -46,7 +46,7 @@ commas, 100 columns (80 for Markdown). Run `pnpm format` rather than hand-aligni
   whenever `src/` or `builds/` changes, and include the result in the same commit.
 
 Content renders into the light DOM. There is no Shadow DOM, and `<slot>` is resolved
-by manual projection rather than natively — see the slot handling in `src/index.js`
+by manual projection rather than natively — see the slot handling in `src/slots.js`
 before changing anything in that area.
 
 ## Development

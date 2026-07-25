@@ -5,7 +5,7 @@ function readSlotName(slotElement, attributeName) {
 }
 
 // Slot templates are taken off the host up front, because rendering takes over its children.
-function captureSlotContent(hostElement) {
+function captureSlotContent(Alpine, hostElement) {
   const slotTemplateNodes = [...hostElement.querySelectorAll(':scope > template[x-slot]')]
   const capturedSlotContent = new Map()
 
@@ -19,14 +19,15 @@ function captureSlotContent(hostElement) {
       capturedSlotContent.set(slotName, slotTemplateNode.content)
     }
 
-    slotTemplateNode.remove()
+    // Every DOM write in the plugin is paused for Alpine's observer, including this one.
+    Alpine.mutateDom(() => slotTemplateNode.remove())
   }
 
   return capturedSlotContent
 }
 
 export function createSlotProjector(Alpine, hostElement) {
-  const capturedSlotContent = captureSlotContent(hostElement)
+  const capturedSlotContent = captureSlotContent(Alpine, hostElement)
 
   function fillSlots(componentFragment) {
     const slotNodes = [...componentFragment.querySelectorAll('slot')]

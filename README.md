@@ -26,11 +26,26 @@ v3 is directive-based and built around `x-component`.
 ```html
 <script
   defer
-  src="https://unpkg.com/alpinejs-component@latest/dist/component.min.js"
+  src="https://unpkg.com/alpinejs-component@3.0.0/dist/component.min.js"
 ></script>
 
-<script defer src="https://unpkg.com/alpinejs@latest/dist/cdn.min.js"></script>
+<script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
 ```
+
+Pin an exact version rather than using `@latest`. A pinned URL is immutable, so you
+can add Subresource Integrity and know the file can't change under you:
+
+```html
+<script
+  defer
+  src="https://unpkg.com/alpinejs-component@3.0.0/dist/component.min.js"
+  integrity="sha384-..."
+  crossorigin="anonymous"
+></script>
+```
+
+Don't use `integrity` with a floating tag like `@latest` or `@3` — the file changes
+and the hash stops matching, which blocks the script entirely.
 
 ### With a Package Manager
 
@@ -255,6 +270,36 @@ content is cleared. No `x-component:error` is emitted in that case.
 - `x-component.url` accepts only `http(s)` URLs
 - `x-component.url` blocks cross-origin requests by default
 - Use `x-component.url.external` to opt into cross-origin `http(s)` requests
+
+### Content Security Policy
+
+**Alpine's default build needs `'unsafe-eval'`.** It compiles every directive
+expression with `new Function`, so this is about Alpine itself, not just this plugin.
+If your CSP can't allow `'unsafe-eval'`, use Alpine's
+[CSP build](https://alpinejs.dev/advanced/csp) (`@alpinejs/csp`). This plugin works
+with it — `x-component`, `.url`, slots, and dynamic expressions all behave the same.
+
+**Trusted Types needs both pieces.** Templates are parsed by assigning to
+`innerHTML`, which is a Trusted Types sink, so under
+`require-trusted-types-for 'script'` the plugin registers a pass-through policy named
+`alpinejs-component`. Allow that name:
+
+```http
+Content-Security-Policy: trusted-types alpinejs-component; require-trusted-types-for 'script'
+```
+
+If the name isn't allowed, the plugin logs a warning and rendering fails on that page.
+
+That header alone is not enough, though. `require-trusted-types-for 'script'` also
+blocks `new Function`, so Alpine's default build can't evaluate any expression and
+nothing renders at all. Trusted Types therefore requires the CSP build **and** the
+policy name above. That combination is what's verified to work.
+
+The policy does **not** sanitize; it exists so the plugin works under enforcement,
+not to make untrusted templates safe — the trust model above still applies.
+Sanitizing here isn't an option: `setHTML()` and the Sanitizer API strip unknown
+attributes, which removes `x-text`, `x-for`, `@click`, and every other Alpine
+directive, leaving inert markup.
 
 ## Browser Support
 

@@ -49,6 +49,10 @@ export default function (Alpine) {
 
         dispatchLifecycleEvent(hostElement, 'x-component:loaded', { source: componentSource })
       } catch (renderError) {
+        if (renderToken !== currentRenderToken) {
+          return
+        }
+
         reportRenderError(hostElement, componentSource, renderError)
       }
     }
@@ -67,6 +71,9 @@ export default function (Alpine) {
       }
 
       if (!componentSource.length) {
+        // Bumping the token abandons any render still in flight for the previous source.
+        currentRenderToken += 1
+
         componentRenderer.unmount()
 
         return

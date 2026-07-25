@@ -40,9 +40,9 @@
     "format": "prettier --write .",
     "lint": "eslint . --fix",
     "prebuild": "pnpm run lint",
-    "test": "playwright test",
+    "test": "pnpm run build && playwright test",
     "test:serve": "pnpm run build:css && serve . --config tests/serve.json --listen 3210 --listen 3211 --cors --no-clipboard --no-request-logging",
-    "test:ui": "playwright test --ui"
+    "test:ui": "pnpm run build && playwright test --ui"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

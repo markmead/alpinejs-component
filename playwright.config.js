@@ -19,7 +19,9 @@ export default defineConfig({
   webServer: {
     // The repo root is served so fixtures can load dist/ and Alpine from node_modules.
     // Port 3211 is the same content on a second origin, which the cross-origin tests need.
-    command: 'pnpm run build && pnpm run test:serve',
+    // The build lives in the test script instead, because reuseExistingServer skips this
+    // command outright when something is already listening and the suite runs against dist/.
+    command: 'pnpm run test:serve',
     url: 'http://localhost:3210/tests/fixtures/index.html',
     reuseExistingServer: !process.env.CI,
   },

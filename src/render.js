@@ -25,7 +25,16 @@ export function createComponentRenderer(Alpine, hostElement) {
 
     unmount()
 
+    // Whatever is left on the host is content we never mounted, such as a loading placeholder.
+    // Replacing it happens inside mutateDom, so Alpine's observer never sees those nodes leave
+    // and their trees have to be torn down by hand.
+    const discardedHostElements = [...hostElement.children]
+
     Alpine.mutateDom(() => {
+      for (const discardedHostElement of discardedHostElements) {
+        Alpine.destroyTree(discardedHostElement)
+      }
+
       hostElement.replaceChildren(componentFragment)
 
       for (const componentNode of componentNodes) {
@@ -36,6 +45,19 @@ export function createComponentRenderer(Alpine, hostElement) {
     })
 
     mountedNodes = componentNodes
+
+    // Alpine defers directive handlers FIFO, so a placeholder's own directives can still be
+    // queued when a synchronous render detaches it. Destroying the discarded trees a second
+    // time, once that queue has drained, collects the effects they attach on their way out.
+    if (discardedHostElements.length) {
+      queueMicrotask(() => {
+        Alpine.mutateDom(() => {
+          for (const discardedHostElement of discardedHostElements) {
+            Alpine.destroyTree(discardedHostElement)
+          }
+        })
+      })
+    }
   }
 
   return { mount, unmount }

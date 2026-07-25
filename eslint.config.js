@@ -13,6 +13,7 @@ export default [
         document: 'readonly',
         fetch: 'readonly',
         Node: 'readonly',
+        queueMicrotask: 'readonly',
         globalThis: 'readonly',
         process: 'readonly',
         URL: 'readonly',

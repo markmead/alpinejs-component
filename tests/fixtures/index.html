@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>alpinejs-component</title>
 
-    <script src="/dist/component.min.js"></script>
+    <script defer src="/dist/component.min.js"></script>
     <script defer src="/node_modules/alpinejs/dist/cdn.min.js"></script>
 
     <link rel="stylesheet" href="/tests/fixtures/tailwind.css" />
@@ -21,325 +21,333 @@
       </p>
     </header>
 
-    <section class="grid gap-3 border-t border-slate-200 pt-6" id="templates">
-      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-        On-page templates
-      </h2>
+    <main class="grid gap-10">
+      <section class="grid gap-3 border-t border-slate-200 pt-6" id="templates">
+        <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
+          On-page templates
+        </h2>
 
-      <p class="text-sm text-slate-600">
-        Host scope reaches the component, including <code class="font-mono text-xs">x-for</code>.
-      </p>
+        <p class="text-sm text-slate-600">
+          Host scope reaches the component, including <code class="font-mono text-xs">x-for</code>.
+        </p>
 
-      <div x-data="{ item: { name: 'John', age: 25, skills: ['JavaScript', 'CSS'] } }">
-        <div data-testid="basic" x-component="'person-card'"></div>
-      </div>
-    </section>
+        <div x-data="{ item: { name: 'John', age: 25, skills: ['JavaScript', 'CSS'] } }">
+          <div data-testid="basic" x-component="'person-card'"></div>
+        </div>
+      </section>
 
-    <section class="grid gap-3 border-t border-slate-200 pt-6" id="styles">
-      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Styling</h2>
+      <section class="grid gap-3 border-t border-slate-200 pt-6" id="styles">
+        <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Styling</h2>
 
-      <p class="text-sm text-slate-600">
-        This page is styled by a compiled Tailwind build, and the utilities on the card below are
-        used only inside a component template. In v2 they could not reach that content without
-        <code class="font-mono text-xs">x-component-styles</code>. This is issue #41.
-      </p>
+        <p class="text-sm text-slate-600">
+          This page is styled by a compiled Tailwind build, and the utilities on the card below are
+          used only inside a component template. In v2 they could not reach that content without
+          <code class="font-mono text-xs">x-component-styles</code>. This is issue #41.
+        </p>
 
-      <div x-data>
-        <div data-testid="styled" x-component="'styled-card'"></div>
-      </div>
-    </section>
+        <div x-data>
+          <div data-testid="styled" x-component="'styled-card'"></div>
+        </div>
+      </section>
 
-    <section class="grid gap-3 border-t border-slate-200 pt-6" id="slots">
-      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Slots</h2>
+      <section class="grid gap-3 border-t border-slate-200 pt-6" id="slots">
+        <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Slots</h2>
 
-      <p class="text-sm text-slate-600">
-        Default, named, and unfilled slots. Slot content evaluates in the <em>host</em> scope, so
-        <code class="font-mono text-xs">owner</code> resolves to the host's value even though the
-        component declares its own.
-      </p>
+        <p class="text-sm text-slate-600">
+          Default, named, and unfilled slots. Slot content evaluates in the <em>host</em> scope, so
+          <code class="font-mono text-xs">owner</code> resolves to the host's value even though the
+          component declares its own.
+        </p>
 
-      <div x-data="{ owner: 'Ada' }">
-        <div data-testid="slots" x-component="'slotted-card'">
-          <template x-slot>
-            <p>Owned by <strong data-testid="slot-owner" x-text="owner"></strong></p>
-          </template>
+        <div x-data="{ owner: 'Ada' }">
+          <div data-testid="slots" x-component="'slotted-card'">
+            <template x-slot>
+              <p>Owned by <strong data-testid="slot-owner" x-text="owner"></strong></p>
+            </template>
 
-          <template x-slot="actions">
+            <template x-slot="actions">
+              <button
+                data-testid="rename-owner"
+                class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+                type="button"
+                @click="owner = 'Grace'"
+              >
+                Rename owner
+              </button>
+            </template>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid gap-3 border-t border-slate-200 pt-6" id="duplicate-slots">
+        <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
+          Duplicate slot names
+        </h2>
+
+        <p class="text-sm text-slate-600">
+          Both templates fill the one slot, in document order, like a native slot.
+        </p>
+
+        <div x-data>
+          <div data-testid="duplicate" x-component="'slotted-card'">
+            <template x-slot="actions"><b class="dupe">one</b></template>
+            <template x-slot="actions"><b class="dupe">two</b></template>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid gap-3 border-t border-slate-200 pt-6" id="dynamic">
+        <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
+          Dynamic source
+        </h2>
+
+        <p class="text-sm text-slate-600">
+          Swapping the expression re-renders and destroys the previous tree. Slot content is
+          re-projected each time, including after a component that has no slots at all.
+        </p>
+
+        <div class="grid gap-3" x-data="{ view: 'view-a', label: 'first' }">
+          <div class="flex flex-wrap gap-2">
             <button
-              data-testid="rename-owner"
+              data-testid="view-a"
               class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
               type="button"
-              @click="owner = 'Grace'"
+              @click="view = 'view-a'"
             >
-              Rename owner
+              View A
             </button>
-          </template>
+
+            <button
+              data-testid="view-b"
+              class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+              type="button"
+              @click="view = 'view-b'"
+            >
+              View B
+            </button>
+
+            <button
+              data-testid="view-slotless"
+              class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+              type="button"
+              @click="view = 'slotless'"
+            >
+              Slotless
+            </button>
+
+            <button
+              data-testid="view-clear"
+              class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+              type="button"
+              @click="view = ''"
+            >
+              Clear
+            </button>
+
+            <button
+              data-testid="relabel"
+              class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+              type="button"
+              @click="label = 'updated'"
+            >
+              Relabel slot
+            </button>
+          </div>
+
+          <div data-testid="dynamic" x-component="view">
+            <template x-slot>
+              <span data-testid="dynamic-label" x-text="label"></span>
+            </template>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="grid gap-3 border-t border-slate-200 pt-6" id="duplicate-slots">
-      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-        Duplicate slot names
-      </h2>
+      <section class="grid gap-3 border-t border-slate-200 pt-6" id="lifecycle">
+        <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
+          Lifecycle events
+        </h2>
 
-      <p class="text-sm text-slate-600">
-        Both templates fill the one slot, in document order, like a native slot.
-      </p>
+        <p class="text-sm text-slate-600">
+          Listeners sit on the wrapper, because the events bubble.
+        </p>
 
-      <div x-data>
-        <div data-testid="duplicate" x-component="'slotted-card'">
-          <template x-slot="actions"><b class="dupe">one</b></template>
-          <template x-slot="actions"><b class="dupe">two</b></template>
-        </div>
-      </div>
-    </section>
-
-    <section class="grid gap-3 border-t border-slate-200 pt-6" id="dynamic">
-      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Dynamic source</h2>
-
-      <p class="text-sm text-slate-600">
-        Swapping the expression re-renders and destroys the previous tree. Slot content is
-        re-projected each time, including after a component that has no slots at all.
-      </p>
-
-      <div class="grid gap-3" x-data="{ view: 'view-a', label: 'first' }">
-        <div class="flex flex-wrap gap-2">
-          <button
-            data-testid="view-a"
-            class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
-            type="button"
-            @click="view = 'view-a'"
-          >
-            View A
-          </button>
-
-          <button
-            data-testid="view-b"
-            class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
-            type="button"
-            @click="view = 'view-b'"
-          >
-            View B
-          </button>
-
-          <button
-            data-testid="view-slotless"
-            class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
-            type="button"
-            @click="view = 'slotless'"
-          >
-            Slotless
-          </button>
-
-          <button
-            data-testid="view-clear"
-            class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
-            type="button"
-            @click="view = ''"
-          >
-            Clear
-          </button>
-
-          <button
-            data-testid="relabel"
-            class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
-            type="button"
-            @click="label = 'updated'"
-          >
-            Relabel slot
-          </button>
-        </div>
-
-        <div data-testid="dynamic" x-component="view">
-          <template x-slot>
-            <span data-testid="dynamic-label" x-text="label"></span>
-          </template>
-        </div>
-      </div>
-    </section>
-
-    <section class="grid gap-3 border-t border-slate-200 pt-6" id="lifecycle">
-      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-        Lifecycle events
-      </h2>
-
-      <p class="text-sm text-slate-600">Listeners sit on the wrapper, because the events bubble.</p>
-
-      <div
-        class="grid gap-2"
-        x-data="{ log: [] }"
-        @x-component:loading="log.push('loading')"
-        @x-component:loaded="log.push('loaded')"
-      >
         <div
-          data-testid="lifecycle"
-          x-data="{ item: { name: 'Watched' } }"
-          x-component.url="'remote-card.html'"
+          class="grid gap-2"
+          x-data="{ log: [] }"
+          @x-component:loading="log.push('loading')"
+          @x-component:loaded="log.push('loaded')"
         >
-          <template x-slot="actions">
-            <button
-              class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
-              type="button"
-            >
-              Go
-            </button>
-          </template>
+          <div
+            data-testid="lifecycle"
+            x-data="{ item: { name: 'Watched' } }"
+            x-component.url="'remote-card.html'"
+          >
+            <template x-slot="actions">
+              <button
+                class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+                type="button"
+              >
+                Go
+              </button>
+            </template>
+          </div>
+
+          <output
+            class="font-mono text-xs text-slate-600"
+            data-testid="lifecycle-log"
+            x-text="log.join(' → ')"
+          ></output>
         </div>
+      </section>
 
-        <output
-          class="font-mono text-xs text-slate-600"
-          data-testid="lifecycle-log"
-          x-text="log.join(' → ')"
-        ></output>
-      </div>
-    </section>
+      <section class="grid gap-3 border-t border-slate-200 pt-6" id="light-dom">
+        <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
+          Light DOM wins
+        </h2>
 
-    <section class="grid gap-3 border-t border-slate-200 pt-6" id="light-dom">
-      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Light DOM wins</h2>
+        <p class="text-sm text-slate-600">
+          Every one of these was broken by the shadow boundary in v2.
+        </p>
 
-      <p class="text-sm text-slate-600">
-        Every one of these was broken by the shadow boundary in v2.
-      </p>
+        <div class="grid gap-2" x-data>
+          <span x-ref="target" hidden>from-host</span>
 
-      <div class="grid gap-2" x-data>
-        <span x-ref="target" hidden>from-host</span>
-
-        <form
-          class="grid gap-3"
-          data-testid="form"
-          action="#"
-          @submit.prevent="
+          <form
+            class="grid gap-3"
+            data-testid="form"
+            action="#"
+            @submit.prevent="
             $refs.result.value = [...new FormData($el)].map((entry) => entry.join('=')).join(', ')
           "
-        >
-          <label class="text-sm font-medium" for="proof-input">
-            A label outside the component targets this input
-          </label>
-
-          <div data-testid="proof" x-component="'proof-card'"></div>
-
-          <button
-            class="justify-self-start rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
-            data-testid="submit"
-            type="submit"
           >
-            Submit the form
-          </button>
-        </form>
+            <label class="text-sm font-medium" for="proof-input">
+              A label outside the component targets this input
+            </label>
 
-        <output
-          class="font-mono text-xs text-slate-600"
-          data-testid="form-result"
-          x-ref="result"
-        ></output>
-      </div>
-    </section>
+            <div data-testid="proof" x-component="'proof-card'"></div>
 
-    <section class="grid gap-3 border-t border-slate-200 pt-6" id="tracking">
-      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-        Init and effect tracking
-      </h2>
+            <button
+              class="justify-self-start rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+              data-testid="submit"
+              type="submit"
+            >
+              Submit the form
+            </button>
+          </form>
 
-      <p class="text-sm text-slate-600">
-        Counts initializations and effect runs, so double-initialization and effects leaking from an
-        unmounted tree both become visible.
-      </p>
+          <output
+            class="font-mono text-xs text-slate-600"
+            data-testid="form-result"
+            x-ref="result"
+          ></output>
+        </div>
+      </section>
 
-      <div class="grid gap-3" x-data="{ view: 'tracked' }">
-        <div class="flex flex-wrap gap-2">
+      <section class="grid gap-3 border-t border-slate-200 pt-6" id="tracking">
+        <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
+          Init and effect tracking
+        </h2>
+
+        <p class="text-sm text-slate-600">
+          Counts initializations and effect runs, so double-initialization and effects leaking from
+          an unmounted tree both become visible.
+        </p>
+
+        <div class="grid gap-3" x-data="{ view: 'tracked' }">
+          <div class="flex flex-wrap gap-2">
+            <button
+              data-testid="untrack"
+              class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+              type="button"
+              @click="view = 'slotless'"
+            >
+              Swap away
+            </button>
+
+            <button
+              data-testid="bump-store"
+              class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+              type="button"
+              @click="$store.probe.tick++"
+            >
+              Bump store
+            </button>
+          </div>
+
+          <div data-testid="tracked" x-component="view"></div>
+
+          <output
+            class="font-mono text-xs text-slate-600"
+            data-testid="counts"
+            x-text="`inits: ${$store.probe.inits}, effects: ${$store.probe.effects}`"
+          ></output>
+        </div>
+      </section>
+
+      <section class="grid gap-3 border-t border-slate-200 pt-6" id="failures">
+        <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
+          Failure handling
+        </h2>
+
+        <p class="text-sm text-slate-600">
+          These render nothing on purpose. Expect console noise from this section.
+        </p>
+
+        <dl class="grid gap-3 text-sm *:grid *:gap-2" x-data>
+          <div>
+            <dt class="text-slate-600">Missing template</dt>
+            <dd data-testid="missing" x-component="'does-not-exist'"></dd>
+          </div>
+
+          <div>
+            <dt class="text-slate-600">Cross-origin, blocked by default</dt>
+            <dd
+              data-testid="blocked"
+              x-component.url="'http://localhost:3211/tests/fixtures/remote-card.html'"
+            ></dd>
+          </div>
+
+          <div>
+            <dt class="text-slate-600">
+              Cross-origin, allowed with <code class="font-mono text-xs">.external</code>
+            </dt>
+            <dd
+              data-testid="external"
+              x-data="{ item: { name: 'External' } }"
+              x-component.url.external="'http://localhost:3211/tests/fixtures/remote-card.html'"
+            ></dd>
+          </div>
+
+          <div>
+            <dt class="text-slate-600">Unsupported protocol</dt>
+            <dd data-testid="protocol" x-component.url="'ftp://example.com/card.html'"></dd>
+          </div>
+
+          <div>
+            <dt class="text-slate-600">Throwing expression</dt>
+            <dd data-testid="throwing" x-component="nope.deeply.missing"></dd>
+          </div>
+        </dl>
+
+        <div
+          class="flex flex-wrap items-center gap-3"
+          x-data="{ url: 'missing-card.html', item: { name: 'Retried' } }"
+        >
+          <span class="text-sm text-slate-600">Failed fetch, then retried</span>
+
           <button
-            data-testid="untrack"
+            data-testid="retry-fix"
             class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
             type="button"
-            @click="view = 'slotless'"
+            @click="url = 'remote-card.html'"
           >
-            Swap away
+            Retry with a real URL
           </button>
 
-          <button
-            data-testid="bump-store"
-            class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
-            type="button"
-            @click="$store.probe.tick++"
-          >
-            Bump store
-          </button>
+          <span class="basis-full" data-testid="retry" x-component.url="url"></span>
         </div>
-
-        <div data-testid="tracked" x-component="view"></div>
-
-        <output
-          class="font-mono text-xs text-slate-600"
-          data-testid="counts"
-          x-text="`inits: ${$store.probe.inits}, effects: ${$store.probe.effects}`"
-        ></output>
-      </div>
-    </section>
-
-    <section class="grid gap-3 border-t border-slate-200 pt-6" id="failures">
-      <h2 class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-        Failure handling
-      </h2>
-
-      <p class="text-sm text-slate-600">
-        These render nothing on purpose. Expect console noise from this section.
-      </p>
-
-      <dl class="grid gap-3 text-sm *:grid *:gap-2" x-data>
-        <div>
-          <dt class="text-slate-600">Missing template</dt>
-          <dd data-testid="missing" x-component="'does-not-exist'"></dd>
-        </div>
-
-        <div>
-          <dt class="text-slate-600">Cross-origin, blocked by default</dt>
-          <dd
-            data-testid="blocked"
-            x-component.url="'http://localhost:3211/tests/fixtures/remote-card.html'"
-          ></dd>
-        </div>
-
-        <div>
-          <dt class="text-slate-600">
-            Cross-origin, allowed with <code class="font-mono text-xs">.external</code>
-          </dt>
-          <dd
-            data-testid="external"
-            x-data="{ item: { name: 'External' } }"
-            x-component.url.external="'http://localhost:3211/tests/fixtures/remote-card.html'"
-          ></dd>
-        </div>
-
-        <div>
-          <dt class="text-slate-600">Unsupported protocol</dt>
-          <dd data-testid="protocol" x-component.url="'ftp://example.com/card.html'"></dd>
-        </div>
-
-        <div>
-          <dt class="text-slate-600">Throwing expression</dt>
-          <dd data-testid="throwing" x-component="nope.deeply.missing"></dd>
-        </div>
-      </dl>
-
-      <div
-        class="flex flex-wrap items-center gap-3"
-        x-data="{ url: 'missing-card.html', item: { name: 'Retried' } }"
-      >
-        <span class="text-sm text-slate-600">Failed fetch, then retried</span>
-
-        <button
-          data-testid="retry-fix"
-          class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
-          type="button"
-          @click="url = 'remote-card.html'"
-        >
-          Retry with a real URL
-        </button>
-
-        <span class="basis-full" data-testid="retry" x-component.url="url"></span>
-      </div>
-    </section>
+      </section>
+    </main>
 
     <template id="person-card">
       <article class="card grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
