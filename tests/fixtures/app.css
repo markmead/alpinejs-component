@@ -6,3 +6,212 @@
   /* A fixed hex so the light DOM style test can assert an exact computed colour. */
   --color-proof: #008000;
 }
+
+/* Chrome the fixture pages repeat often enough that copying utility strings around stopped
+   being readable, and buried the interesting markup in the source panels on index.html.
+   It lives in the components layer so utilities in the markup still win, which is what keeps
+   #styled-card a real proof that the page's stylesheet reaches component content. */
+@layer components {
+  .page {
+    display: grid;
+    gap: 2.5rem;
+    margin-inline: auto;
+    max-inline-size: 56rem;
+    padding: 3rem 1.5rem;
+    color: var(--color-slate-900);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .masthead {
+    display: grid;
+    gap: 0.75rem;
+
+    & h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  .lede {
+    max-inline-size: 68ch;
+    color: var(--color-slate-600);
+    text-wrap: pretty;
+
+    & code {
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+    }
+  }
+
+  .sections {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .section {
+    display: grid;
+    gap: 0.75rem;
+    border-block-start: 1px solid var(--color-slate-200);
+    padding-block-start: 1.5rem;
+
+    & h2 {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.625rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      letter-spacing: -0.0125em;
+    }
+  }
+
+  .note {
+    max-inline-size: 68ch;
+    color: var(--color-slate-600);
+    font-size: 0.875rem;
+    line-height: 1.65;
+    text-wrap: pretty;
+
+    & code {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+  }
+
+  .flag {
+    border: 1px solid var(--color-amber-300);
+    border-radius: 9999px;
+    background: var(--color-amber-50);
+    padding-inline: 0.5rem;
+    padding-block: 0.0625rem;
+    color: var(--color-amber-800);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+  }
+
+  .demo {
+    display: grid;
+    gap: 0.75rem;
+    margin-block-start: 0.25rem;
+  }
+
+  .panel {
+    display: grid;
+    gap: 0.375rem;
+    margin: 0;
+  }
+
+  .panel-label {
+    color: var(--color-slate-500);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Dashed for the inert markup, solid for what the plugin made of it. */
+  .code {
+    overflow-wrap: break-word;
+    margin: 0;
+    border: 1px dashed var(--color-slate-300);
+    border-radius: 0.5rem;
+    background: var(--color-slate-100);
+    padding: 0.75rem 0.875rem;
+    color: var(--color-slate-700);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    tab-size: 2;
+  }
+
+  .result {
+    display: grid;
+    gap: 0.75rem;
+    border: 1px solid var(--color-slate-200);
+    border-radius: 0.5rem;
+    background: white;
+    padding: 0.875rem;
+  }
+
+  .result-bug {
+    border-color: var(--color-amber-300);
+    background: var(--color-amber-50);
+  }
+
+  .card {
+    border: 1px solid var(--color-slate-200);
+    border-radius: 0.75rem;
+    background: var(--color-slate-50);
+    padding: 1rem;
+  }
+
+  .row {
+    border: 1px solid var(--color-slate-200);
+    border-radius: 0.5rem;
+    background: var(--color-slate-50);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .button {
+    min-block-size: 2rem;
+    border: 1px solid var(--color-slate-300);
+    border-radius: 0.375rem;
+    background: white;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 150ms;
+
+    &:hover:not(:disabled) {
+      background: var(--color-slate-100);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-sky-600);
+      outline-offset: 2px;
+    }
+  }
+
+  .field {
+    justify-self: start;
+    border: 1px solid var(--color-slate-300);
+    border-radius: 0.375rem;
+    background: white;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .log {
+    min-block-size: 1lh;
+    color: var(--color-slate-600);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  .cases {
+    display: grid;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+
+    & > div {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    & dt {
+      color: var(--color-slate-600);
+    }
+  }
+}

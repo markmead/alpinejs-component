@@ -13,25 +13,21 @@
     <link rel="stylesheet" href="/tests/fixtures/tailwind.css" />
   </head>
 
-  <body class="mx-auto grid max-w-4xl gap-10 px-6 py-12 text-slate-900 antialiased">
-    <header class="grid gap-3">
-      <h1 class="text-3xl font-bold tracking-tight">x-component</h1>
+  <body class="page">
+    <header class="masthead">
+      <h1>x-component</h1>
 
-      <p class="max-w-[68ch] text-pretty text-slate-600">
+      <p class="lede">
         Render a template from the page or a URL into any element, fill its slots, and keep the
         result in the light DOM where the rest of your page can reach it.
       </p>
 
-      <p class="max-w-[68ch] text-sm leading-relaxed text-pretty text-slate-600">
+      <p class="note">
         Every section below shows the template it renders, the markup that uses it, and the live
         result, so nothing here needs an editor to follow. Two sections are marked
-        <span
-          class="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-semibold tracking-wide text-amber-800 uppercase"
-          >Known bug</span
-        >
-        and show output that is wrong today. This page is also the fixture the Playwright suite
-        drives; <a class="underline underline-offset-2" href="/tests/fixtures/csp.html">csp.html</a>
-        and
+        <span class="flag">Known bug</span> and show output that is wrong today. This page is also
+        the fixture the Playwright suite drives;
+        <a class="underline underline-offset-2" href="/tests/fixtures/csp.html">csp.html</a> and
         <a class="underline underline-offset-2" href="/tests/fixtures/trusted-types.html"
           >trusted-types.html</a
         >
@@ -39,22 +35,19 @@
       </p>
     </header>
 
-    <main class="grid gap-10">
-      <section class="grid gap-3 border-t border-slate-200 pt-6" id="render">
-        <h2 class="flex flex-wrap items-center gap-2.5 text-lg font-semibold tracking-tight">
-          Render a template from the page
-        </h2>
+    <main class="sections">
+      <section class="section" id="render">
+        <h2>Render a template from the page</h2>
 
-        <p class="max-w-[68ch] text-sm leading-relaxed text-pretty text-slate-600">
-          The expression is the <code class="font-mono text-xs">id</code> of a
-          <code class="font-mono text-xs">&lt;template&gt;</code> on the page. Its content is cloned
-          into the host element and initialized against the host's scope, so
-          <code class="font-mono text-xs">item</code> below resolves to the host's data, including
-          inside an <code class="font-mono text-xs">x-for</code>.
+        <p class="note">
+          The expression is the <code>id</code> of a <code>&lt;template&gt;</code> on the page. Its
+          content is cloned into the host element and initialized against the host's scope, so
+          <code>item</code> below resolves to the host's data, including inside an
+          <code>x-for</code>.
         </p>
 
         <template id="person-card">
-          <article class="card grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <article class="card grid gap-3">
             <div class="grid gap-0.5">
               <h3 class="font-semibold" x-text="item.name"></h3>
               <p class="text-sm text-slate-600" x-text="`Age ${item.age}`"></p>
@@ -71,31 +64,21 @@
           </article>
         </template>
 
-        <div class="mt-1 grid gap-3">
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Template
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="#person-card"></code></pre>
+        <div class="demo">
+          <figure class="panel">
+            <figcaption class="panel-label">Template</figcaption>
+            <pre class="code"><code data-source="#person-card"></code></pre>
           </figure>
 
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Usage
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="usage"></code></pre>
+          <figure class="panel">
+            <figcaption class="panel-label">Usage</figcaption>
+            <pre class="code"><code data-source="usage"></code></pre>
           </figure>
 
-          <div class="grid gap-1.5">
-            <p class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Result</p>
+          <div class="panel">
+            <p class="panel-label">Result</p>
 
-            <div class="grid gap-3 rounded-lg border border-slate-200 bg-white p-3.5" data-result>
+            <div class="result" data-result>
               <div x-data="{ item: { name: 'John', age: 25, skills: ['JavaScript', 'CSS'] } }">
                 <div data-testid="basic" x-component="'person-card'"></div>
               </div>
@@ -104,50 +87,39 @@
         </div>
       </section>
 
-      <section class="grid gap-3 border-t border-slate-200 pt-6" id="styles">
-        <h2 class="flex flex-wrap items-center gap-2.5 text-lg font-semibold tracking-tight">
-          Style a component with the page's stylesheet
-        </h2>
+      <section class="section" id="styles">
+        <h2>Style a component with the page's stylesheet</h2>
 
-        <p class="max-w-[68ch] text-sm leading-relaxed text-pretty text-slate-600">
+        <p class="note">
           The utilities on the card below come from the page's compiled Tailwind build and are used
           nowhere except inside a component template. Nothing opts in: the content renders into the
           light DOM, so the stylesheet already applies to it. In v2 the shadow boundary cut it off,
-          and reaching it meant naming a stylesheet with
-          <code class="font-mono text-xs">x-component-styles</code>. This is issue #41.
+          and reaching it meant naming a stylesheet with <code>x-component-styles</code>. This is
+          issue #41, so this one card spells its chrome out in utilities rather than borrowing the
+          page's <code>.card</code> class.
         </p>
 
         <template id="styled-card">
-          <p class="card styled rounded-xl border border-slate-200 bg-slate-50 p-4 text-proof">
+          <p class="styled rounded-xl border border-slate-200 bg-slate-50 p-4 text-proof">
             Styled by Tailwind utilities from the page stylesheet
           </p>
         </template>
 
-        <div class="mt-1 grid gap-3">
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Template
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="#styled-card"></code></pre>
+        <div class="demo">
+          <figure class="panel">
+            <figcaption class="panel-label">Template</figcaption>
+            <pre class="code"><code data-source="#styled-card"></code></pre>
           </figure>
 
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Usage
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="usage"></code></pre>
+          <figure class="panel">
+            <figcaption class="panel-label">Usage</figcaption>
+            <pre class="code"><code data-source="usage"></code></pre>
           </figure>
 
-          <div class="grid gap-1.5">
-            <p class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Result</p>
+          <div class="panel">
+            <p class="panel-label">Result</p>
 
-            <div class="grid gap-3 rounded-lg border border-slate-200 bg-white p-3.5" data-result>
+            <div class="result" data-result>
               <div x-data>
                 <div data-testid="styled" x-component="'styled-card'"></div>
               </div>
@@ -156,27 +128,20 @@
         </div>
       </section>
 
-      <section class="grid gap-3 border-t border-slate-200 pt-6" id="slots">
-        <h2 class="flex flex-wrap items-center gap-2.5 text-lg font-semibold tracking-tight">
-          Fill a component's slots
-        </h2>
+      <section class="section" id="slots">
+        <h2>Fill a component's slots</h2>
 
-        <p class="max-w-[68ch] text-sm leading-relaxed text-pretty text-slate-600">
-          A <code class="font-mono text-xs">&lt;template x-slot&gt;</code> on the host fills the
-          default <code class="font-mono text-xs">&lt;slot&gt;</code>, and
-          <code class="font-mono text-xs">x-slot="actions"</code> fills the one named
-          <code class="font-mono text-xs">actions</code>. A slot nobody fills keeps its own children
-          as fallback. Slot content is authored on the host, so it reads and writes the host's
-          scope: <code class="font-mono text-xs">owner</code> is the host's
-          <code class="font-mono text-xs">Ada</code>, not the component's own value, and the button
-          updates the host.
+        <p class="note">
+          A <code>&lt;template x-slot&gt;</code> on the host fills the default
+          <code>&lt;slot&gt;</code>, and <code>x-slot="actions"</code> fills the one named
+          <code>actions</code>. A slot nobody fills keeps its own children as fallback. Slot content
+          is authored on the host, so it reads and writes the host's scope: <code>owner</code> is
+          the host's <code>Ada</code>, not the component's own value, and the button updates the
+          host.
         </p>
 
         <template id="slotted-card">
-          <article
-            class="card grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4"
-            x-data="{ owner: 'component-scope' }"
-          >
+          <article class="card grid gap-3" x-data="{ owner: 'component-scope' }">
             <slot></slot>
 
             <footer class="flex flex-wrap gap-2"><slot name="actions"></slot></footer>
@@ -187,31 +152,21 @@
           </article>
         </template>
 
-        <div class="mt-1 grid gap-3">
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Template
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="#slotted-card"></code></pre>
+        <div class="demo">
+          <figure class="panel">
+            <figcaption class="panel-label">Template</figcaption>
+            <pre class="code"><code data-source="#slotted-card"></code></pre>
           </figure>
 
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Usage
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="usage"></code></pre>
+          <figure class="panel">
+            <figcaption class="panel-label">Usage</figcaption>
+            <pre class="code"><code data-source="usage"></code></pre>
           </figure>
 
-          <div class="grid gap-1.5">
-            <p class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Result</p>
+          <div class="panel">
+            <p class="panel-label">Result</p>
 
-            <div class="grid gap-3 rounded-lg border border-slate-200 bg-white p-3.5" data-result>
+            <div class="result" data-result>
               <div x-data="{ owner: 'Ada' }">
                 <div data-testid="slots" x-component="'slotted-card'">
                   <template x-slot>
@@ -220,8 +175,8 @@
 
                   <template x-slot="actions">
                     <button
+                      class="button"
                       data-testid="rename-owner"
-                      class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
                       type="button"
                       @click="owner = 'Grace'"
                     >
@@ -235,41 +190,29 @@
         </div>
       </section>
 
-      <section class="grid gap-3 border-t border-slate-200 pt-6" id="duplicate-slots">
-        <h2 class="flex flex-wrap items-center gap-2.5 text-lg font-semibold tracking-tight">
-          Fill one slot from two templates
-        </h2>
+      <section class="section" id="duplicate-slots">
+        <h2>Fill one slot from two templates</h2>
 
-        <p class="max-w-[68ch] text-sm leading-relaxed text-pretty text-slate-600">
+        <p class="note">
           Two templates naming the same slot both fill it, in document order, the way a native slot
           behaves. This renders the same card as the section above.
         </p>
 
-        <div class="mt-1 grid gap-3">
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Template
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="#slotted-card"></code></pre>
+        <div class="demo">
+          <figure class="panel">
+            <figcaption class="panel-label">Template</figcaption>
+            <pre class="code"><code data-source="#slotted-card"></code></pre>
           </figure>
 
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Usage
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="usage"></code></pre>
+          <figure class="panel">
+            <figcaption class="panel-label">Usage</figcaption>
+            <pre class="code"><code data-source="usage"></code></pre>
           </figure>
 
-          <div class="grid gap-1.5">
-            <p class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Result</p>
+          <div class="panel">
+            <p class="panel-label">Result</p>
 
-            <div class="grid gap-3 rounded-lg border border-slate-200 bg-white p-3.5" data-result>
+            <div class="result" data-result>
               <div x-data>
                 <div data-testid="duplicate" x-component="'slotted-card'">
                   <template x-slot="actions"><b class="dupe">one</b></template>
@@ -281,70 +224,42 @@
         </div>
       </section>
 
-      <section class="grid gap-3 border-t border-slate-200 pt-6" id="looped-slots">
-        <h2 class="flex flex-wrap items-center gap-2.5 text-lg font-semibold tracking-tight">
-          Repeat a slot for every row
+      <section class="section" id="looped-slots">
+        <h2>Repeat a slot for every row <span class="flag">Known bug</span></h2>
 
-          <span
-            class="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-semibold tracking-wide text-amber-800 uppercase"
-            >Known bug</span
-          >
-        </h2>
-
-        <p class="max-w-[68ch] text-sm leading-relaxed text-pretty text-slate-600">
-          A <code class="font-mono text-xs">&lt;slot&gt;</code> nested in an
-          <code class="font-mono text-xs">x-for</code> or
-          <code class="font-mono text-xs">x-if</code> template is filled, once per iteration. It is
-          the one place slot content does not get the host's scope: the cells below ask for
-          <code class="font-mono text-xs">owner</code>, which is
-          <code class="font-mono text-xs">Ada</code> on the host, and render the component's
-          <code class="font-mono text-xs">component-scope</code> instead. Alpine clones those
-          templates with <code class="font-mono text-xs">cloneNode</code>, and the expando binding
-          projected content to the host does not survive the clone. Keep slots out of
-          <code class="font-mono text-xs">x-for</code> and
-          <code class="font-mono text-xs">x-if</code> when the content needs host scope.
+        <p class="note">
+          A <code>&lt;slot&gt;</code> nested in an <code>x-for</code> or <code>x-if</code> template
+          is filled, once per iteration. It is the one place slot content does not get the host's
+          scope: the cells below ask for <code>owner</code>, which is <code>Ada</code> on the host,
+          and render the component's <code>component-scope</code> instead. Alpine clones those
+          templates with <code>cloneNode</code>, and the expando binding projected content to the
+          host does not survive the clone. Keep slots out of <code>x-for</code> and
+          <code>x-if</code> when the content needs host scope.
         </p>
 
         <template id="looped-card">
           <ul class="grid gap-2" x-data="{ owner: 'component-scope', rows: [1, 2] }">
             <template x-for="row in rows" :key="row">
-              <li class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
-                <slot name="cell"></slot>
-              </li>
+              <li class="row"><slot name="cell"></slot></li>
             </template>
           </ul>
         </template>
 
-        <div class="mt-1 grid gap-3">
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Template
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="#looped-card"></code></pre>
+        <div class="demo">
+          <figure class="panel">
+            <figcaption class="panel-label">Template</figcaption>
+            <pre class="code"><code data-source="#looped-card"></code></pre>
           </figure>
 
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Usage
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="usage"></code></pre>
+          <figure class="panel">
+            <figcaption class="panel-label">Usage</figcaption>
+            <pre class="code"><code data-source="usage"></code></pre>
           </figure>
 
-          <div class="grid gap-1.5">
-            <p class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Result, showing the wrong scope
-            </p>
+          <div class="panel">
+            <p class="panel-label">Result, showing the wrong scope</p>
 
-            <div
-              class="grid gap-3 rounded-lg border border-amber-300 bg-amber-50 p-3.5"
-              data-result
-            >
+            <div class="result result-bug" data-result>
               <div x-data="{ owner: 'Ada' }">
                 <div data-testid="looped" x-component="'looped-card'">
                   <template x-slot="cell">
@@ -357,12 +272,10 @@
         </div>
       </section>
 
-      <section class="grid gap-3 border-t border-slate-200 pt-6" id="dynamic">
-        <h2 class="flex flex-wrap items-center gap-2.5 text-lg font-semibold tracking-tight">
-          Swap the component at runtime
-        </h2>
+      <section class="section" id="dynamic">
+        <h2>Swap the component at runtime</h2>
 
-        <p class="max-w-[68ch] text-sm leading-relaxed text-pretty text-slate-600">
+        <p class="note">
           The expression is reactive. Changing it destroys the tree that was mounted and renders the
           new one in its place, and the host's slot content is projected again every time, including
           after a component that has no slots to fill. An expression that resolves to an empty
@@ -370,53 +283,37 @@
         </p>
 
         <template id="view-a">
-          <p class="card rounded-xl border border-slate-200 bg-slate-50 p-4">
-            View A [<slot></slot>]
-          </p>
+          <p class="card">View A [<slot></slot>]</p>
         </template>
 
         <template id="view-b">
-          <p class="card rounded-xl border border-slate-200 bg-slate-50 p-4">
-            View B [<slot></slot>]
-          </p>
+          <p class="card">View B [<slot></slot>]</p>
         </template>
 
         <template id="slotless">
-          <p class="card rounded-xl border border-slate-200 bg-slate-50 p-4">
-            A component with no slots
-          </p>
+          <p class="card">A component with no slots</p>
         </template>
 
-        <div class="mt-1 grid gap-3">
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Templates
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="#view-a, #view-b, #slotless"></code></pre>
+        <div class="demo">
+          <figure class="panel">
+            <figcaption class="panel-label">Templates</figcaption>
+            <pre class="code"><code data-source="#view-a, #view-b, #slotless"></code></pre>
           </figure>
 
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Usage
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="usage"></code></pre>
+          <figure class="panel">
+            <figcaption class="panel-label">Usage</figcaption>
+            <pre class="code"><code data-source="usage"></code></pre>
           </figure>
 
-          <div class="grid gap-1.5">
-            <p class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Result</p>
+          <div class="panel">
+            <p class="panel-label">Result</p>
 
-            <div class="grid gap-3 rounded-lg border border-slate-200 bg-white p-3.5" data-result>
+            <div class="result" data-result>
               <div class="grid gap-3" x-data="{ view: 'view-a', label: 'first' }">
-                <div class="flex flex-wrap gap-2">
+                <div class="controls">
                   <button
+                    class="button"
                     data-testid="view-a"
-                    class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
                     type="button"
                     @click="view = 'view-a'"
                   >
@@ -424,8 +321,8 @@
                   </button>
 
                   <button
+                    class="button"
                     data-testid="view-b"
-                    class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
                     type="button"
                     @click="view = 'view-b'"
                   >
@@ -433,26 +330,21 @@
                   </button>
 
                   <button
+                    class="button"
                     data-testid="view-slotless"
-                    class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
                     type="button"
                     @click="view = 'slotless'"
                   >
                     Slotless
                   </button>
 
-                  <button
-                    data-testid="view-clear"
-                    class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
-                    type="button"
-                    @click="view = ''"
-                  >
+                  <button class="button" data-testid="view-clear" type="button" @click="view = ''">
                     Clear
                   </button>
 
                   <button
+                    class="button"
                     data-testid="relabel"
-                    class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
                     type="button"
                     @click="label = 'updated'"
                   >
@@ -471,46 +363,33 @@
         </div>
       </section>
 
-      <section class="grid gap-3 border-t border-slate-200 pt-6" id="url">
-        <h2 class="flex flex-wrap items-center gap-2.5 text-lg font-semibold tracking-tight">
-          Load a template from a URL
-        </h2>
+      <section class="section" id="url">
+        <h2>Load a template from a URL</h2>
 
-        <p class="max-w-[68ch] text-sm leading-relaxed text-pretty text-slate-600">
-          With the <code class="font-mono text-xs">.url</code> modifier the expression is a URL to
-          fetch rather than the id of a template on the page. Everything else is the same, slots
-          included. Because the fetch is asynchronous, the host emits
-          <code class="font-mono text-xs">x-component:loading</code> and then
-          <code class="font-mono text-xs">x-component:loaded</code>. The events bubble, so the log
-          below listens on the wrapper rather than the host, and a same-origin URL is required
-          unless you add <code class="font-mono text-xs">.external</code>.
+        <p class="note">
+          With the <code>.url</code> modifier the expression is a URL to fetch rather than the id of
+          a template on the page. Everything else is the same, slots included. Because the fetch is
+          asynchronous, the host emits <code>x-component:loading</code> and then
+          <code>x-component:loaded</code>. The events bubble, so the log below listens on the
+          wrapper rather than the host, and a same-origin URL is required unless you add
+          <code>.external</code>.
         </p>
 
-        <div class="mt-1 grid gap-3">
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Template, fetched from remote-card.html
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source-url="remote-card.html"></code></pre>
+        <div class="demo">
+          <figure class="panel">
+            <figcaption class="panel-label">Template, fetched from remote-card.html</figcaption>
+            <pre class="code"><code data-source-url="remote-card.html"></code></pre>
           </figure>
 
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Usage
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="usage"></code></pre>
+          <figure class="panel">
+            <figcaption class="panel-label">Usage</figcaption>
+            <pre class="code"><code data-source="usage"></code></pre>
           </figure>
 
-          <div class="grid gap-1.5">
-            <p class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Result</p>
+          <div class="panel">
+            <p class="panel-label">Result</p>
 
-            <div class="grid gap-3 rounded-lg border border-slate-200 bg-white p-3.5" data-result>
+            <div class="result" data-result>
               <div
                 class="grid gap-2"
                 x-data="{ log: [] }"
@@ -523,48 +402,31 @@
                   x-component.url="'remote-card.html'"
                 >
                   <template x-slot="actions">
-                    <button
-                      class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
-                      type="button"
-                    >
-                      Go
-                    </button>
+                    <button class="button" type="button">Go</button>
                   </template>
                 </div>
 
-                <output
-                  class="font-mono text-xs text-slate-600"
-                  data-testid="lifecycle-log"
-                  x-text="log.join(' → ')"
-                ></output>
+                <output class="log" data-testid="lifecycle-log" x-text="log.join(' → ')"></output>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="grid gap-3 border-t border-slate-200 pt-6" id="boundary">
-        <h2 class="flex flex-wrap items-center gap-2.5 text-lg font-semibold tracking-tight">
-          Reach across the component boundary
-        </h2>
+      <section class="section" id="boundary">
+        <h2>Reach across the component boundary</h2>
 
-        <p class="max-w-[68ch] text-sm leading-relaxed text-pretty text-slate-600">
+        <p class="note">
           The label outside the component focuses the input inside it, that input submits with the
-          form wrapped around the component, <code class="font-mono text-xs">document</code> queries
-          find it, and <code class="font-mono text-xs">$refs</code> and
-          <code class="font-mono text-xs">$root</code> resolve past the host into the surrounding
-          tree. Every one of these was broken by the shadow boundary in v2, and together they are
-          the reason v3 renders into the light DOM.
+          form wrapped around the component, <code>document</code> queries find it, and
+          <code>$refs</code> and <code>$root</code> resolve past the host into the surrounding tree.
+          Every one of these was broken by the shadow boundary in v2, and together they are the
+          reason v3 renders into the light DOM.
         </p>
 
         <template id="proof-card">
-          <div class="card grid gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <input
-              id="proof-input"
-              class="justify-self-start rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm"
-              name="field"
-              value="submitted"
-            />
+          <div class="card grid gap-2">
+            <input class="field" id="proof-input" name="field" value="submitted" />
 
             <p class="text-sm">
               <span class="text-slate-600">$refs across the boundary:</span>
@@ -578,31 +440,21 @@
           </div>
         </template>
 
-        <div class="mt-1 grid gap-3">
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Template
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="#proof-card"></code></pre>
+        <div class="demo">
+          <figure class="panel">
+            <figcaption class="panel-label">Template</figcaption>
+            <pre class="code"><code data-source="#proof-card"></code></pre>
           </figure>
 
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Usage
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="usage"></code></pre>
+          <figure class="panel">
+            <figcaption class="panel-label">Usage</figcaption>
+            <pre class="code"><code data-source="usage"></code></pre>
           </figure>
 
-          <div class="grid gap-1.5">
-            <p class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Result</p>
+          <div class="panel">
+            <p class="panel-label">Result</p>
 
-            <div class="grid gap-3 rounded-lg border border-slate-200 bg-white p-3.5" data-result>
+            <div class="result" data-result>
               <div class="grid gap-2" x-data="{ result: '' }">
                 <span x-ref="target" hidden>from-host</span>
 
@@ -618,43 +470,32 @@
 
                   <div data-testid="proof" x-component="'proof-card'"></div>
 
-                  <button
-                    class="justify-self-start rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
-                    data-testid="submit"
-                    type="submit"
-                  >
+                  <button class="button justify-self-start" data-testid="submit" type="submit">
                     Submit the form
                   </button>
                 </form>
 
-                <output
-                  class="font-mono text-xs text-slate-600"
-                  data-testid="form-result"
-                  x-text="result"
-                ></output>
+                <output class="log" data-testid="form-result" x-text="result"></output>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="grid gap-3 border-t border-slate-200 pt-6" id="teardown">
-        <h2 class="flex flex-wrap items-center gap-2.5 text-lg font-semibold tracking-tight">
-          Prove a swapped-out component is gone
-        </h2>
+      <section class="section" id="teardown">
+        <h2>Prove a swapped-out component is gone</h2>
 
-        <p class="max-w-[68ch] text-sm leading-relaxed text-pretty text-slate-600">
+        <p class="note">
           The component counts its own initializations and effect runs in a store, which makes two
           failures visible. It initializes once and not twice, because the mount is wrapped in
-          <code class="font-mono text-xs">Alpine.mutateDom</code> and Alpine's own mutation observer
-          therefore leaves it alone. Swap it for the slotless card and bump the store again: the
-          effect count holds, because the tree that left the page was destroyed rather than left
-          running.
+          <code>Alpine.mutateDom</code> and Alpine's own mutation observer therefore leaves it
+          alone. Swap it for the slotless card and bump the store again: the effect count holds,
+          because the tree that left the page was destroyed rather than left running.
         </p>
 
         <template id="tracked">
           <p
-            class="card rounded-xl border border-slate-200 bg-slate-50 p-4"
+            class="card"
             x-data
             x-init="$store.probe.inits++"
             x-effect="$store.probe.tick; $store.probe.effects++"
@@ -663,36 +504,26 @@
           </p>
         </template>
 
-        <div class="mt-1 grid gap-3">
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Template
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="#tracked"></code></pre>
+        <div class="demo">
+          <figure class="panel">
+            <figcaption class="panel-label">Template</figcaption>
+            <pre class="code"><code data-source="#tracked"></code></pre>
           </figure>
 
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Usage
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="usage"></code></pre>
+          <figure class="panel">
+            <figcaption class="panel-label">Usage</figcaption>
+            <pre class="code"><code data-source="usage"></code></pre>
           </figure>
 
-          <div class="grid gap-1.5">
-            <p class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Result</p>
+          <div class="panel">
+            <p class="panel-label">Result</p>
 
-            <div class="grid gap-3 rounded-lg border border-slate-200 bg-white p-3.5" data-result>
+            <div class="result" data-result>
               <div class="grid gap-3" x-data="{ view: 'tracked' }">
-                <div class="flex flex-wrap gap-2">
+                <div class="controls">
                   <button
+                    class="button"
                     data-testid="untrack"
-                    class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
                     type="button"
                     @click="view = 'slotless'"
                   >
@@ -700,8 +531,8 @@
                   </button>
 
                   <button
+                    class="button"
                     data-testid="bump-store"
-                    class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
                     type="button"
                     @click="$store.probe.tick++"
                   >
@@ -712,7 +543,7 @@
                 <div data-testid="tracked" x-component="view"></div>
 
                 <output
-                  class="font-mono text-xs text-slate-600"
+                  class="log"
                   data-testid="counts"
                   x-text="`inits: ${$store.probe.inits}, effects: ${$store.probe.effects}`"
                 ></output>
@@ -722,44 +553,35 @@
         </div>
       </section>
 
-      <section class="grid gap-3 border-t border-slate-200 pt-6" id="failures">
-        <h2 class="flex flex-wrap items-center gap-2.5 text-lg font-semibold tracking-tight">
-          Handle a template that will not load
-        </h2>
+      <section class="section" id="failures">
+        <h2>Handle a template that will not load</h2>
 
-        <p class="max-w-[68ch] text-sm leading-relaxed text-pretty text-slate-600">
+        <p class="note">
           Each of these leaves the host empty and reports the reason, so expect console noise from
           this section. A URL that fails is not cached, so retrying the same host with a working one
-          succeeds; a cross-origin URL is blocked until you add
-          <code class="font-mono text-xs">.external</code>, and a protocol that is not
-          <code class="font-mono text-xs">http</code> or
-          <code class="font-mono text-xs">https</code> is refused outright.
+          succeeds; a cross-origin URL is blocked until you add <code>.external</code>, and a
+          protocol that is not <code>http</code> or <code>https</code> is refused outright.
         </p>
 
-        <div class="mt-1 grid gap-3">
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Usage
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="usage"></code></pre>
+        <div class="demo">
+          <figure class="panel">
+            <figcaption class="panel-label">Usage</figcaption>
+            <pre class="code"><code data-source="usage"></code></pre>
           </figure>
 
-          <div class="grid gap-1.5">
-            <p class="text-xs font-semibold tracking-widest text-slate-500 uppercase">Result</p>
+          <div class="panel">
+            <p class="panel-label">Result</p>
 
-            <div class="grid gap-3 rounded-lg border border-slate-200 bg-white p-3.5" data-result>
+            <div class="result" data-result>
               <div class="grid gap-4" x-data>
-                <dl class="grid gap-3 text-sm *:grid *:gap-2">
+                <dl class="cases">
                   <div>
-                    <dt class="text-slate-600">Missing template</dt>
+                    <dt>Missing template</dt>
                     <dd data-testid="missing" x-component="'does-not-exist'"></dd>
                   </div>
 
                   <div>
-                    <dt class="text-slate-600">Cross-origin, blocked by default</dt>
+                    <dt>Cross-origin, blocked by default</dt>
                     <dd
                       data-testid="blocked"
                       x-component.url="'http://localhost:3211/tests/fixtures/remote-card.html'"
@@ -767,9 +589,7 @@
                   </div>
 
                   <div>
-                    <dt class="text-slate-600">
-                      Cross-origin, allowed with <code class="font-mono text-xs">.external</code>
-                    </dt>
+                    <dt>Cross-origin, allowed with <code class="font-mono">.external</code></dt>
                     <dd
                       data-testid="external"
                       x-data="{ item: { name: 'External' } }"
@@ -778,7 +598,7 @@
                   </div>
 
                   <div>
-                    <dt class="text-slate-600">Unsupported protocol</dt>
+                    <dt>Unsupported protocol</dt>
                     <dd data-testid="protocol" x-component.url="'ftp://example.com/card.html'"></dd>
                   </div>
                 </dl>
@@ -790,8 +610,8 @@
                   <span class="text-sm text-slate-600">Failed fetch, then retried</span>
 
                   <button
+                    class="button"
                     data-testid="retry-fix"
-                    class="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium shadow-xs transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
                     type="button"
                     @click="url = 'remote-card.html'"
                   >
@@ -806,44 +626,27 @@
         </div>
       </section>
 
-      <section class="grid gap-3 border-t border-slate-200 pt-6" id="throwing">
-        <h2 class="flex flex-wrap items-center gap-2.5 text-lg font-semibold tracking-tight">
-          Throw from the component expression
+      <section class="section" id="throwing">
+        <h2>Throw from the component expression <span class="flag">Known bug</span></h2>
 
-          <span
-            class="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-semibold tracking-wide text-amber-800 uppercase"
-            >Known bug</span
-          >
-        </h2>
-
-        <p class="max-w-[68ch] text-sm leading-relaxed text-pretty text-slate-600">
+        <p class="note">
           When the expression itself throws, the host stays empty and no
-          <code class="font-mono text-xs">x-component:error</code> event is emitted, so a listener
-          waiting for one never hears about it. Alpine's evaluator catches the throw and reports it
-          to the console out of band, which means the plugin never sees a failure to report. The
-          failed URL in the section above does emit the event; this does not.
+          <code>x-component:error</code> event is emitted, so a listener waiting for one never hears
+          about it. Alpine's evaluator catches the throw and reports it to the console out of band,
+          which means the plugin never sees a failure to report. The failed URL in the section above
+          does emit the event; this does not.
         </p>
 
-        <div class="mt-1 grid gap-3">
-          <figure class="grid gap-1.5">
-            <figcaption class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Usage
-            </figcaption>
-
-            <pre
-              class="m-0 rounded-lg border border-dashed border-slate-300 bg-slate-100 px-3.5 py-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-slate-700"
-            ><code data-source="usage"></code></pre>
+        <div class="demo">
+          <figure class="panel">
+            <figcaption class="panel-label">Usage</figcaption>
+            <pre class="code"><code data-source="usage"></code></pre>
           </figure>
 
-          <div class="grid gap-1.5">
-            <p class="text-xs font-semibold tracking-widest text-slate-500 uppercase">
-              Result, showing the event that never arrives
-            </p>
+          <div class="panel">
+            <p class="panel-label">Result, showing the event that never arrives</p>
 
-            <div
-              class="grid gap-3 rounded-lg border border-amber-300 bg-amber-50 p-3.5"
-              data-result
-            >
+            <div class="result result-bug" data-result>
               <div
                 class="grid gap-2"
                 x-data="{ errors: [] }"
@@ -852,7 +655,7 @@
                 <span data-testid="throwing" x-component="nope.deeply.missing"></span>
 
                 <output
-                  class="font-mono text-xs text-slate-600"
+                  class="log"
                   x-text="errors.length ? errors.join(', ') : 'no x-component:error event'"
                 ></output>
               </div>
