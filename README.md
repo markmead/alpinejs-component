@@ -370,8 +370,8 @@ build under an enforced `script-src 'self'`, and `trusted-types.html` covers
 
 - Missing templates and failed URL requests are handled with console
   warnings/errors and lifecycle error events.
-- Expression evaluation failures dispatch `x-component:error` and clear mounted
-  content for that host.
+- A throwing directive expression is reported by Alpine's own error handler, not
+  as `x-component:error`. The host's mounted content is cleared.
 - URL responses are cached by URL.
 - Template fragments are cached by template id.
 

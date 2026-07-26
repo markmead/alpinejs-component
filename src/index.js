@@ -58,17 +58,7 @@ export default function (Alpine) {
     }
 
     effect(() => {
-      const { value: componentSource, error: evaluationError } = resolveSourceValue(
-        expression,
-        evaluate,
-      )
-
-      if (evaluationError) {
-        dispatchLifecycleEvent(hostElement, 'x-component:error', {
-          source: expression,
-          error: evaluationError,
-        })
-      }
+      const componentSource = resolveSourceValue(expression, evaluate)
 
       if (!componentSource.length) {
         // Bumping the token abandons any render still in flight for the previous source.
