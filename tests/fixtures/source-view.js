@@ -1,6 +1,5 @@
-// Fills the Template and Usage panels from the page itself, so a snippet can never drift from
-// what it claims to show. Runs before Alpine starts, because x-component rewrites the elements
-// it renders into: once a component has mounted, the usage markup on the page is the output.
+// Loaded above Alpine on purpose: x-component rewrites the elements it renders into, so once a
+// component has mounted the usage markup on the page is the output rather than the source.
 
 function formatMarkup(markup) {
   const [openingLine, ...remainingLines] = markup.split('\n')
@@ -20,7 +19,7 @@ function findSourceElements(sourceBlock) {
   const sourceSelector = sourceBlock.dataset.source
 
   if (sourceSelector === 'usage') {
-    return [...sourceBlock.closest('section').querySelectorAll('[data-result] > *')]
+    return [...sourceBlock.closest('section').querySelectorAll('[data-usage-markup] > *')]
   }
 
   return [...document.querySelectorAll(sourceSelector)]

@@ -47,7 +47,7 @@
 
         <template id="csp-card">
           <article class="card grid gap-3" x-data="cardScope">
-            <h2 class="font-semibold" data-testid="csp-title" x-text="person.name"></h2>
+            <h2 class="font-semibold" data-testid="csp-card-title" x-text="person.name"></h2>
 
             <slot></slot>
 
@@ -59,25 +59,33 @@
           <p class="card">Alternative card [<slot></slot>]</p>
         </template>
 
-        <div class="result">
-          <div class="grid gap-3" x-data="cardHost">
-            <div class="controls">
-              <button class="button" data-testid="csp-swap" type="button" @click="showAltCard">
-                Swap
+        <div class="result" x-data="cardHost">
+          <div class="controls">
+            <button
+              class="button"
+              data-testid="csp-swap-button"
+              type="button"
+              @click="showAlternativeCard"
+            >
+              Swap
+            </button>
+          </div>
+
+          <div data-testid="csp-card-host" x-component="cardName">
+            <template x-slot>
+              <span data-testid="csp-slot-label" x-text="label"></span>
+            </template>
+
+            <template x-slot="actions">
+              <button
+                class="button"
+                data-testid="csp-relabel-button"
+                type="button"
+                @click="relabel"
+              >
+                Relabel
               </button>
-            </div>
-
-            <div data-testid="csp-dynamic" x-component="cardName">
-              <template x-slot>
-                <span data-testid="csp-label" x-text="label"></span>
-              </template>
-
-              <template x-slot="actions">
-                <button class="button" data-testid="csp-relabel" type="button" @click="relabel">
-                  Relabel
-                </button>
-              </template>
-            </div>
+            </template>
           </div>
         </div>
       </section>
@@ -90,10 +98,8 @@
           evaluate it rather than reaching for <code>new Function</code> itself.
         </p>
 
-        <div class="result">
-          <div x-data>
-            <div data-testid="csp-literal" x-component="'csp-alt-card'"></div>
-          </div>
+        <div class="result" x-data>
+          <div data-testid="csp-literal-host" x-component="'csp-alt-card'"></div>
         </div>
       </section>
 
@@ -105,11 +111,11 @@
           lifecycle events the same way it does on the default build.
         </p>
 
-        <div class="result">
-          <div x-data="remoteHost">
-            <div data-testid="csp-remote" x-component.url="cardUrl">
-              <template x-slot="actions"><b data-testid="csp-remote-slot">projected</b></template>
-            </div>
+        <div class="result" x-data="remoteHost">
+          <div data-testid="csp-remote-host" x-component.url="cardUrl">
+            <template x-slot="actions"
+              ><b data-testid="csp-remote-slot-content">projected</b></template
+            >
           </div>
         </div>
       </section>

@@ -64,27 +64,27 @@
           </article>
         </template>
 
-        <div class="demo">
-          <figure class="panel">
-            <figcaption class="panel-label">Template</figcaption>
-            <pre class="code"><code data-source="#person-card"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#person-card"></code></pre>
+        </figure>
 
-          <figure class="panel">
-            <figcaption class="panel-label">Usage</figcaption>
-            <pre class="code"><code data-source="usage"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
 
-          <div class="panel">
-            <p class="panel-label">Result</p>
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
 
-            <div class="result" data-result>
-              <div x-data="{ item: { name: 'John', age: 25, skills: ['JavaScript', 'CSS'] } }">
-                <div data-testid="basic" x-component="'person-card'"></div>
-              </div>
-            </div>
+          <div class="result" data-usage-markup>
+            <div
+              data-testid="person-card-host"
+              x-data="{ item: { name: 'John', age: 25, skills: ['JavaScript', 'CSS'] } }"
+              x-component="'person-card'"
+            ></div>
           </div>
-        </div>
+        </figure>
       </section>
 
       <section class="section" id="styles">
@@ -105,27 +105,23 @@
           </p>
         </template>
 
-        <div class="demo">
-          <figure class="panel">
-            <figcaption class="panel-label">Template</figcaption>
-            <pre class="code"><code data-source="#styled-card"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#styled-card"></code></pre>
+        </figure>
 
-          <figure class="panel">
-            <figcaption class="panel-label">Usage</figcaption>
-            <pre class="code"><code data-source="usage"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
 
-          <div class="panel">
-            <p class="panel-label">Result</p>
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
 
-            <div class="result" data-result>
-              <div x-data>
-                <div data-testid="styled" x-component="'styled-card'"></div>
-              </div>
-            </div>
+          <div class="result" data-usage-markup>
+            <div data-testid="styled-card-host" x-data x-component="'styled-card'"></div>
           </div>
-        </div>
+        </figure>
       </section>
 
       <section class="section" id="slots">
@@ -144,7 +140,7 @@
           <article class="card grid gap-3" x-data="{ owner: 'component-scope' }">
             <slot></slot>
 
-            <footer class="flex flex-wrap gap-2"><slot name="actions"></slot></footer>
+            <footer class="controls"><slot name="actions"></slot></footer>
 
             <aside class="text-sm text-slate-500">
               <slot name="unfilled">Fallback content for an unfilled slot</slot>
@@ -152,42 +148,42 @@
           </article>
         </template>
 
-        <div class="demo">
-          <figure class="panel">
-            <figcaption class="panel-label">Template</figcaption>
-            <pre class="code"><code data-source="#slotted-card"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#slotted-card"></code></pre>
+        </figure>
 
-          <figure class="panel">
-            <figcaption class="panel-label">Usage</figcaption>
-            <pre class="code"><code data-source="usage"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
 
-          <div class="panel">
-            <p class="panel-label">Result</p>
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
 
-            <div class="result" data-result>
-              <div x-data="{ owner: 'Ada' }">
-                <div data-testid="slots" x-component="'slotted-card'">
-                  <template x-slot>
-                    <p>Owned by <strong data-testid="slot-owner" x-text="owner"></strong></p>
-                  </template>
+          <div class="result" data-usage-markup>
+            <div
+              data-testid="slotted-card-host"
+              x-data="{ owner: 'Ada' }"
+              x-component="'slotted-card'"
+            >
+              <template x-slot>
+                <p>Owned by <strong data-testid="slot-owner-name" x-text="owner"></strong></p>
+              </template>
 
-                  <template x-slot="actions">
-                    <button
-                      class="button"
-                      data-testid="rename-owner"
-                      type="button"
-                      @click="owner = 'Grace'"
-                    >
-                      Rename owner
-                    </button>
-                  </template>
-                </div>
-              </div>
+              <template x-slot="actions">
+                <button
+                  class="button"
+                  data-testid="rename-owner-button"
+                  type="button"
+                  @click="owner = 'Grace'"
+                >
+                  Rename owner
+                </button>
+              </template>
             </div>
           </div>
-        </div>
+        </figure>
       </section>
 
       <section class="section" id="duplicate-slots">
@@ -198,30 +194,26 @@
           behaves. This renders the same card as the section above.
         </p>
 
-        <div class="demo">
-          <figure class="panel">
-            <figcaption class="panel-label">Template</figcaption>
-            <pre class="code"><code data-source="#slotted-card"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#slotted-card"></code></pre>
+        </figure>
 
-          <figure class="panel">
-            <figcaption class="panel-label">Usage</figcaption>
-            <pre class="code"><code data-source="usage"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
 
-          <div class="panel">
-            <p class="panel-label">Result</p>
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
 
-            <div class="result" data-result>
-              <div x-data>
-                <div data-testid="duplicate" x-component="'slotted-card'">
-                  <template x-slot="actions"><b class="dupe">one</b></template>
-                  <template x-slot="actions"><b class="dupe">two</b></template>
-                </div>
-              </div>
+          <div class="result" data-usage-markup>
+            <div data-testid="duplicate-slots-host" x-data x-component="'slotted-card'">
+              <template x-slot="actions"><b class="duplicate-item">one</b></template>
+              <template x-slot="actions"><b class="duplicate-item">two</b></template>
             </div>
           </div>
-        </div>
+        </figure>
       </section>
 
       <section class="section" id="looped-slots">
@@ -240,36 +232,36 @@
         <template id="looped-card">
           <ul class="grid gap-2" x-data="{ owner: 'component-scope', rows: [1, 2] }">
             <template x-for="row in rows" :key="row">
-              <li class="row"><slot name="cell"></slot></li>
+              <li class="slot-cell"><slot name="cell"></slot></li>
             </template>
           </ul>
         </template>
 
-        <div class="demo">
-          <figure class="panel">
-            <figcaption class="panel-label">Template</figcaption>
-            <pre class="code"><code data-source="#looped-card"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#looped-card"></code></pre>
+        </figure>
 
-          <figure class="panel">
-            <figcaption class="panel-label">Usage</figcaption>
-            <pre class="code"><code data-source="usage"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
 
-          <div class="panel">
-            <p class="panel-label">Result, showing the wrong scope</p>
+        <figure class="panel">
+          <figcaption class="panel-label">Result, showing the wrong scope</figcaption>
 
-            <div class="result result-bug" data-result>
-              <div x-data="{ owner: 'Ada' }">
-                <div data-testid="looped" x-component="'looped-card'">
-                  <template x-slot="cell">
-                    <span class="cell" x-text="owner"></span>
-                  </template>
-                </div>
-              </div>
+          <div class="result result-bug" data-usage-markup>
+            <div
+              data-testid="looped-card-host"
+              x-data="{ owner: 'Ada' }"
+              x-component="'looped-card'"
+            >
+              <template x-slot="cell">
+                <span class="looped-slot-owner" x-text="owner"></span>
+              </template>
             </div>
           </div>
-        </div>
+        </figure>
       </section>
 
       <section class="section" id="dynamic">
@@ -294,73 +286,76 @@
           <p class="card">A component with no slots</p>
         </template>
 
-        <div class="demo">
-          <figure class="panel">
-            <figcaption class="panel-label">Templates</figcaption>
-            <pre class="code"><code data-source="#view-a, #view-b, #slotless"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Templates</figcaption>
+          <pre class="code"><code data-source="#view-a, #view-b, #slotless"></code></pre>
+        </figure>
 
-          <figure class="panel">
-            <figcaption class="panel-label">Usage</figcaption>
-            <pre class="code"><code data-source="usage"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
 
-          <div class="panel">
-            <p class="panel-label">Result</p>
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
 
-            <div class="result" data-result>
-              <div class="grid gap-3" x-data="{ view: 'view-a', label: 'first' }">
-                <div class="controls">
-                  <button
-                    class="button"
-                    data-testid="view-a"
-                    type="button"
-                    @click="view = 'view-a'"
-                  >
-                    View A
-                  </button>
+          <div class="result" data-usage-markup>
+            <div class="grid gap-3" x-data="{ activeView: 'view-a', slotLabel: 'first' }">
+              <div class="controls">
+                <button
+                  class="button"
+                  data-testid="show-view-a-button"
+                  type="button"
+                  @click="activeView = 'view-a'"
+                >
+                  View A
+                </button>
 
-                  <button
-                    class="button"
-                    data-testid="view-b"
-                    type="button"
-                    @click="view = 'view-b'"
-                  >
-                    View B
-                  </button>
+                <button
+                  class="button"
+                  data-testid="show-view-b-button"
+                  type="button"
+                  @click="activeView = 'view-b'"
+                >
+                  View B
+                </button>
 
-                  <button
-                    class="button"
-                    data-testid="view-slotless"
-                    type="button"
-                    @click="view = 'slotless'"
-                  >
-                    Slotless
-                  </button>
+                <button
+                  class="button"
+                  data-testid="show-slotless-button"
+                  type="button"
+                  @click="activeView = 'slotless'"
+                >
+                  Slotless
+                </button>
 
-                  <button class="button" data-testid="view-clear" type="button" @click="view = ''">
-                    Clear
-                  </button>
+                <button
+                  class="button"
+                  data-testid="clear-view-button"
+                  type="button"
+                  @click="activeView = ''"
+                >
+                  Clear
+                </button>
 
-                  <button
-                    class="button"
-                    data-testid="relabel"
-                    type="button"
-                    @click="label = 'updated'"
-                  >
-                    Relabel slot
-                  </button>
-                </div>
+                <button
+                  class="button"
+                  data-testid="relabel-slot-button"
+                  type="button"
+                  @click="slotLabel = 'updated'"
+                >
+                  Relabel slot
+                </button>
+              </div>
 
-                <div data-testid="dynamic" x-component="view">
-                  <template x-slot>
-                    <span data-testid="dynamic-label" x-text="label"></span>
-                  </template>
-                </div>
+              <div data-testid="dynamic-view-host" x-component="activeView">
+                <template x-slot>
+                  <span data-testid="dynamic-slot-label" x-text="slotLabel"></span>
+                </template>
               </div>
             </div>
           </div>
-        </div>
+        </figure>
       </section>
 
       <section class="section" id="url">
@@ -375,42 +370,44 @@
           <code>.external</code>.
         </p>
 
-        <div class="demo">
-          <figure class="panel">
-            <figcaption class="panel-label">Template, fetched from remote-card.html</figcaption>
-            <pre class="code"><code data-source-url="remote-card.html"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Template, fetched from remote-card.html</figcaption>
+          <pre class="code"><code data-source-url="remote-card.html"></code></pre>
+        </figure>
 
-          <figure class="panel">
-            <figcaption class="panel-label">Usage</figcaption>
-            <pre class="code"><code data-source="usage"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
 
-          <div class="panel">
-            <p class="panel-label">Result</p>
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
 
-            <div class="result" data-result>
+          <div class="result" data-usage-markup>
+            <div
+              class="grid gap-2"
+              x-data="{ eventLog: [] }"
+              @x-component:loading="eventLog.push('loading')"
+              @x-component:loaded="eventLog.push('loaded')"
+            >
               <div
-                class="grid gap-2"
-                x-data="{ log: [] }"
-                @x-component:loading="log.push('loading')"
-                @x-component:loaded="log.push('loaded')"
+                data-testid="remote-card-host"
+                x-data="{ item: { name: 'Watched' } }"
+                x-component.url="'remote-card.html'"
               >
-                <div
-                  data-testid="lifecycle"
-                  x-data="{ item: { name: 'Watched' } }"
-                  x-component.url="'remote-card.html'"
-                >
-                  <template x-slot="actions">
-                    <button class="button" type="button">Go</button>
-                  </template>
-                </div>
-
-                <output class="log" data-testid="lifecycle-log" x-text="log.join(' → ')"></output>
+                <template x-slot="actions">
+                  <button class="button" type="button">Go</button>
+                </template>
               </div>
+
+              <output
+                class="log"
+                data-testid="lifecycle-event-log"
+                x-text="eventLog.join(' → ')"
+              ></output>
             </div>
           </div>
-        </div>
+        </figure>
       </section>
 
       <section class="section" id="boundary">
@@ -430,7 +427,7 @@
 
             <p class="text-sm">
               <span class="text-slate-600">$refs across the boundary:</span>
-              <strong x-text="$refs.target.textContent"></strong>
+              <strong x-text="$refs.hostMessage.textContent"></strong>
             </p>
 
             <p class="text-sm">
@@ -440,46 +437,48 @@
           </div>
         </template>
 
-        <div class="demo">
-          <figure class="panel">
-            <figcaption class="panel-label">Template</figcaption>
-            <pre class="code"><code data-source="#proof-card"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#proof-card"></code></pre>
+        </figure>
 
-          <figure class="panel">
-            <figcaption class="panel-label">Usage</figcaption>
-            <pre class="code"><code data-source="usage"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
 
-          <div class="panel">
-            <p class="panel-label">Result</p>
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
 
-            <div class="result" data-result>
-              <div class="grid gap-2" x-data="{ result: '' }">
-                <span x-ref="target" hidden>from-host</span>
+          <div class="result" data-usage-markup>
+            <div class="grid gap-2" x-data="{ formResult: '' }">
+              <span x-ref="hostMessage" hidden>from-host</span>
 
-                <form
-                  class="grid gap-3"
-                  data-testid="form"
-                  action="#"
-                  @submit.prevent="result = [...new FormData($el)].map((pair) => pair.join('=')).join(', ')"
+              <form
+                class="grid gap-3"
+                data-testid="boundary-form"
+                action="#"
+                @submit.prevent="formResult = new URLSearchParams(new FormData($el)).toString()"
+              >
+                <label class="text-sm font-medium" for="proof-input">
+                  A label outside the component targets this input
+                </label>
+
+                <div data-testid="proof-card-host" x-component="'proof-card'"></div>
+
+                <button
+                  class="button justify-self-start"
+                  data-testid="submit-form-button"
+                  type="submit"
                 >
-                  <label class="text-sm font-medium" for="proof-input">
-                    A label outside the component targets this input
-                  </label>
+                  Submit the form
+                </button>
+              </form>
 
-                  <div data-testid="proof" x-component="'proof-card'"></div>
-
-                  <button class="button justify-self-start" data-testid="submit" type="submit">
-                    Submit the form
-                  </button>
-                </form>
-
-                <output class="log" data-testid="form-result" x-text="result"></output>
-              </div>
+              <output class="log" data-testid="form-result-log" x-text="formResult"></output>
             </div>
           </div>
-        </div>
+        </figure>
       </section>
 
       <section class="section" id="teardown">
@@ -497,60 +496,58 @@
           <p
             class="card"
             x-data
-            x-init="$store.probe.inits++"
-            x-effect="$store.probe.tick; $store.probe.effects++"
+            x-init="$store.renderProbe.initCount++"
+            x-effect="$store.renderProbe.tickCount; $store.renderProbe.effectCount++"
           >
             Tracked component
           </p>
         </template>
 
-        <div class="demo">
-          <figure class="panel">
-            <figcaption class="panel-label">Template</figcaption>
-            <pre class="code"><code data-source="#tracked"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#tracked"></code></pre>
+        </figure>
 
-          <figure class="panel">
-            <figcaption class="panel-label">Usage</figcaption>
-            <pre class="code"><code data-source="usage"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
 
-          <div class="panel">
-            <p class="panel-label">Result</p>
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
 
-            <div class="result" data-result>
-              <div class="grid gap-3" x-data="{ view: 'tracked' }">
-                <div class="controls">
-                  <button
-                    class="button"
-                    data-testid="untrack"
-                    type="button"
-                    @click="view = 'slotless'"
-                  >
-                    Swap away
-                  </button>
+          <div class="result" data-usage-markup>
+            <div class="grid gap-3" x-data="{ trackedView: 'tracked' }">
+              <div class="controls">
+                <button
+                  class="button"
+                  data-testid="swap-away-button"
+                  type="button"
+                  @click="trackedView = 'slotless'"
+                >
+                  Swap away
+                </button>
 
-                  <button
-                    class="button"
-                    data-testid="bump-store"
-                    type="button"
-                    @click="$store.probe.tick++"
-                  >
-                    Bump store
-                  </button>
-                </div>
-
-                <div data-testid="tracked" x-component="view"></div>
-
-                <output
-                  class="log"
-                  data-testid="counts"
-                  x-text="`inits: ${$store.probe.inits}, effects: ${$store.probe.effects}`"
-                ></output>
+                <button
+                  class="button"
+                  data-testid="bump-store-button"
+                  type="button"
+                  @click="$store.renderProbe.tickCount++"
+                >
+                  Bump store
+                </button>
               </div>
+
+              <div data-testid="tracked-card-host" x-component="trackedView"></div>
+
+              <output
+                class="log"
+                data-testid="probe-count-log"
+                x-text="`inits: ${$store.renderProbe.initCount}, effects: ${$store.renderProbe.effectCount}`"
+              ></output>
             </div>
           </div>
-        </div>
+        </figure>
       </section>
 
       <section class="section" id="failures">
@@ -563,67 +560,67 @@
           protocol that is not <code>http</code> or <code>https</code> is refused outright.
         </p>
 
-        <div class="demo">
-          <figure class="panel">
-            <figcaption class="panel-label">Usage</figcaption>
-            <pre class="code"><code data-source="usage"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
 
-          <div class="panel">
-            <p class="panel-label">Result</p>
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
 
-            <div class="result" data-result>
-              <div class="grid gap-4" x-data>
-                <dl class="cases">
-                  <div>
-                    <dt>Missing template</dt>
-                    <dd data-testid="missing" x-component="'does-not-exist'"></dd>
-                  </div>
-
-                  <div>
-                    <dt>Cross-origin, blocked by default</dt>
-                    <dd
-                      data-testid="blocked"
-                      x-component.url="'http://localhost:3211/tests/fixtures/remote-card.html'"
-                    ></dd>
-                  </div>
-
-                  <div>
-                    <dt>Cross-origin, allowed with <code class="font-mono">.external</code></dt>
-                    <dd
-                      data-testid="external"
-                      x-data="{ item: { name: 'External' } }"
-                      x-component.url.external="'http://localhost:3211/tests/fixtures/remote-card.html'"
-                    ></dd>
-                  </div>
-
-                  <div>
-                    <dt>Unsupported protocol</dt>
-                    <dd data-testid="protocol" x-component.url="'ftp://example.com/card.html'"></dd>
-                  </div>
-                </dl>
-
-                <div
-                  class="flex flex-wrap items-center gap-3"
-                  x-data="{ url: 'missing-card.html', item: { name: 'Retried' } }"
-                >
-                  <span class="text-sm text-slate-600">Failed fetch, then retried</span>
-
-                  <button
-                    class="button"
-                    data-testid="retry-fix"
-                    type="button"
-                    @click="url = 'remote-card.html'"
-                  >
-                    Retry with a real URL
-                  </button>
-
-                  <span class="basis-full" data-testid="retry" x-component.url="url"></span>
-                </div>
+          <div class="result" data-usage-markup>
+            <dl class="cases" x-data>
+              <div>
+                <dt>Missing template</dt>
+                <dd data-testid="missing-template-host" x-component="'does-not-exist'"></dd>
               </div>
+
+              <div>
+                <dt>Cross-origin, blocked by default</dt>
+                <dd
+                  data-testid="cross-origin-blocked-host"
+                  x-component.url="'http://localhost:3211/tests/fixtures/remote-card.html'"
+                ></dd>
+              </div>
+
+              <div>
+                <dt>Cross-origin, allowed with <code>.external</code></dt>
+                <dd
+                  data-testid="cross-origin-external-host"
+                  x-data="{ item: { name: 'External' } }"
+                  x-component.url.external="'http://localhost:3211/tests/fixtures/remote-card.html'"
+                ></dd>
+              </div>
+
+              <div>
+                <dt>Unsupported protocol</dt>
+                <dd
+                  data-testid="unsupported-protocol-host"
+                  x-component.url="'ftp://example.com/card.html'"
+                ></dd>
+              </div>
+            </dl>
+
+            <div
+              class="flex flex-wrap items-center gap-3"
+              x-data="{ cardUrl: 'missing-card.html', item: { name: 'Retried' } }"
+            >
+              <span class="text-sm text-slate-600">Failed fetch, then retried</span>
+
+              <button
+                class="button"
+                data-testid="retry-with-real-url-button"
+                type="button"
+                @click="cardUrl = 'remote-card.html'"
+              >
+                Retry with a real URL
+              </button>
+
+              <span class="basis-full" data-testid="retried-card-host" x-component.url="cardUrl">
+              </span>
             </div>
           </div>
-        </div>
+        </figure>
       </section>
 
       <section class="section" id="throwing">
@@ -637,37 +634,35 @@
           does emit the event; this does not.
         </p>
 
-        <div class="demo">
-          <figure class="panel">
-            <figcaption class="panel-label">Usage</figcaption>
-            <pre class="code"><code data-source="usage"></code></pre>
-          </figure>
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
 
-          <div class="panel">
-            <p class="panel-label">Result, showing the event that never arrives</p>
+        <figure class="panel">
+          <figcaption class="panel-label">Result, showing the event that never arrives</figcaption>
 
-            <div class="result result-bug" data-result>
-              <div
-                class="grid gap-2"
-                x-data="{ errors: [] }"
-                @x-component:error="errors.push($event.detail.source)"
-              >
-                <span data-testid="throwing" x-component="nope.deeply.missing"></span>
+          <div class="result result-bug" data-usage-markup>
+            <div
+              class="grid gap-2"
+              x-data="{ errorEvents: [] }"
+              @x-component:error="errorEvents.push($event.detail.source)"
+            >
+              <span data-testid="throwing-expression-host" x-component="nope.deeply.missing"></span>
 
-                <output
-                  class="log"
-                  x-text="errors.length ? errors.join(', ') : 'no x-component:error event'"
-                ></output>
-              </div>
+              <output
+                class="log"
+                x-text="errorEvents.length ? errorEvents.join(', ') : 'no x-component:error event'"
+              ></output>
             </div>
           </div>
-        </div>
+        </figure>
       </section>
     </main>
 
     <script>
       document.addEventListener('alpine:init', () => {
-        Alpine.store('probe', { tick: 0, inits: 0, effects: 0 })
+        Alpine.store('renderProbe', { tickCount: 0, initCount: 0, effectCount: 0 })
       })
     </script>
   </body>

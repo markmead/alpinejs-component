@@ -39,8 +39,8 @@ test('the fixture really is under an enforced policy', async ({ page }) => {
 test('renders under an enforced Trusted Types policy', async ({ page }) => {
   const consoleMessages = await gotoWithPolicy(page, 'trusted-types alpinejs-component')
 
-  await expect(page.getByTestId('tt-title')).toHaveText('Ada')
-  await expect(page.getByTestId('tt-slot')).toHaveText('projected')
+  await expect(page.getByTestId('trusted-types-card-title')).toHaveText('Ada')
+  await expect(page.getByTestId('trusted-types-slot-content')).toHaveText('projected')
   await expect(page.locator('slot')).toHaveCount(0)
 
   expect(consoleMessages).toEqual([])
@@ -55,7 +55,7 @@ test('warns instead of throwing when the policy name is not allowed', async ({ p
 
   const consoleMessages = await gotoWithPolicy(page, 'trusted-types someone-else')
 
-  await expect(page.getByTestId('tt')).toBeEmpty()
+  await expect(page.getByTestId('trusted-types-host')).toBeEmpty()
 
   expect(consoleMessages).toContainEqual(
     expect.stringContaining('[alpinejs-component] Could not create a Trusted Types policy'),

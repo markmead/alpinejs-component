@@ -24,7 +24,7 @@ document.addEventListener('alpine:init', () => {
     cardName: 'csp-card',
     label: 'first',
 
-    showAltCard() {
+    showAlternativeCard() {
       this.cardName = 'csp-alt-card'
     },
 
