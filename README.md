@@ -321,6 +321,10 @@ For URL mode, failed fetches are removed from cache so retries can succeed.
 
 ## Development
 
+Working on the plugin needs pnpm. The published package installs fine with npm
+or yarn, but this repo has no npm lockfile, and `npm install` would add one that
+drifts from `pnpm-lock.yaml`.
+
 ```shell
 pnpm install
 pnpm build
@@ -356,6 +360,11 @@ pnpm test:serve
 
 The page is served on ports 3210 and 3211 so the cross-origin `.url` behaviour
 is testable against a real second origin.
+
+Two scenarios cannot share that page, because they need a different Alpine build
+and a policy the page itself cannot carry: `csp.html` covers the `@alpinejs/csp`
+build under an enforced `script-src 'self'`, and `trusted-types.html` covers
+`require-trusted-types-for 'script'`.
 
 ## Notes
 
