@@ -38,8 +38,9 @@ test('form controls submit with an ancestor form', async ({ page }) => {
   await expect(page.getByTestId('form-result')).toHaveText('field=submitted')
 })
 
+// Scoped to the form because the same label text also appears in the section's Usage snippet.
 test('a label outside the component can target an input inside it', async ({ page }) => {
-  await page.getByText('A label outside the component').click()
+  await page.getByTestId('form').getByText('A label outside the component').click()
 
   await expect(page.locator('#proof-input')).toBeFocused()
 })

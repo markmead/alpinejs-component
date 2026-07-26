@@ -29,6 +29,7 @@ export default [
         Alpine: 'readonly',
         console: 'readonly',
         document: 'readonly',
+        fetch: 'readonly',
         FormData: 'readonly',
         globalThis: 'readonly',
         process: 'readonly',
