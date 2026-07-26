@@ -2,34 +2,20 @@
 // <script> block the way tests/fixtures/index.html does.
 
 globalThis.cspViolations = []
-globalThis.lifecycleEvents = []
-
-// Playwright's page.evaluate is exempt from the page's policy, so proving the policy is really
-// enforced has to happen in a script the page loaded itself.
-globalThis.isEvalBlocked = false
-
-try {
-  new Function('return 1')()
-} catch {
-  globalThis.isEvalBlocked = true
-}
 
 document.addEventListener('securitypolicyviolation', (violationEvent) => {
-  // The probe above trips the policy on purpose. Nothing else on this page should evaluate a
-  // string, and if the plugin ever did, rendering would fail long before this listener mattered.
-  if (violationEvent.blockedURI === 'eval') {
-    return
-  }
-
   globalThis.cspViolations.push(
     `${violationEvent.effectiveDirective}: ${violationEvent.blockedURI}`,
   )
 })
 
-for (const eventName of ['x-component:loading', 'x-component:loaded', 'x-component:error']) {
-  document.addEventListener(eventName, (lifecycleEvent) =>
-    globalThis.lifecycleEvents.push(lifecycleEvent.type),
-  )
+// Playwright's page.evaluate is exempt from the page's policy, so the one violation this page
+// expects has to be provoked by a script the page loaded itself. The spec asserts the record
+// holds this and nothing else: empty would mean no policy is being enforced at all.
+try {
+  new Function('return 1')()
+} catch {
+  // The recorded violation is what the spec reads, not the throw.
 }
 
 document.addEventListener('alpine:init', () => {
@@ -42,17 +28,13 @@ document.addEventListener('alpine:init', () => {
       this.cardName = 'csp-alt-card'
     },
 
-    clearCard() {
-      this.cardName = ''
-    },
-
     relabel() {
       this.label = 'updated'
     },
   }))
 
-  // Only ever reached from inside a component template, so a slot that resolves to 'component'
-  // instead of the host's label is a projection bug.
+  // Only ever reached from inside a component template, so a slot that resolves to
+  // 'component-scope' instead of the host's label is a projection bug.
   Alpine.data('cardScope', () => ({ label: 'component-scope' }))
 
   Alpine.data('remoteHost', () => ({

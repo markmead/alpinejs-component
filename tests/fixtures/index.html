@@ -6,6 +6,7 @@
     <title>alpinejs-component</title>
 
     <script defer src="/dist/component.min.js"></script>
+    <script defer src="/tests/fixtures/lifecycle-log.js"></script>
     <script defer src="/node_modules/alpinejs/dist/cdn.min.js"></script>
 
     <link rel="stylesheet" href="/tests/fixtures/tailwind.css" />
@@ -438,20 +439,6 @@
       document.addEventListener('alpine:init', () => {
         Alpine.store('probe', { tick: 0, inits: 0, effects: 0 })
       })
-
-      // Recorded from the document so nothing depends on directive init order.
-      globalThis.lifecycleEvents = []
-
-      for (const eventName of ['x-component:loading', 'x-component:loaded', 'x-component:error']) {
-        document.addEventListener(eventName, ({ target, type, detail }) => {
-          globalThis.lifecycleEvents.push({
-            testId: target.dataset.testid || null,
-            type,
-            source: detail.source,
-            error: detail.error ? String(detail.error.message || detail.error) : null,
-          })
-        })
-      }
     </script>
   </body>
 </html>
