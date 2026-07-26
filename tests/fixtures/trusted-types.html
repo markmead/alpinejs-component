@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>alpinejs-component — Trusted Types</title>
+
+    <script defer src="/dist/component.min.js"></script>
+
+    <script>
+      document.addEventListener('alpine:init', () => {
+        Alpine.data('host', () => ({ cardName: 'tt-card', item: { name: 'Ada' } }))
+      })
+    </script>
+
+    <!-- Alpine's CSP build, not the default one. require-trusted-types-for 'script' blocks
+         new Function, so the default build cannot evaluate a single expression here. -->
+    <script defer src="/node_modules/@alpinejs/csp/dist/cdn.min.js"></script>
+  </head>
+
+  <body>
+    <h1>Trusted Types</h1>
+
+    <p>
+      Served with a Content-Security-Policy header by the spec, because a document-level policy
+      cannot be set from the page itself.
+    </p>
+
+    <main>
+      <div x-data="host">
+        <div data-testid="tt" x-component="cardName">
+          <template x-slot="actions"><b data-testid="tt-slot">projected</b></template>
+        </div>
+      </div>
+    </main>
+
+    <template id="tt-card">
+      <article class="card">
+        <h2 data-testid="tt-title" x-text="item.name"></h2>
+        <footer><slot name="actions"></slot></footer>
+      </article>
+    </template>
+  </body>
+</html>

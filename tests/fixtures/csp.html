@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>alpinejs-component — CSP build</title>
+
+    <!-- Enforced by the page itself, so opening this fixture by hand runs the same test the spec
+         does. 'unsafe-eval' is deliberately absent, which rules out Alpine's default build and
+         inline scripts along with it — the page's own wiring lives in csp.js. -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self'" />
+
+    <script defer src="/dist/component.min.js"></script>
+    <script defer src="/tests/fixtures/csp.js"></script>
+    <script defer src="/node_modules/@alpinejs/csp/dist/cdn.min.js"></script>
+  </head>
+
+  <body>
+    <h1>CSP build</h1>
+
+    <p>
+      Alpine's CSP build under an enforced <code>script-src 'self'</code>, with no
+      <code>'unsafe-eval'</code>. Sources are data properties rather than inline expressions,
+      because that is how components are written on a page like this one.
+    </p>
+
+    <main>
+      <section id="dynamic">
+        <h2>Dynamic source and slots</h2>
+
+        <div x-data="cardHost">
+          <button data-testid="csp-swap" type="button" @click="showAltCard">Swap</button>
+          <button data-testid="csp-clear" type="button" @click="clearCard">Clear</button>
+
+          <div data-testid="csp-dynamic" x-component="cardName">
+            <template x-slot>
+              <span data-testid="csp-label" x-text="label"></span>
+            </template>
+
+            <template x-slot="actions">
+              <button data-testid="csp-relabel" type="button" @click="relabel">Relabel</button>
+            </template>
+          </div>
+        </div>
+      </section>
+
+      <section id="literal">
+        <h2>Literal source</h2>
+
+        <div x-data>
+          <div data-testid="csp-literal" x-component="'csp-alt-card'"></div>
+        </div>
+      </section>
+
+      <section id="url">
+        <h2>URL source</h2>
+
+        <div x-data="remoteHost">
+          <div data-testid="csp-remote" x-component.url="cardUrl">
+            <template x-slot="actions"><b data-testid="csp-remote-slot">projected</b></template>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <template id="csp-card">
+      <article class="card" x-data="cardScope">
+        <h2 data-testid="csp-title" x-text="person.name"></h2>
+
+        <slot></slot>
+
+        <footer><slot name="actions"></slot></footer>
+
+        <aside data-testid="csp-unfilled"><slot name="unfilled">Fallback content</slot></aside>
+      </article>
+    </template>
+
+    <template id="csp-alt-card">
+      <p class="card">Alternative card [<slot></slot>]</p>
+    </template>
+  </body>
+</html>

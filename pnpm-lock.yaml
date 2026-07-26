@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@alpinejs/csp':
+        specifier: ^3.15.12
+        version: 3.15.12
       '@eslint/js':
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.7.0(jiti@2.7.0))
@@ -37,6 +40,9 @@ importers:
         version: 4.3.3
 
 packages:
+
+  '@alpinejs/csp@3.15.12':
+    resolution: {integrity: sha512-9jielHzVPqMlO9zQ6K1WtdhSHVX5OZfq5ZDUSVZfY10VnXRoRBx8nOadWjsG1xev/kz4EPaNN9eDFWtZSvJHxA==}
 
   '@esbuild/aix-ppc64@0.27.7':
     resolution: {integrity: sha512-EKX3Qwmhz1eMdEJokhALr0YiD0lhQNwDqkPYyPhiSwKrh7/4KRjQc04sZ8db+5DVVnZ1LmbNDI1uAMPEUBnQPg==}
@@ -1149,6 +1155,10 @@ packages:
     engines: {node: '>=10'}
 
 snapshots:
+
+  '@alpinejs/csp@3.15.12':
+    dependencies:
+      '@vue/reactivity': 3.1.5
 
   '@esbuild/aix-ppc64@0.27.7':
     optional: true

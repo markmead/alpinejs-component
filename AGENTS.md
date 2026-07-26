@@ -81,6 +81,11 @@ more fixture files, and prefer driving the UI (`getByTestId(...).click()`) over
 reaching into Alpine internals with `page.evaluate`. Open it by hand with
 `pnpm test:serve`.
 
+The only fixtures that live outside it are the ones that cannot share its Alpine build
+or its lack of a policy: `csp.html` (the `@alpinejs/csp` build under an enforced
+`script-src 'self'`, wired from `csp.js` because inline scripts are blocked too) and
+`trusted-types.html`. A new page needs that kind of reason.
+
 It is served on ports 3210 and 3211 so cross-origin `.url` behaviour can be tested
 against a real second origin.
 

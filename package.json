@@ -45,6 +45,7 @@
     "test:ui": "pnpm run build && playwright test --ui"
   },
   "devDependencies": {
+    "@alpinejs/csp": "^3.15.12",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.61.1",
     "@tailwindcss/cli": "^4.3.3",
