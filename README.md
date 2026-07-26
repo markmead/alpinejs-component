@@ -272,15 +272,18 @@ For URL mode, failed fetches are removed from cache so retries can succeed.
 
 ## Development
 
+Use pnpm. There is no npm lockfile.
+
 ```shell
-npm install
-npm run build
+pnpm install
+pnpm build
 ```
 
 Available scripts:
 
-- `npm run build`: lint then build minified CDN + ESM outputs in `dist/`
-- `npm run lint`: run ESLint with `--fix`
+- `pnpm build`: lint then build minified CDN + ESM outputs in `dist/`
+- `pnpm lint`: run ESLint with `--fix`
+- `pnpm format`: run Prettier over the repo
 
 ## Notes
 
