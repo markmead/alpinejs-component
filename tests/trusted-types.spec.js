@@ -7,12 +7,12 @@ import { expect, test } from '@playwright/test'
 const FIXTURE_PATH = 'trusted-types.html'
 const ENFORCED_POLICY = "require-trusted-types-for 'script'"
 
-async function gotoWithPolicy(page, trustedTypesDirective) {
+async function gotoWithPolicy(page, trustedTypesDirective, { usesProbe = false } = {}) {
   const consoleMessages = []
 
   page.on('console', (consoleMessage) => consoleMessages.push(consoleMessage.text()))
 
-  await page.route(`**/${FIXTURE_PATH}`, async (route) => {
+  await page.route(`**/${FIXTURE_PATH}*`, async (route) => {
     const originalResponse = await route.fetch()
 
     await route.fulfill({
@@ -24,10 +24,17 @@ async function gotoWithPolicy(page, trustedTypesDirective) {
     })
   })
 
-  await page.goto(FIXTURE_PATH)
+  await page.goto(usesProbe ? `${FIXTURE_PATH}?probe=1` : FIXTURE_PATH)
 
   return consoleMessages
 }
+
+// Without this, every assertion below would hold just as well on a page no policy ever reached.
+test('the fixture really is under an enforced policy', async ({ page }) => {
+  await gotoWithPolicy(page, 'trusted-types alpinejs-component', { usesProbe: true })
+
+  expect(await page.evaluate(() => globalThis.isTrustedTypesEnforced)).toBe(true)
+})
 
 test('renders under an enforced Trusted Types policy', async ({ page }) => {
   const consoleMessages = await gotoWithPolicy(page, 'trusted-types alpinejs-component')

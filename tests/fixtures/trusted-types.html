@@ -11,6 +11,20 @@
       document.addEventListener('alpine:init', () => {
         Alpine.data('host', () => ({ cardName: 'tt-card', item: { name: 'Ada' } }))
       })
+
+      // The policy arrives as a response header the spec adds, so the page cannot tell from its
+      // own markup whether it turned up. A raw innerHTML assignment is refused under
+      // enforcement and allowed without it, which is the difference the spec needs. Gated behind
+      // ?probe=1 because a refusal also logs, and the render test asserts a silent console.
+      if (new URL(location.href).searchParams.has('probe')) {
+        globalThis.isTrustedTypesEnforced = false
+
+        try {
+          document.createElement('div').innerHTML = '<b>probe</b>'
+        } catch {
+          globalThis.isTrustedTypesEnforced = true
+        }
+      }
     </script>
 
     <!-- Alpine's CSP build, not the default one. require-trusted-types-for 'script' blocks
