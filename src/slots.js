@@ -19,7 +19,6 @@ function captureSlotContent(Alpine, hostElement) {
       capturedSlotContent.set(slotName, slotTemplateNode.content)
     }
 
-    // Every DOM write in the plugin is paused for Alpine's observer, including this one.
     Alpine.mutateDom(() => slotTemplateNode.remove())
   }
 
@@ -49,7 +48,6 @@ export function createSlotProjector(Alpine, hostElement) {
       const slotContent = capturedSlotContent.get(readSlotName(slotNode, 'name'))
 
       if (!slotContent) {
-        // Unfilled slots fall back to their own children, the same as a native <slot>.
         slotNode.replaceWith(...slotNode.childNodes)
 
         continue
@@ -66,7 +64,6 @@ export function createSlotProjector(Alpine, hostElement) {
       // This does not reach content projected into an x-for or x-if template: addScopeToNode
       // records the binding as an expando, and Alpine clones those templates with cloneNode,
       // which drops it. Carrying the binding on an attribute instead would survive the clone.
-      // Documented in the README, and locked in by a test in tests/slots.spec.js.
       for (const projectedNode of projectedNodes) {
         if (projectedNode.nodeType === Node.ELEMENT_NODE) {
           Alpine.addScopeToNode(projectedNode, {}, hostElement)

@@ -126,7 +126,7 @@
     gap: --spacing(3);
     border: 1px solid var(--color-slate-200);
     border-radius: var(--radius-lg);
-    background: white;
+    background: var(--color-white);
     padding: --spacing(3.5);
   }
 
@@ -160,7 +160,7 @@
     min-block-size: --spacing(8);
     border: 1px solid var(--color-slate-300);
     border-radius: var(--radius-md);
-    background: white;
+    background: var(--color-white);
     padding: --spacing(1.5) --spacing(3);
     font-size: var(--text-sm);
     font-weight: var(--font-weight-medium);
@@ -180,7 +180,7 @@
     justify-self: start;
     border: 1px solid var(--color-slate-300);
     border-radius: var(--radius-md);
-    background: white;
+    background: var(--color-white);
     padding: --spacing(1.5) --spacing(3);
     font-size: var(--text-sm);
   }

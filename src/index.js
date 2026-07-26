@@ -61,7 +61,6 @@ export default function (Alpine) {
       const componentSource = resolveSourceValue(expression, evaluate)
 
       if (!componentSource.length) {
-        // Bumping the token abandons any render still in flight for the previous source.
         currentRenderToken += 1
 
         componentRenderer.unmount()
