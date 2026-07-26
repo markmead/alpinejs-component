@@ -220,6 +220,37 @@ scope, not the scope of the component it is rendered into.
 </template>
 ```
 
+### Slots inside `x-for` and `x-if`
+
+A `<slot>` nested in an `x-for` or `x-if` template is filled, and its content is
+repeated for every iteration.
+
+It is the one place where slot content does **not** evaluate against the host's
+scope. Alpine clones those templates at render time, and the marker that binds
+projected content to the host does not survive the clone, so the content sees the
+surrounding component scope instead:
+
+```html
+<div x-data="{ label: 'host' }">
+  <div x-component="'row-list'">
+    <template x-slot="cell">
+      <!-- Renders "component", not "host". -->
+      <span x-text="label"></span>
+    </template>
+  </div>
+</div>
+
+<template id="row-list">
+  <ul x-data="{ label: 'component', rows: [1, 2] }">
+    <template x-for="row in rows">
+      <li><slot name="cell"></slot></li>
+    </template>
+  </ul>
+</template>
+```
+
+Keep slots out of `x-for` and `x-if` if you need host scope inside them.
+
 ## Lifecycle Events
 
 The host element emits lifecycle events:

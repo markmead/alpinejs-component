@@ -26,11 +26,24 @@ function captureSlotContent(Alpine, hostElement) {
   return capturedSlotContent
 }
 
+// querySelectorAll treats a <template>'s content as a separate document, so it walks past
+// any <slot> inside one. Those slots have to be collected by hand or an x-for/x-if wrapped
+// around a slot silently renders nothing.
+function collectSlotNodes(rootNode) {
+  const slotNodes = [...rootNode.querySelectorAll('slot')]
+
+  for (const nestedTemplate of rootNode.querySelectorAll('template')) {
+    slotNodes.push(...collectSlotNodes(nestedTemplate.content))
+  }
+
+  return slotNodes
+}
+
 export function createSlotProjector(Alpine, hostElement) {
   const capturedSlotContent = captureSlotContent(Alpine, hostElement)
 
   function fillSlots(componentFragment) {
-    const slotNodes = [...componentFragment.querySelectorAll('slot')]
+    const slotNodes = collectSlotNodes(componentFragment)
 
     for (const slotNode of slotNodes) {
       const slotContent = capturedSlotContent.get(readSlotName(slotNode, 'name'))
@@ -49,6 +62,11 @@ export function createSlotProjector(Alpine, hostElement) {
 
       // Slot content is authored on the host, so it keeps evaluating against the host's scope
       // instead of the scope of whatever component it lands in.
+      //
+      // This does not reach content projected into an x-for or x-if template: addScopeToNode
+      // records the binding as an expando, and Alpine clones those templates with cloneNode,
+      // which drops it. Carrying the binding on an attribute instead would survive the clone.
+      // Documented in the README, and locked in by a test in tests/slots.spec.js.
       for (const projectedNode of projectedNodes) {
         if (projectedNode.nodeType === Node.ELEMENT_NODE) {
           Alpine.addScopeToNode(projectedNode, {}, hostElement)

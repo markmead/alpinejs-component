@@ -33,6 +33,23 @@ test('evaluates slot content in the host scope, not the component scope', async 
   await expect(page.getByTestId('slot-owner')).not.toHaveText('component-scope')
 })
 
+test('fills a slot nested in an x-for, once per iteration', async ({ page }) => {
+  await expect(page.getByTestId('looped').locator('.cell')).toHaveCount(2)
+})
+
+test('slot content inside x-for evaluates in the component scope, not the host scope', async ({
+  page,
+}) => {
+  // Documents a known divergence rather than the behaviour we want. Alpine clones the x-for
+  // template, and addScopeToNode's marker is an expando that cloneNode drops, so the host
+  // binding is lost. Fixing it means carrying the scope on an attribute instead; this test
+  // has to be updated deliberately when that happens.
+  await expect(page.getByTestId('looped').locator('.cell')).toHaveText([
+    'component-scope',
+    'component-scope',
+  ])
+})
+
 test('slot content drives host state', async ({ page }) => {
   await page.getByTestId('rename-owner').click()
 
