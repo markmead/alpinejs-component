@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;700&family=DM+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap"
     />
 
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -19,25 +19,49 @@
 
     <style type="text/tailwindcss">
       @theme {
-        --color-desk: #b5bfba;
-        --color-sheet: #fcfbf7;
-        --color-copy: #f4ead0;
-        --color-ink: #1b211f;
-        --color-ink-soft: #566059;
-        --color-stamp: #4a2fa8;
-        --color-alert: #a83b1c;
-        --color-alert-wash: #fbf1e9;
-        --color-rule: rgb(27 33 31 / 22%);
+        --color-canvas: #fafafa;
+        --color-surface: #ffffff;
+        --color-subtle: #f4f4f5;
+        --color-line: #e4e4e7;
+        --color-fg: #09090b;
+        --color-muted: #71717a;
+        --color-accent: #2563eb;
+        --color-accent-wash: #eff6ff;
+        --color-danger: #dc2626;
+        --color-danger-wash: #fef2f2;
+        --color-code: #09090b;
+        --color-code-fg: #e4e4e7;
 
-        --font-sans: 'Public Sans', system-ui, sans-serif;
-        --font-display: 'Archivo Narrow', 'Arial Narrow', sans-serif;
-        --font-mono: 'DM Mono', ui-monospace, monospace;
+        --font-sans: 'Geist', system-ui, sans-serif;
+        --font-mono: 'Geist Mono', ui-monospace, monospace;
+      }
+
+      :root {
+        color-scheme: light dark;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --color-canvas: #09090b;
+          --color-surface: #0f0f11;
+          --color-subtle: #18181b;
+          --color-line: #27272a;
+          --color-fg: #fafafa;
+          --color-muted: #a1a1aa;
+          --color-accent: #60a5fa;
+          --color-accent-wash: #101a2c;
+          --color-danger: #f87171;
+          --color-danger-wash: #26100f;
+          --color-code: #000000;
+          --color-code-fg: #d4d4d8;
+        }
       }
 
       @layer base {
         body {
-          background-color: var(--color-desk);
-          color: var(--color-ink);
+          background: var(--color-canvas);
+          color: var(--color-fg);
+          font-family: var(--font-sans);
           -webkit-font-smoothing: antialiased;
         }
       }
@@ -45,85 +69,95 @@
       @layer components {
         .page {
           display: grid;
-          gap: --spacing(6);
+          gap: --spacing(4);
           margin-inline: auto;
-          max-inline-size: var(--container-5xl);
+          max-inline-size: var(--container-4xl);
           padding: --spacing(6) --spacing(4);
 
           @variant md {
-            padding: --spacing(12) --spacing(8);
+            gap: --spacing(6);
+            padding: --spacing(16) --spacing(8);
           }
         }
 
         .sheet {
           display: grid;
-          gap: --spacing(3.5);
+          gap: --spacing(4);
           min-inline-size: 0;
-          border: 2px solid var(--color-ink);
-          box-shadow: 6px 6px 0 var(--color-ink);
-          background: var(--color-sheet);
-          padding: --spacing(4);
+          border: 1px solid var(--color-line);
+          border-radius: var(--radius-xl);
+          box-shadow: 0 1px 2px rgb(9 9 11 / 4%);
+          background: var(--color-surface);
+          padding: --spacing(5);
 
           @variant md {
-            padding: --spacing(7);
+            padding: --spacing(8);
           }
         }
 
         .slug {
-          color: var(--color-stamp);
+          color: var(--color-muted);
           font-family: var(--font-mono);
           font-size: var(--text-xs);
-          letter-spacing: var(--tracking-widest);
-          text-transform: uppercase;
         }
 
         .sheet-head {
           display: grid;
           gap: --spacing(1);
-          border-block-end: 2px solid var(--color-ink);
-          padding-block-end: --spacing(2.5);
+          border-block-end: 1px solid var(--color-line);
+          padding-block-end: --spacing(4);
 
           & h2 {
-            font-family: var(--font-display);
-            font-size: var(--text-2xl);
-            font-weight: var(--font-weight-bold);
-            line-height: var(--leading-tight);
+            font-size: var(--text-xl);
+            font-weight: var(--font-weight-semibold);
+            letter-spacing: var(--tracking-tight);
+            line-height: var(--leading-snug);
           }
         }
 
         .note {
           max-inline-size: 68ch;
-          color: var(--color-ink-soft);
+          color: var(--color-muted);
           font-size: var(--text-sm);
           line-height: var(--leading-relaxed);
           text-wrap: pretty;
         }
 
-        .trait {
-          border: 1px solid var(--color-rule);
-          background: var(--color-copy);
-          padding: --spacing(0.5) --spacing(2);
+        .badge {
+          display: inline-flex;
+          align-items: center;
+          border: 1px solid var(--color-line);
+          border-radius: var(--radius-md);
+          background: var(--color-subtle);
+          padding-inline: --spacing(2);
+          padding-block: --spacing(0.5);
+          color: var(--color-muted);
           font-family: var(--font-mono);
           font-size: var(--text-xs);
-          letter-spacing: var(--tracking-wide);
-          text-transform: uppercase;
+          white-space: nowrap;
         }
 
-        .memo {
+        .badge-danger {
+          border-color: var(--color-danger);
+          background: var(--color-danger-wash);
+          color: var(--color-danger);
+        }
+
+        .callout {
           display: grid;
           gap: --spacing(1.5);
-          max-inline-size: 60ch;
-          border: 1px solid var(--color-alert);
-          border-inline-start-width: 4px;
-          background: var(--color-alert-wash);
-          padding: --spacing(3);
+          max-inline-size: 62ch;
+          border: 1px solid var(--color-line);
+          border-radius: var(--radius-lg);
+          background: var(--color-subtle);
+          padding: --spacing(4);
           font-size: var(--text-sm);
           line-height: var(--leading-relaxed);
         }
 
         .panel {
           display: grid;
-          gap: --spacing(1.5);
+          gap: --spacing(2);
           min-inline-size: 0;
         }
 
@@ -133,33 +167,18 @@
           align-items: center;
           justify-content: space-between;
           gap: --spacing(3);
-          color: var(--color-ink-soft);
+          color: var(--color-muted);
           font-family: var(--font-mono);
           font-size: var(--text-xs);
-          letter-spacing: var(--tracking-widest);
-          text-transform: uppercase;
-        }
-
-        .stamp {
-          border: 1.5px solid var(--color-stamp);
-          padding: --spacing(0.5) --spacing(1.5);
-          color: var(--color-stamp);
-          font-size: 0.625rem;
-          letter-spacing: var(--tracking-widest);
-          rotate: -3deg;
-          white-space: nowrap;
-        }
-
-        .stamp-alert {
-          border-color: var(--color-alert);
-          color: var(--color-alert);
         }
 
         .code {
           overflow-wrap: anywhere;
-          border: 1px dashed rgb(27 33 31 / 40%);
-          background: var(--color-copy);
-          padding: --spacing(3) --spacing(4);
+          border: 1px solid var(--color-line);
+          border-radius: var(--radius-lg);
+          background: var(--color-code);
+          padding: --spacing(4);
+          color: var(--color-code-fg);
           font-family: var(--font-mono);
           font-size: var(--text-xs);
           line-height: var(--leading-relaxed);
@@ -169,28 +188,32 @@
 
         .result {
           display: grid;
-          gap: --spacing(3.5);
-          border: 1px solid var(--color-rule);
-          background: var(--color-white);
-          padding: --spacing(4);
+          gap: --spacing(4);
+          border: 1px solid var(--color-line);
+          border-radius: var(--radius-lg);
+          background: var(--color-canvas);
+          padding: --spacing(5);
         }
 
         .result-bug {
-          border-color: var(--color-alert);
-          background: var(--color-alert-wash);
+          border-color: var(--color-danger);
+          background: var(--color-danger-wash);
         }
 
         .card {
-          border: 1px solid var(--color-rule);
-          border-inline-start: 3px solid var(--color-stamp);
-          background: var(--color-sheet);
-          padding: --spacing(3) --spacing(4);
+          border: 1px solid var(--color-line);
+          border-radius: var(--radius-lg);
+          background: var(--color-surface);
+          padding: --spacing(4);
         }
 
         .chip {
-          border: 1px solid var(--color-rule);
-          background: var(--color-copy);
-          padding: --spacing(0.5) --spacing(1.5);
+          border: 1px solid var(--color-line);
+          border-radius: var(--radius-md);
+          background: var(--color-subtle);
+          padding-inline: --spacing(2);
+          padding-block: --spacing(0.5);
+          color: var(--color-muted);
           font-family: var(--font-mono);
           font-size: var(--text-xs);
         }
@@ -201,65 +224,73 @@
           align-items: center;
           justify-content: space-between;
           gap: --spacing(2);
-          border: 1px solid var(--color-rule);
-          background: var(--color-sheet);
-          padding: --spacing(1.5) --spacing(2.5);
+          border: 1px solid var(--color-line);
+          border-radius: var(--radius-md);
+          background: var(--color-surface);
+          padding: --spacing(2) --spacing(3);
           font-size: var(--text-sm);
         }
 
         .button {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
           justify-self: start;
-          border: 1px solid var(--color-ink);
-          box-shadow: 3px 3px 0 var(--color-ink);
-          background: var(--color-white);
-          padding: --spacing(1.5) --spacing(3);
-          font-family: var(--font-mono);
-          font-size: var(--text-xs);
-          letter-spacing: var(--tracking-wide);
-          text-transform: uppercase;
-          transition: background-color var(--default-transition-duration);
+          min-block-size: --spacing(8);
+          border: 1px solid var(--color-line);
+          border-radius: var(--radius-md);
+          background: var(--color-surface);
+          padding-inline: --spacing(3);
+          color: var(--color-fg);
+          font-size: var(--text-sm);
+          font-weight: var(--font-weight-medium);
+          transition-property: background-color, border-color, color;
+          transition-duration: 150ms;
 
           &:hover {
-            background: var(--color-copy);
-          }
-
-          &:active {
-            box-shadow: 1px 1px 0 var(--color-ink);
-            translate: 2px 2px;
+            background: var(--color-subtle);
           }
 
           &:focus-visible {
-            outline: 2px solid var(--color-stamp);
+            outline: 2px solid var(--color-accent);
             outline-offset: 2px;
           }
         }
 
-        .button-active {
-          background: var(--color-ink);
-          color: var(--color-sheet);
+        .button-primary {
+          border-color: transparent;
+          background: var(--color-fg);
+          color: var(--color-surface);
+
+          &:hover {
+            background: color-mix(in oklab, var(--color-fg) 88%, var(--color-canvas));
+          }
         }
 
         .field {
           justify-self: start;
-          border: 1px solid rgb(27 33 31 / 40%);
-          background: var(--color-white);
-          padding: --spacing(1.5) --spacing(2.5);
+          min-block-size: --spacing(9);
+          border: 1px solid var(--color-line);
+          border-radius: var(--radius-md);
+          background: var(--color-surface);
+          padding-inline: --spacing(3);
           font-family: var(--font-mono);
           font-size: var(--text-sm);
 
           &:focus-visible {
-            outline: 2px solid var(--color-stamp);
-            outline-offset: 1px;
+            outline: 2px solid var(--color-accent);
+            outline-offset: 2px;
           }
         }
 
         .log {
           overflow-wrap: anywhere;
           min-block-size: 1lh;
-          border: 1px solid rgb(27 33 31 / 18%);
-          background: #edeae1;
-          padding: --spacing(1.5) --spacing(2.5);
-          color: var(--color-ink-soft);
+          border: 1px solid var(--color-line);
+          border-radius: var(--radius-md);
+          background: var(--color-subtle);
+          padding: --spacing(2) --spacing(3);
+          color: var(--color-muted);
           font-family: var(--font-mono);
           font-size: var(--text-xs);
         }
@@ -271,17 +302,21 @@
 
           & > div {
             display: grid;
-            gap: --spacing(1);
-            border-block-end: 1px dotted rgb(27 33 31 / 30%);
-            padding-block-end: --spacing(2.5);
+            gap: --spacing(1.5);
+            border-block-end: 1px solid var(--color-line);
+            padding-block-end: --spacing(3);
           }
 
           & dt {
-            color: var(--color-ink-soft);
+            color: var(--color-muted);
           }
         }
 
         .prose-code {
+          border-radius: var(--radius-sm);
+          background: var(--color-subtle);
+          padding-inline: --spacing(1);
+          color: var(--color-fg);
           font-family: var(--font-mono);
           font-size: 0.85em;
         }
@@ -292,16 +327,16 @@
         :scope {
           display: grid;
           gap: --spacing(2);
-          border: 1px solid var(--color-stamp);
-          background: #efeaff;
-          padding: --spacing(3) --spacing(4);
+          border: 1px solid var(--color-accent);
+          border-radius: var(--radius-lg);
+          background: var(--color-accent-wash);
+          padding: --spacing(4);
         }
 
         h3 {
-          color: var(--color-stamp);
-          font-family: var(--font-display);
-          font-size: var(--text-lg);
-          font-weight: var(--font-weight-bold);
+          color: var(--color-accent);
+          font-size: var(--text-base);
+          font-weight: var(--font-weight-semibold);
         }
 
         ul {
@@ -311,9 +346,11 @@
         }
 
         li {
-          border: 1px solid var(--color-stamp);
-          padding: --spacing(0.5) --spacing(1.5);
-          color: var(--color-stamp);
+          border: 1px solid var(--color-accent);
+          border-radius: var(--radius-md);
+          padding-inline: --spacing(2);
+          padding-block: --spacing(0.5);
+          color: var(--color-accent);
           font-family: var(--font-mono);
           font-size: var(--text-xs);
         }
@@ -332,24 +369,24 @@
   <body>
     <div class="page">
       <header class="sheet gap-5">
-        <p class="slug">alpinejs-component / v3</p>
+        <p class="slug">alpinejs-component@3</p>
 
-        <h1 class="font-mono text-5xl font-medium tracking-tighter md:text-7xl">x-component</h1>
+        <h1 class="font-mono text-4xl font-medium tracking-tighter md:text-6xl">x-component</h1>
 
-        <p class="max-w-[46ch] text-lg leading-relaxed text-pretty">
+        <p class="max-w-[52ch] text-lg leading-relaxed text-muted text-pretty">
           Render a template from the page or a URL into any element, fill its slots, and keep the
           result in the light DOM, where the rest of your page can reach it.
         </p>
 
         <ul class="flex flex-wrap gap-1.5">
-          <li class="trait">Page templates</li>
-          <li class="trait">Remote templates</li>
-          <li class="trait">Default and named slots</li>
-          <li class="trait">Lifecycle events</li>
+          <li class="badge">Page templates</li>
+          <li class="badge">Remote templates</li>
+          <li class="badge">Default and named slots</li>
+          <li class="badge">Lifecycle events</li>
         </ul>
 
-        <div class="memo">
-          <p class="font-mono text-xs tracking-widest text-alert uppercase">Coming from v2</p>
+        <div class="callout">
+          <p class="font-mono text-xs text-accent">Coming from v2</p>
 
           <p>
             v3 renders into the light DOM instead of a shadow root, so delete
@@ -366,7 +403,7 @@
 
       <section class="sheet" id="page-template">
         <header class="sheet-head">
-          <p class="slug">template / page</p>
+          <p class="slug">template/page</p>
           <h2>Render a template from the page</h2>
         </header>
 
@@ -380,9 +417,9 @@
 
         <template id="person-card">
           <article class="card grid gap-2">
-            <h3 class="font-display text-lg font-bold" x-text="item.name"></h3>
+            <h3 class="text-base font-semibold" x-text="item.name"></h3>
 
-            <p class="text-sm text-ink-soft"><span x-text="item.age"></span> years old</p>
+            <p class="text-sm text-muted"><span x-text="item.age"></span> years old</p>
 
             <ul class="flex flex-wrap gap-1.5">
               <template x-for="skill in item.skills" :key="skill">
@@ -403,7 +440,7 @@
         </figure>
 
         <figure class="panel">
-          <figcaption class="panel-label">Result <span class="stamp">Rendered</span></figcaption>
+          <figcaption class="panel-label">Result <span class="badge">Rendered</span></figcaption>
 
           <div class="result" data-usage-markup>
             <ul
@@ -427,7 +464,7 @@
 
       <section class="sheet" id="styles">
         <header class="sheet-head">
-          <p class="slug">styles / scope</p>
+          <p class="slug">styles/scope</p>
           <h2>Style a component with the page's stylesheet</h2>
         </header>
 
@@ -463,9 +500,9 @@
         <figure class="panel">
           <figcaption class="panel-label">Stylesheet</figcaption>
           <pre class="code"><code>@scope (.accent-card) {
-  :scope { border: 1px solid var(--color-stamp); background: #efeaff; }
-  h3 { color: var(--color-stamp); font-family: var(--font-display); }
-  li { border: 1px solid var(--color-stamp); font-family: var(--font-mono); }
+  :scope { border: 1px solid var(--color-accent); background: var(--color-accent-wash); }
+  h3 { color: var(--color-accent); font-weight: 600; }
+  li { border: 1px solid var(--color-accent); font-family: var(--font-mono); }
 }</code></pre>
         </figure>
 
@@ -475,7 +512,7 @@
         </figure>
 
         <figure class="panel">
-          <figcaption class="panel-label">Result <span class="stamp">Rendered</span></figcaption>
+          <figcaption class="panel-label">Result <span class="badge">Rendered</span></figcaption>
 
           <div class="result" data-usage-markup>
             <div
@@ -494,7 +531,7 @@
 
       <section class="sheet" id="slots">
         <header class="sheet-head">
-          <p class="slug">slots / named</p>
+          <p class="slug">slots/named</p>
           <h2>Fill a component's slots</h2>
         </header>
 
@@ -510,13 +547,13 @@
 
         <template id="person-card-editable">
           <article class="card grid gap-2" x-data="{ item: { name: 'Component scope' } }">
-            <h3 class="font-display text-lg font-bold" x-text="item.name"></h3>
+            <h3 class="text-base font-semibold" x-text="item.name"></h3>
 
             <slot></slot>
 
             <footer class="flex flex-wrap gap-2"><slot name="actions"></slot></footer>
 
-            <p class="text-xs text-ink-soft italic">
+            <p class="text-xs text-muted italic">
               <slot name="footnote">No footnote on this card</slot>
             </p>
           </article>
@@ -533,7 +570,7 @@
         </figure>
 
         <figure class="panel">
-          <figcaption class="panel-label">Result <span class="stamp">Rendered</span></figcaption>
+          <figcaption class="panel-label">Result <span class="badge">Rendered</span></figcaption>
 
           <div class="result" data-usage-markup>
             <div
@@ -559,7 +596,7 @@
 
       <section class="sheet" id="looped-slots">
         <header class="sheet-head">
-          <p class="slug">slots / loops</p>
+          <p class="slug">slots/loops</p>
           <h2>Repeat a slot for every row</h2>
         </header>
 
@@ -598,7 +635,7 @@
 
         <figure class="panel">
           <figcaption class="panel-label">
-            Result, showing the wrong scope <span class="stamp stamp-alert">Known bug</span>
+            Result, showing the wrong scope <span class="badge badge-danger">Known bug</span>
           </figcaption>
 
           <div class="result result-bug" data-usage-markup>
@@ -613,7 +650,7 @@
 
       <section class="sheet" id="dynamic">
         <header class="sheet-head">
-          <p class="slug">component / dynamic</p>
+          <p class="slug">component/dynamic</p>
           <h2>Swap the component at runtime</h2>
         </header>
 
@@ -641,7 +678,7 @@
         </figure>
 
         <figure class="panel">
-          <figcaption class="panel-label">Result <span class="stamp">Rendered</span></figcaption>
+          <figcaption class="panel-label">Result <span class="badge">Rendered</span></figcaption>
 
           <div class="result" data-usage-markup>
             <div
@@ -655,7 +692,7 @@
                 <button
                   class="button"
                   type="button"
-                  :class="{ 'button-active': activeCard === 'person-card' }"
+                  :class="{ 'button-primary': activeCard === 'person-card' }"
                   :aria-pressed="activeCard === 'person-card'"
                   @click="activeCard = 'person-card'"
                 >
@@ -665,7 +702,7 @@
                 <button
                   class="button"
                   type="button"
-                  :class="{ 'button-active': activeCard === 'person-card-compact' }"
+                  :class="{ 'button-primary': activeCard === 'person-card-compact' }"
                   :aria-pressed="activeCard === 'person-card-compact'"
                   @click="activeCard = 'person-card-compact'"
                 >
@@ -675,7 +712,7 @@
                 <button
                   class="button"
                   type="button"
-                  :class="{ 'button-active': activeCard === '' }"
+                  :class="{ 'button-primary': activeCard === '' }"
                   :aria-pressed="activeCard === ''"
                   @click="activeCard = ''"
                 >
@@ -691,7 +728,7 @@
 
       <section class="sheet" id="url">
         <header class="sheet-head">
-          <p class="slug">template / url</p>
+          <p class="slug">template/url</p>
           <h2>Load a template from a URL</h2>
         </header>
 
@@ -719,7 +756,7 @@
         </figure>
 
         <figure class="panel">
-          <figcaption class="panel-label">Result <span class="stamp">Fetched</span></figcaption>
+          <figcaption class="panel-label">Result <span class="badge">Fetched</span></figcaption>
 
           <div class="result" data-usage-markup>
             <div
@@ -750,7 +787,7 @@
 
       <section class="sheet" id="boundary">
         <header class="sheet-head">
-          <p class="slug">boundary / light dom</p>
+          <p class="slug">boundary/light-dom</p>
           <h2>Reach across the component boundary</h2>
         </header>
 
@@ -767,14 +804,14 @@
           <div class="card grid gap-2">
             <input class="field" id="nickname" name="nickname" value="Amazing Grace" />
 
-            <p class="text-sm text-ink-soft">
+            <p class="text-sm text-muted">
               $refs across the boundary:
-              <strong class="text-ink" x-text="$refs.hostNote.textContent"></strong>
+              <strong class="text-fg" x-text="$refs.hostNote.textContent"></strong>
             </p>
 
-            <p class="text-sm text-ink-soft">
+            <p class="text-sm text-muted">
               $root across the boundary:
-              <strong class="text-ink" x-text="$root.tagName"></strong>
+              <strong class="text-fg" x-text="$root.tagName"></strong>
             </p>
           </div>
         </template>
@@ -790,7 +827,7 @@
         </figure>
 
         <figure class="panel">
-          <figcaption class="panel-label">Result <span class="stamp">Rendered</span></figcaption>
+          <figcaption class="panel-label">Result <span class="badge">Rendered</span></figcaption>
 
           <div class="result" data-usage-markup>
             <form
@@ -806,7 +843,7 @@
 
               <div x-component="'profile-card'"></div>
 
-              <button class="button" type="submit">Submit the form</button>
+              <button class="button button-primary" type="submit">Submit the form</button>
 
               <output class="log" x-text="submitted || 'nothing submitted yet'"></output>
             </form>
@@ -816,7 +853,7 @@
 
       <section class="sheet" id="failures">
         <header class="sheet-head">
-          <p class="slug">errors / failure</p>
+          <p class="slug">errors/failure</p>
           <h2>Handle a template that will not load</h2>
         </header>
 
@@ -833,7 +870,7 @@
         </figure>
 
         <figure class="panel">
-          <figcaption class="panel-label">Result <span class="stamp">Handled</span></figcaption>
+          <figcaption class="panel-label">Result <span class="badge">Handled</span></figcaption>
 
           <div class="result" data-usage-markup>
             <div
@@ -873,7 +910,7 @@
               }"
             >
               <div class="flex flex-wrap items-center gap-3">
-                <span class="text-sm text-ink-soft">A fetch that failed, then retried</span>
+                <span class="text-sm text-muted">A fetch that failed, then retried</span>
 
                 <button
                   class="button"
@@ -890,7 +927,7 @@
         </figure>
       </section>
 
-      <p class="text-center text-xs text-ink-soft">
+      <p class="text-center text-xs text-muted">
         <a
           class="underline underline-offset-2"
           href="https://github.com/markmead/alpinejs-component"
