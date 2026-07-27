@@ -37,11 +37,6 @@
       @layer base {
         body {
           background-color: var(--color-desk);
-          background-image: repeating-linear-gradient(
-            to bottom,
-            rgb(27 33 31 / 6%) 0 1px,
-            transparent 1px 28px
-          );
           color: var(--color-ink);
           -webkit-font-smoothing: antialiased;
         }
@@ -64,8 +59,8 @@
           display: grid;
           gap: --spacing(3.5);
           min-inline-size: 0;
-          border: 1px solid var(--color-rule);
-          box-shadow: 3px 3px 0 rgb(27 33 31 / 16%);
+          border: 2px solid var(--color-ink);
+          box-shadow: 6px 6px 0 var(--color-ink);
           background: var(--color-sheet);
           padding: --spacing(4);
 
@@ -215,7 +210,7 @@
         .button {
           justify-self: start;
           border: 1px solid var(--color-ink);
-          box-shadow: 2px 2px 0 rgb(27 33 31 / 20%);
+          box-shadow: 3px 3px 0 var(--color-ink);
           background: var(--color-white);
           padding: --spacing(1.5) --spacing(3);
           font-family: var(--font-mono);
@@ -229,8 +224,8 @@
           }
 
           &:active {
-            box-shadow: 1px 1px 0 rgb(27 33 31 / 20%);
-            translate: 1px 1px;
+            box-shadow: 1px 1px 0 var(--color-ink);
+            translate: 2px 2px;
           }
 
           &:focus-visible {
@@ -339,9 +334,7 @@
       <header class="sheet gap-5">
         <p class="slug">alpinejs-component / v3</p>
 
-        <h1 class="font-mono text-5xl font-medium tracking-tighter md:text-7xl">
-          <span class="text-stamp">x-</span>component
-        </h1>
+        <h1 class="font-mono text-5xl font-medium tracking-tighter md:text-7xl">x-component</h1>
 
         <p class="max-w-[46ch] text-lg leading-relaxed text-pretty">
           Render a template from the page or a URL into any element, fill its slots, and keep the
