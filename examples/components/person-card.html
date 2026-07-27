@@ -1,0 +1,13 @@
+<article class="card grid gap-2">
+  <h3 class="font-display text-lg font-bold" x-text="item.name"></h3>
+
+  <p class="text-sm text-ink-soft">Fetched at runtime, <span x-text="item.age"></span> years old</p>
+
+  <ul class="flex flex-wrap gap-1.5">
+    <template x-for="skill in item.skills" :key="skill">
+      <li class="chip" x-text="skill"></li>
+    </template>
+  </ul>
+
+  <footer class="flex flex-wrap gap-2"><slot name="actions"></slot></footer>
+</article>

@@ -1,0 +1,952 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>x-component — Alpine.js components with slots</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;700&family=DM+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <script defer src="https://unpkg.com/alpinejs-component@3.0.0/dist/component.min.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
+
+    <style type="text/tailwindcss">
+      @theme {
+        --color-desk: #b5bfba;
+        --color-sheet: #fcfbf7;
+        --color-copy: #f4ead0;
+        --color-ink: #1b211f;
+        --color-ink-soft: #566059;
+        --color-stamp: #4a2fa8;
+        --color-alert: #a83b1c;
+        --color-alert-wash: #fbf1e9;
+        --color-rule: rgb(27 33 31 / 22%);
+
+        --font-sans: 'Public Sans', system-ui, sans-serif;
+        --font-display: 'Archivo Narrow', 'Arial Narrow', sans-serif;
+        --font-mono: 'DM Mono', ui-monospace, monospace;
+      }
+
+      @layer base {
+        body {
+          background-color: var(--color-desk);
+          background-image: repeating-linear-gradient(
+            to bottom,
+            rgb(27 33 31 / 6%) 0 1px,
+            transparent 1px 28px
+          );
+          color: var(--color-ink);
+          -webkit-font-smoothing: antialiased;
+        }
+      }
+
+      @layer components {
+        .page {
+          display: grid;
+          gap: --spacing(6);
+          margin-inline: auto;
+          max-inline-size: var(--container-5xl);
+          padding: --spacing(6) --spacing(4);
+
+          @variant md {
+            padding: --spacing(12) --spacing(8);
+          }
+        }
+
+        .sheet {
+          display: grid;
+          gap: --spacing(3.5);
+          min-inline-size: 0;
+          border: 1px solid var(--color-rule);
+          box-shadow: 3px 3px 0 rgb(27 33 31 / 16%);
+          background: var(--color-sheet);
+          padding: --spacing(4);
+
+          @variant md {
+            padding: --spacing(7);
+          }
+        }
+
+        .slug {
+          color: var(--color-stamp);
+          font-family: var(--font-mono);
+          font-size: var(--text-xs);
+          letter-spacing: var(--tracking-widest);
+          text-transform: uppercase;
+        }
+
+        .sheet-head {
+          display: grid;
+          gap: --spacing(1);
+          border-block-end: 2px solid var(--color-ink);
+          padding-block-end: --spacing(2.5);
+
+          & h2 {
+            font-family: var(--font-display);
+            font-size: var(--text-2xl);
+            font-weight: var(--font-weight-bold);
+            line-height: var(--leading-tight);
+          }
+        }
+
+        .note {
+          max-inline-size: 68ch;
+          color: var(--color-ink-soft);
+          font-size: var(--text-sm);
+          line-height: var(--leading-relaxed);
+          text-wrap: pretty;
+        }
+
+        .trait {
+          border: 1px solid var(--color-rule);
+          background: var(--color-copy);
+          padding: --spacing(0.5) --spacing(2);
+          font-family: var(--font-mono);
+          font-size: var(--text-xs);
+          letter-spacing: var(--tracking-wide);
+          text-transform: uppercase;
+        }
+
+        .memo {
+          display: grid;
+          gap: --spacing(1.5);
+          max-inline-size: 60ch;
+          border: 1px solid var(--color-alert);
+          border-inline-start-width: 4px;
+          background: var(--color-alert-wash);
+          padding: --spacing(3);
+          font-size: var(--text-sm);
+          line-height: var(--leading-relaxed);
+        }
+
+        .panel {
+          display: grid;
+          gap: --spacing(1.5);
+          min-inline-size: 0;
+        }
+
+        .panel-label {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: space-between;
+          gap: --spacing(3);
+          color: var(--color-ink-soft);
+          font-family: var(--font-mono);
+          font-size: var(--text-xs);
+          letter-spacing: var(--tracking-widest);
+          text-transform: uppercase;
+        }
+
+        .stamp {
+          border: 1.5px solid var(--color-stamp);
+          padding: --spacing(0.5) --spacing(1.5);
+          color: var(--color-stamp);
+          font-size: 0.625rem;
+          letter-spacing: var(--tracking-widest);
+          rotate: -3deg;
+          white-space: nowrap;
+        }
+
+        .stamp-alert {
+          border-color: var(--color-alert);
+          color: var(--color-alert);
+        }
+
+        .code {
+          overflow-wrap: anywhere;
+          border: 1px dashed rgb(27 33 31 / 40%);
+          background: var(--color-copy);
+          padding: --spacing(3) --spacing(4);
+          font-family: var(--font-mono);
+          font-size: var(--text-xs);
+          line-height: var(--leading-relaxed);
+          white-space: pre-wrap;
+          tab-size: 2;
+        }
+
+        .result {
+          display: grid;
+          gap: --spacing(3.5);
+          border: 1px solid var(--color-rule);
+          background: var(--color-white);
+          padding: --spacing(4);
+        }
+
+        .result-bug {
+          border-color: var(--color-alert);
+          background: var(--color-alert-wash);
+        }
+
+        .card {
+          border: 1px solid var(--color-rule);
+          border-inline-start: 3px solid var(--color-stamp);
+          background: var(--color-sheet);
+          padding: --spacing(3) --spacing(4);
+        }
+
+        .chip {
+          border: 1px solid var(--color-rule);
+          background: var(--color-copy);
+          padding: --spacing(0.5) --spacing(1.5);
+          font-family: var(--font-mono);
+          font-size: var(--text-xs);
+        }
+
+        .row {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: space-between;
+          gap: --spacing(2);
+          border: 1px solid var(--color-rule);
+          background: var(--color-sheet);
+          padding: --spacing(1.5) --spacing(2.5);
+          font-size: var(--text-sm);
+        }
+
+        .button {
+          justify-self: start;
+          border: 1px solid var(--color-ink);
+          box-shadow: 2px 2px 0 rgb(27 33 31 / 20%);
+          background: var(--color-white);
+          padding: --spacing(1.5) --spacing(3);
+          font-family: var(--font-mono);
+          font-size: var(--text-xs);
+          letter-spacing: var(--tracking-wide);
+          text-transform: uppercase;
+          transition: background-color var(--default-transition-duration);
+
+          &:hover {
+            background: var(--color-copy);
+          }
+
+          &:active {
+            box-shadow: 1px 1px 0 rgb(27 33 31 / 20%);
+            translate: 1px 1px;
+          }
+
+          &:focus-visible {
+            outline: 2px solid var(--color-stamp);
+            outline-offset: 2px;
+          }
+        }
+
+        .button-active {
+          background: var(--color-ink);
+          color: var(--color-sheet);
+        }
+
+        .field {
+          justify-self: start;
+          border: 1px solid rgb(27 33 31 / 40%);
+          background: var(--color-white);
+          padding: --spacing(1.5) --spacing(2.5);
+          font-family: var(--font-mono);
+          font-size: var(--text-sm);
+
+          &:focus-visible {
+            outline: 2px solid var(--color-stamp);
+            outline-offset: 1px;
+          }
+        }
+
+        .log {
+          overflow-wrap: anywhere;
+          min-block-size: 1lh;
+          border: 1px solid rgb(27 33 31 / 18%);
+          background: #edeae1;
+          padding: --spacing(1.5) --spacing(2.5);
+          color: var(--color-ink-soft);
+          font-family: var(--font-mono);
+          font-size: var(--text-xs);
+        }
+
+        .cases {
+          display: grid;
+          gap: --spacing(3);
+          font-size: var(--text-sm);
+
+          & > div {
+            display: grid;
+            gap: --spacing(1);
+            border-block-end: 1px dotted rgb(27 33 31 / 30%);
+            padding-block-end: --spacing(2.5);
+          }
+
+          & dt {
+            color: var(--color-ink-soft);
+          }
+        }
+
+        .prose-code {
+          font-family: var(--font-mono);
+          font-size: 0.85em;
+        }
+      }
+
+      /* Scoped to the accent card, so these bare element selectors reach nothing else on the page. */
+      @scope (.accent-card) {
+        :scope {
+          display: grid;
+          gap: --spacing(2);
+          border: 1px solid var(--color-stamp);
+          background: #efeaff;
+          padding: --spacing(3) --spacing(4);
+        }
+
+        h3 {
+          color: var(--color-stamp);
+          font-family: var(--font-display);
+          font-size: var(--text-lg);
+          font-weight: var(--font-weight-bold);
+        }
+
+        ul {
+          display: flex;
+          flex-wrap: wrap;
+          gap: --spacing(1.5);
+        }
+
+        li {
+          border: 1px solid var(--color-stamp);
+          padding: --spacing(0.5) --spacing(1.5);
+          color: var(--color-stamp);
+          font-family: var(--font-mono);
+          font-size: var(--text-xs);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          transition-duration: 1ms !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="page">
+      <header class="sheet gap-5">
+        <p class="slug">alpinejs-component / v3</p>
+
+        <h1 class="font-mono text-5xl font-medium tracking-tighter md:text-7xl">
+          <span class="text-stamp">x-</span>component
+        </h1>
+
+        <p class="max-w-[46ch] text-lg leading-relaxed text-pretty">
+          Render a template from the page or a URL into any element, fill its slots, and keep the
+          result in the light DOM, where the rest of your page can reach it.
+        </p>
+
+        <ul class="flex flex-wrap gap-1.5">
+          <li class="trait">Page templates</li>
+          <li class="trait">Remote templates</li>
+          <li class="trait">Default and named slots</li>
+          <li class="trait">Lifecycle events</li>
+        </ul>
+
+        <div class="memo">
+          <p class="font-mono text-xs tracking-widest text-alert uppercase">Coming from v2</p>
+
+          <p>
+            v3 renders into the light DOM instead of a shadow root, so delete
+            <code class="prose-code">x-component-styles</code>. Your stylesheet reaches component
+            content on its own now, and nothing else in the directive changed.
+          </p>
+        </div>
+
+        <p class="note">
+          Every form below shows the template it renders, the markup that uses it, and the live
+          result, so you can read a behaviour and copy it in one pass.
+        </p>
+      </header>
+
+      <section class="sheet" id="page-template">
+        <header class="sheet-head">
+          <p class="slug">template / page</p>
+          <h2>Render a template from the page</h2>
+        </header>
+
+        <p class="note">
+          The expression is the <code class="prose-code">id</code> of a
+          <code class="prose-code">&lt;template&gt;</code> on the page. Its content is cloned into
+          the host element and initialized against the host's scope, so
+          <code class="prose-code">item</code> below resolves to the host's data, including inside
+          an <code class="prose-code">x-for</code>.
+        </p>
+
+        <template id="person-card">
+          <article class="card grid gap-2">
+            <h3 class="font-display text-lg font-bold" x-text="item.name"></h3>
+
+            <p class="text-sm text-ink-soft"><span x-text="item.age"></span> years old</p>
+
+            <ul class="flex flex-wrap gap-1.5">
+              <template x-for="skill in item.skills" :key="skill">
+                <li class="chip" x-text="skill"></li>
+              </template>
+            </ul>
+          </article>
+        </template>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#person-card"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result <span class="stamp">Rendered</span></figcaption>
+
+          <div class="result" data-usage-markup>
+            <ul
+              class="grid gap-3"
+              x-data="{
+                people: [
+                  { name: 'Ada Lovelace', age: 36, skills: ['Analytical engine', 'Poetry'] },
+                  { name: 'Grace Hopper', age: 85, skills: ['COBOL', 'Compilers'] }
+                ]
+              }"
+            >
+              <template x-for="person in people" :key="person.name">
+                <li>
+                  <div x-data="{ item: person }" x-component="'person-card'"></div>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </figure>
+      </section>
+
+      <section class="sheet" id="styles">
+        <header class="sheet-head">
+          <p class="slug">styles / scope</p>
+          <h2>Style a component with the page's stylesheet</h2>
+        </header>
+
+        <p class="note">
+          Nothing opts in. The cards above wear this page's Tailwind utilities and its
+          <code class="prose-code">.card</code> class, compiled by the browser build that reads the
+          markup inside every <code class="prose-code">&lt;template&gt;</code>. In v2 the shadow
+          boundary hid rendered content from that scan and from the stylesheet, which is why the old
+          version of this page had to safelist utilities by hand. Bare element selectors still need
+          scoping, and <code class="prose-code">@scope</code> does that job now that
+          <code class="prose-code">x-component-styles</code> is gone.
+        </p>
+
+        <template id="person-card-accent">
+          <article class="accent-card">
+            <h3 x-text="item.name"></h3>
+
+            <p class="text-sm"><span x-text="item.age"></span> years old</p>
+
+            <ul>
+              <template x-for="skill in item.skills" :key="skill">
+                <li x-text="skill"></li>
+              </template>
+            </ul>
+          </article>
+        </template>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#person-card-accent"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Stylesheet</figcaption>
+          <pre class="code"><code>@scope (.accent-card) {
+  :scope { border: 1px solid var(--color-stamp); background: #efeaff; }
+  h3 { color: var(--color-stamp); font-family: var(--font-display); }
+  li { border: 1px solid var(--color-stamp); font-family: var(--font-mono); }
+}</code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result <span class="stamp">Rendered</span></figcaption>
+
+          <div class="result" data-usage-markup>
+            <div
+              x-data="{
+                item: {
+                  name: 'Dorothy Vaughan',
+                  age: 98,
+                  skills: ['FORTRAN', 'Leadership']
+                }
+              }"
+              x-component="'person-card-accent'"
+            ></div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="sheet" id="slots">
+        <header class="sheet-head">
+          <p class="slug">slots / named</p>
+          <h2>Fill a component's slots</h2>
+        </header>
+
+        <p class="note">
+          A <code class="prose-code">&lt;template x-slot&gt;</code> on the host fills the default
+          <code class="prose-code">&lt;slot&gt;</code>, and
+          <code class="prose-code">x-slot="actions"</code> fills the one named
+          <code class="prose-code">actions</code>. A slot nobody fills keeps its own children as
+          fallback. Slot content is authored on the host, so it reads and writes the host's scope:
+          the heading below comes from the component's own data, while everything inside the slots
+          is the host's Katherine Johnson, and the buttons update the host.
+        </p>
+
+        <template id="person-card-editable">
+          <article class="card grid gap-2" x-data="{ item: { name: 'Component scope' } }">
+            <h3 class="font-display text-lg font-bold" x-text="item.name"></h3>
+
+            <slot></slot>
+
+            <footer class="flex flex-wrap gap-2"><slot name="actions"></slot></footer>
+
+            <p class="text-xs text-ink-soft italic">
+              <slot name="footnote">No footnote on this card</slot>
+            </p>
+          </article>
+        </template>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#person-card-editable"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result <span class="stamp">Rendered</span></figcaption>
+
+          <div class="result" data-usage-markup>
+            <div
+              x-data="{ item: { name: 'Katherine Johnson', age: 38 }, edits: 0 }"
+              x-component="'person-card-editable'"
+            >
+              <template x-slot>
+                <p class="text-sm">
+                  <strong x-text="item.name"></strong>, age <span x-text="item.age"></span>, edits:
+                  <span x-text="edits"></span>
+                </p>
+              </template>
+
+              <template x-slot="actions">
+                <button class="button" type="button" @click="item.age++; edits++">Age up</button>
+
+                <button class="button" type="button" @click="item.age--; edits++">Age down</button>
+              </template>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="sheet" id="looped-slots">
+        <header class="sheet-head">
+          <p class="slug">slots / loops</p>
+          <h2>Repeat a slot for every row</h2>
+        </header>
+
+        <p class="note">
+          A <code class="prose-code">&lt;slot&gt;</code> nested in an
+          <code class="prose-code">x-for</code> or <code class="prose-code">x-if</code> template is
+          filled once per iteration, and it is the one place slot content does not get the host's
+          scope. The badges below ask for <code class="prose-code">label</code>, which is
+          <code class="prose-code">host scope</code> on the host, and render the component's value
+          instead. Alpine clones those templates, and the binding that ties projected content to the
+          host does not survive the clone. Keep slots out of
+          <code class="prose-code">x-for</code> and <code class="prose-code">x-if</code> when the
+          content needs host scope.
+        </p>
+
+        <template id="person-row-list">
+          <ul class="grid gap-1.5" x-data="{ label: 'component scope', people: ['Ada', 'Grace'] }">
+            <template x-for="person in people" :key="person">
+              <li class="row">
+                <span x-text="person"></span>
+                <slot name="badge"></slot>
+              </li>
+            </template>
+          </ul>
+        </template>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#person-row-list"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">
+            Result, showing the wrong scope <span class="stamp stamp-alert">Known bug</span>
+          </figcaption>
+
+          <div class="result result-bug" data-usage-markup>
+            <div x-data="{ label: 'host scope' }" x-component="'person-row-list'">
+              <template x-slot="badge">
+                <span class="chip" x-text="label"></span>
+              </template>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="sheet" id="dynamic">
+        <header class="sheet-head">
+          <p class="slug">component / dynamic</p>
+          <h2>Swap the component at runtime</h2>
+        </header>
+
+        <p class="note">
+          The expression is reactive. Change it and the tree that was mounted is destroyed and the
+          new one rendered in its place, against the same host data. An expression that resolves to
+          an empty string unmounts and leaves the host empty.
+        </p>
+
+        <template id="person-card-compact">
+          <p class="row">
+            <strong x-text="item.name"></strong>
+            <span x-text="`${item.age} · ${item.skills.join(', ')}`"></span>
+          </p>
+        </template>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Templates</figcaption>
+          <pre class="code"><code data-source="#person-card, #person-card-compact"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result <span class="stamp">Rendered</span></figcaption>
+
+          <div class="result" data-usage-markup>
+            <div
+              class="grid gap-3"
+              x-data="{
+                activeCard: 'person-card',
+                item: { name: 'Grace Hopper', age: 85, skills: ['COBOL', 'Compilers'] }
+              }"
+            >
+              <div class="flex flex-wrap gap-2">
+                <button
+                  class="button"
+                  type="button"
+                  :class="{ 'button-active': activeCard === 'person-card' }"
+                  :aria-pressed="activeCard === 'person-card'"
+                  @click="activeCard = 'person-card'"
+                >
+                  Full card
+                </button>
+
+                <button
+                  class="button"
+                  type="button"
+                  :class="{ 'button-active': activeCard === 'person-card-compact' }"
+                  :aria-pressed="activeCard === 'person-card-compact'"
+                  @click="activeCard = 'person-card-compact'"
+                >
+                  Compact card
+                </button>
+
+                <button
+                  class="button"
+                  type="button"
+                  :class="{ 'button-active': activeCard === '' }"
+                  :aria-pressed="activeCard === ''"
+                  @click="activeCard = ''"
+                >
+                  Clear
+                </button>
+              </div>
+
+              <div x-component="activeCard"></div>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="sheet" id="url">
+        <header class="sheet-head">
+          <p class="slug">template / url</p>
+          <h2>Load a template from a URL</h2>
+        </header>
+
+        <p class="note">
+          With the <code class="prose-code">.url</code> modifier the expression is a URL to fetch
+          rather than the id of a template on the page. Everything else is the same, slots included.
+          Because the fetch is asynchronous, the host emits
+          <code class="prose-code">x-component:loading</code> and then
+          <code class="prose-code">x-component:loaded</code>; the events bubble, so the log below
+          listens on the wrapper rather than the host. A same-origin URL is required unless you add
+          <code class="prose-code">.external</code>, and responses are cached by URL.
+        </p>
+
+        <figure class="panel">
+          <figcaption class="panel-label">
+            Template, fetched from components/person-card.html
+          </figcaption>
+
+          <pre class="code"><code data-source-url="components/person-card.html"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result <span class="stamp">Fetched</span></figcaption>
+
+          <div class="result" data-usage-markup>
+            <div
+              class="grid gap-3"
+              x-data="{ eventLog: [] }"
+              @x-component:loading="eventLog.push('loading')"
+              @x-component:loaded="eventLog.push('loaded')"
+            >
+              <div
+                x-data="{
+                  item: { name: 'Hedy Lamarr', age: 85, skills: ['Frequency hopping'] },
+                  greeted: false
+                }"
+                x-component.url="'components/person-card.html'"
+              >
+                <template x-slot="actions">
+                  <button class="button" type="button" @click="greeted = true">Say hello</button>
+
+                  <span class="chip" x-show="greeted">Hello, Hedy</span>
+                </template>
+              </div>
+
+              <output class="log" x-text="eventLog.join(' → ')"></output>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="sheet" id="boundary">
+        <header class="sheet-head">
+          <p class="slug">boundary / light dom</p>
+          <h2>Reach across the component boundary</h2>
+        </header>
+
+        <p class="note">
+          The label outside the component focuses the input inside it, that input submits with the
+          form wrapped around the component, and <code class="prose-code">$refs</code> and
+          <code class="prose-code">$root</code> resolve past the host into the surrounding tree.
+          <code class="prose-code">document.querySelector</code> finds the input too. Every one of
+          these was broken by the shadow boundary in v2, and together they are the reason v3 renders
+          into the light DOM.
+        </p>
+
+        <template id="profile-card">
+          <div class="card grid gap-2">
+            <input class="field" id="nickname" name="nickname" value="Amazing Grace" />
+
+            <p class="text-sm text-ink-soft">
+              $refs across the boundary:
+              <strong class="text-ink" x-text="$refs.hostNote.textContent"></strong>
+            </p>
+
+            <p class="text-sm text-ink-soft">
+              $root across the boundary:
+              <strong class="text-ink" x-text="$root.tagName"></strong>
+            </p>
+          </div>
+        </template>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#profile-card"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result <span class="stamp">Rendered</span></figcaption>
+
+          <div class="result" data-usage-markup>
+            <form
+              class="grid gap-3"
+              x-data="{ submitted: '' }"
+              @submit.prevent="submitted = new URLSearchParams(new FormData($el)).toString()"
+            >
+              <span x-ref="hostNote" hidden>a value from the host</span>
+
+              <label class="text-sm font-medium" for="nickname">
+                This label sits outside the component and focuses the input inside it
+              </label>
+
+              <div x-component="'profile-card'"></div>
+
+              <button class="button" type="submit">Submit the form</button>
+
+              <output class="log" x-text="submitted || 'nothing submitted yet'"></output>
+            </form>
+          </div>
+        </figure>
+      </section>
+
+      <section class="sheet" id="failures">
+        <header class="sheet-head">
+          <p class="slug">errors / failure</p>
+          <h2>Handle a template that will not load</h2>
+        </header>
+
+        <p class="note">
+          Each of these leaves the host empty and emits
+          <code class="prose-code">x-component:error</code> with the source and the error, so expect
+          console noise from this section. A URL that fails is not cached, so retrying the same host
+          with a working URL succeeds.
+        </p>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result <span class="stamp">Handled</span></figcaption>
+
+          <div class="result" data-usage-markup>
+            <div
+              class="grid gap-3"
+              x-data="{ lastError: '' }"
+              @x-component:error="lastError = $event.detail.error.message"
+            >
+              <dl class="cases">
+                <div>
+                  <dt>A template id that is not on the page</dt>
+                  <dd x-component="'does-not-exist'"></dd>
+                </div>
+
+                <div>
+                  <dt>A URL that returns 404</dt>
+                  <dd x-component.url="'components/does-not-exist.html'"></dd>
+                </div>
+
+                <div>
+                  <dt>
+                    A protocol that is not <code class="prose-code">http</code> or
+                    <code class="prose-code">https</code>
+                  </dt>
+
+                  <dd x-component.url="'ftp://example.com/person-card.html'"></dd>
+                </div>
+              </dl>
+
+              <output class="log" x-text="lastError || 'no errors yet'"></output>
+            </div>
+
+            <div
+              class="grid gap-3"
+              x-data="{
+                cardUrl: 'components/does-not-exist.html',
+                item: { name: 'Annie Easley', age: 78, skills: ['Rocketry', 'Energy'] }
+              }"
+            >
+              <div class="flex flex-wrap items-center gap-3">
+                <span class="text-sm text-ink-soft">A fetch that failed, then retried</span>
+
+                <button
+                  class="button"
+                  type="button"
+                  @click="cardUrl = 'components/person-card.html'"
+                >
+                  Retry with a real URL
+                </button>
+              </div>
+
+              <div x-component.url="cardUrl"></div>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <p class="text-center text-xs text-ink-soft">
+        <a
+          class="underline underline-offset-2"
+          href="https://github.com/markmead/alpinejs-component"
+          >github.com/markmead/alpinejs-component</a
+        >
+      </p>
+    </div>
+
+    <script>
+      // Runs before Alpine on purpose: x-component rewrites the elements it renders into, so once a
+      // component has mounted the usage markup on the page is the output rather than the source.
+
+      function formatMarkup(markup) {
+        const [openingLine, ...remainingLines] = markup.split('\n')
+
+        const indentWidths = remainingLines
+          .filter((markupLine) => markupLine.trim().length)
+          .map((markupLine) => markupLine.length - markupLine.trimStart().length)
+
+        const sharedIndent = Math.min(...indentWidths)
+
+        return [openingLine, ...remainingLines.map((markupLine) => markupLine.slice(sharedIndent))]
+          .join('\n')
+          .trimEnd()
+      }
+
+      function findSourceElements(sourceBlock) {
+        const sourceSelector = sourceBlock.dataset.source
+
+        if (sourceSelector === 'usage') {
+          return [...sourceBlock.closest('section').querySelectorAll('[data-usage-markup] > *')]
+        }
+
+        return [...document.querySelectorAll(sourceSelector)]
+      }
+
+      for (const sourceBlock of document.querySelectorAll('[data-source]')) {
+        sourceBlock.textContent = findSourceElements(sourceBlock)
+          .map((sourceElement) => formatMarkup(sourceElement.outerHTML))
+          .join('\n\n')
+      }
+
+      for (const remoteBlock of document.querySelectorAll('[data-source-url]')) {
+        fetch(remoteBlock.dataset.sourceUrl)
+          .then((remoteResponse) => remoteResponse.text())
+          .then((remoteMarkup) => {
+            remoteBlock.textContent = remoteMarkup.trim()
+          })
+      }
+    </script>
+  </body>
+</html>
