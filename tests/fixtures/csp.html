@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>alpinejs-component — CSP build</title>
+
+    <!-- Enforced by the page itself, so opening this fixture by hand runs the same test the spec
+         does. 'unsafe-eval' is deliberately absent, which rules out Alpine's default build and
+         inline scripts along with it — the page's own wiring lives in csp.js. -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self'" />
+
+    <script defer src="/dist/component.min.js"></script>
+    <script defer src="/tests/fixtures/lifecycle-log.js"></script>
+    <script defer src="/tests/fixtures/csp.js"></script>
+    <script defer src="/node_modules/@alpinejs/csp/dist/cdn.min.js"></script>
+
+    <link rel="stylesheet" href="/tests/fixtures/tailwind.css" />
+  </head>
+
+  <body class="page">
+    <header class="masthead">
+      <h1>CSP build</h1>
+
+      <p class="lede">
+        Alpine's CSP build under an enforced <code>script-src 'self'</code>, with no
+        <code>'unsafe-eval'</code>.
+      </p>
+
+      <p class="note">
+        Sources are data properties rather than inline expressions, because that is how components
+        are written on a page like this one. Everything else the plugin does is plain DOM work the
+        evaluator never touches, so it is covered on
+        <a class="underline underline-offset-2" href="/tests/fixtures/index.html">index.html</a>
+        rather than repeated here.
+      </p>
+    </header>
+
+    <main class="sections">
+      <section class="section" id="dynamic">
+        <h2>Swap a component named by a data property</h2>
+
+        <p class="note">
+          The source is <code>cardName</code> on the host's data, and the slot content reads
+          <code>label</code> from the host even though the card declares its own.
+        </p>
+
+        <template id="csp-card">
+          <article class="card grid gap-3" x-data="cardScope">
+            <h2 class="font-semibold" data-testid="csp-card-title" x-text="person.name"></h2>
+
+            <slot></slot>
+
+            <footer class="controls"><slot name="actions"></slot></footer>
+          </article>
+        </template>
+
+        <template id="csp-alt-card">
+          <p class="card">Alternative card [<slot></slot>]</p>
+        </template>
+
+        <div class="result" x-data="cardHost">
+          <div class="controls">
+            <button
+              class="button"
+              data-testid="csp-swap-button"
+              type="button"
+              @click="showAlternativeCard"
+            >
+              Swap
+            </button>
+          </div>
+
+          <div data-testid="csp-card-host" x-component="cardName">
+            <template x-slot>
+              <span data-testid="csp-slot-label" x-text="label"></span>
+            </template>
+
+            <template x-slot="actions">
+              <button
+                class="button"
+                data-testid="csp-relabel-button"
+                type="button"
+                @click="relabel"
+              >
+                Relabel
+              </button>
+            </template>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="literal">
+        <h2>Render a literal source</h2>
+
+        <p class="note">
+          A quoted string still works under the CSP build, because the plugin asks Alpine to
+          evaluate it rather than reaching for <code>new Function</code> itself.
+        </p>
+
+        <div class="result" x-data>
+          <div data-testid="csp-literal-host" x-component="'csp-alt-card'"></div>
+        </div>
+      </section>
+
+      <section class="section" id="url">
+        <h2>Load a template from a URL</h2>
+
+        <p class="note">
+          <code>remote-card.html</code> is fetched and projected into, and the host emits its
+          lifecycle events the same way it does on the default build.
+        </p>
+
+        <div class="result" x-data="remoteHost">
+          <div data-testid="csp-remote-host" x-component.url="cardUrl">
+            <template x-slot="actions"
+              ><b data-testid="csp-remote-slot-content">projected</b></template
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -7,3 +7,10 @@ skills-lock.json
 
 # Generated
 pnpm-lock.yaml
+
+# Playwright output
+test-results/
+playwright-report/
+
+# Compiled Tailwind output
+tests/fixtures/tailwind.css

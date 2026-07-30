@@ -4,21 +4,20 @@
 ![](https://img.shields.io/npm/dt/alpinejs-component)
 ![](https://img.shields.io/github/license/markmead/alpinejs-component)
 
-Directive-based Alpine.js components with Shadow DOM encapsulation, slots, and
-cached template rendering.
+Directive-based Alpine.js components with slots and cached template rendering.
 
 **[✨ View the demos on CodePen](https://codepen.io/editor/markmead/pen/019d86f8-ed3f-7342-b0c1-b890dec04c9c?file=%2Findex.html&orientation=left&show=preview)**
 
-## V2 Overview
+## V3 Overview
 
-v2 is directive-based and built around `x-component`.
+v3 is directive-based and built around `x-component`.
 
 - No custom element registration required
 - Supports on-page templates and remote templates
-- Renders into Shadow DOM for style encapsulation
+- Renders into the light DOM, so your page's CSS applies as-is
 - Supports default and named slots from host templates
 - Emits lifecycle events for loading, loaded, and error states
-- Uses bounded caches for templates, remote responses, and stylesheets
+- Uses bounded caches for templates and remote responses
 
 ## Install
 
@@ -27,11 +26,26 @@ v2 is directive-based and built around `x-component`.
 ```html
 <script
   defer
-  src="https://unpkg.com/alpinejs-component@latest/dist/component.min.js"
+  src="https://unpkg.com/alpinejs-component@3.0.0/dist/component.min.js"
 ></script>
 
-<script defer src="https://unpkg.com/alpinejs@latest/dist/cdn.min.js"></script>
+<script defer src="https://unpkg.com/alpinejs@3.15.12/dist/cdn.min.js"></script>
 ```
+
+Pin an exact version rather than using `@latest`. A pinned URL is immutable, so you
+can add Subresource Integrity and know the file can't change under you:
+
+```html
+<script
+  defer
+  src="https://unpkg.com/alpinejs-component@3.0.0/dist/component.min.js"
+  integrity="sha384-..."
+  crossorigin="anonymous"
+></script>
+```
+
+Don't use `integrity` with a floating tag like `@latest` or `@3` — the file changes
+and the hash stops matching, which blocks the script entirely.
 
 ### With a Package Manager
 
@@ -51,15 +65,13 @@ Alpine.start()
 
 ## Usage
 
-v2 uses an Alpine directive: `x-component`.
+v3 uses an Alpine directive: `x-component`.
 
 ## Directive Reference
 
 - `x-component="expression"`: render from an on-page `<template id="...">`
 - `x-component.url="expression"`: render from a URL
 - `x-component.url.external="expression"`: allow cross-origin `http(s)` URLs
-- `x-component-styles="title-a,title-b"`: include matching document stylesheets
-- `styles="..."`: alias for `x-component-styles`
 
 The directive expression can be static or dynamic. Values are normalized as:
 
@@ -150,30 +162,42 @@ By default, `.url` only allows `http(s)` URLs on the current origin. Add the
 
 ## Styles
 
-Rendered component content is mounted in a Shadow DOM root.
-
-Use `x-component-styles` (or `styles`) to include selected document stylesheets
-by `title`.
+Rendered content is mounted in the light DOM, so your stylesheets apply to it
+with no extra setup. Style components the same way you style the rest of the
+page.
 
 ```html
-<style title="person-card">
-  article {
+<style>
+  .person-card {
     border: 1px solid #ddd;
   }
 </style>
 
-<div x-component="'person-card'" x-component-styles="person-card"></div>
+<div x-component="'person-card'"></div>
 ```
 
-Use `global` to include all local stylesheets:
+If you want styles scoped to one component, reach for `@scope` or a class
+convention rather than the plugin:
 
 ```html
-<div x-component="'person-card'" x-component-styles="global"></div>
+<style>
+  @scope (.person-card) {
+    h2 {
+      font-size: 1.25rem;
+    }
+  }
+</style>
 ```
 
 ## Slots
 
 Slot templates can be declared on the host element with `x-slot`.
+
+Each `<slot>` in the component is replaced with the matching `x-slot` content.
+A `<slot>` with no matching content keeps its own children as fallback.
+
+Slot content is authored on the host, so it evaluates against the host's Alpine
+scope, not the scope of the component it is rendered into.
 
 ```html
 <div x-component="'card-with-slot'">
@@ -196,13 +220,44 @@ Slot templates can be declared on the host element with `x-slot`.
 </template>
 ```
 
+### Slots inside `x-for` and `x-if`
+
+A `<slot>` nested in an `x-for` or `x-if` template is filled, and its content is
+repeated for every iteration.
+
+It is the one place where slot content does **not** evaluate against the host's
+scope. Alpine clones those templates at render time, and the marker that binds
+projected content to the host does not survive the clone, so the content sees the
+surrounding component scope instead:
+
+```html
+<div x-data="{ label: 'host' }">
+  <div x-component="'row-list'">
+    <template x-slot="cell">
+      <!-- Renders "component", not "host". -->
+      <span x-text="label"></span>
+    </template>
+  </div>
+</div>
+
+<template id="row-list">
+  <ul x-data="{ label: 'component', rows: [1, 2] }">
+    <template x-for="row in rows">
+      <li><slot name="cell"></slot></li>
+    </template>
+  </ul>
+</template>
+```
+
+Keep slots out of `x-for` and `x-if` if you need host scope inside them.
+
 ## Lifecycle Events
 
 The host element emits lifecycle events:
 
 - `x-component:loading` when URL loading starts
 - `x-component:loaded` when render completes
-- `x-component:error` when expression evaluation, loading, or rendering fails
+- `x-component:error` when loading or rendering fails
 
 Event detail payloads:
 
@@ -210,15 +265,16 @@ Event detail payloads:
 - `x-component:loaded`: `{ source }`
 - `x-component:error`: `{ source, error }`
 
-`source` is the resolved template id/URL for load/render failures, and the raw
-directive expression for expression-evaluation failures.
+`source` is the resolved template id/URL.
 
-Evaluation failure behavior:
+Attach listeners to an ancestor rather than the host element itself.
+`x-component:loading` is dispatched while the host's own directives are still
+being processed, so an `x-on` binding on the host can miss it. The events
+bubble, so an ancestor always sees them.
 
-- If directive expression evaluation throws, the plugin emits
-  `x-component:error` with the evaluation error.
-- The component source is treated as empty, so any currently mounted content is
-  cleared.
+If the directive expression itself throws, Alpine reports the error through its
+own handler and the component source is treated as empty, so any mounted
+content is cleared. No `x-component:error` is emitted in that case.
 
 ```html
 <div
@@ -246,17 +302,42 @@ Evaluation failure behavior:
 - `x-component.url` blocks cross-origin requests by default
 - Use `x-component.url.external` to opt into cross-origin `http(s)` requests
 
+### Content Security Policy
+
+**Alpine's default build needs `'unsafe-eval'`.** It compiles every directive
+expression with `new Function`, so this is about Alpine itself, not just this plugin.
+If your CSP can't allow `'unsafe-eval'`, use Alpine's
+[CSP build](https://alpinejs.dev/advanced/csp) (`@alpinejs/csp`). This plugin works
+with it — `x-component`, `.url`, slots, and dynamic expressions all behave the same.
+
+**Trusted Types needs both pieces.** Templates are parsed by assigning to
+`innerHTML`, which is a Trusted Types sink, so under
+`require-trusted-types-for 'script'` the plugin registers a pass-through policy named
+`alpinejs-component`. Allow that name:
+
+```http
+Content-Security-Policy: trusted-types alpinejs-component; require-trusted-types-for 'script'
+```
+
+If the name isn't allowed, the plugin logs a warning and rendering fails on that page.
+
+That header alone is not enough, though. `require-trusted-types-for 'script'` also
+blocks `new Function`, so Alpine's default build can't evaluate any expression and
+nothing renders at all. Trusted Types therefore requires the CSP build **and** the
+policy name above. That combination is what's verified to work.
+
+The policy does **not** sanitize; it exists so the plugin works under enforcement,
+not to make untrusted templates safe — the trust model above still applies.
+Sanitizing here isn't an option: `setHTML()` and the Sanitizer API strip unknown
+attributes, which removes `x-text`, `x-for`, `@click`, and every other Alpine
+directive, leaving inert markup.
+
 ## Browser Support
 
 This plugin targets modern browsers with support for:
 
-- Shadow DOM
-- `adoptedStyleSheets` (when using `x-component-styles` / `styles`)
-- `CSSStyleSheet` (when using `x-component-styles` / `styles`)
 - `template.content`
-
-If your target environment lacks these APIs, use a compatibility strategy or
-avoid Shadow DOM style adoption features.
+- `Element.replaceChildren`
 
 ## Caching
 
@@ -264,7 +345,6 @@ The plugin maintains bounded in-memory caches:
 
 - Template fragments by template id (limit: 200)
 - Remote template fetch promises by normalized URL (limit: 200)
-- Adopted stylesheets by style target list (limit: 100)
 
 When a cache exceeds its limit, oldest entries are evicted.
 
@@ -272,7 +352,9 @@ For URL mode, failed fetches are removed from cache so retries can succeed.
 
 ## Development
 
-Use pnpm. There is no npm lockfile.
+Working on the plugin needs pnpm. The published package installs fine with npm
+or yarn, but this repo has no npm lockfile, and `npm install` would add one that
+drifts from `pnpm-lock.yaml`.
 
 ```shell
 pnpm install
@@ -284,16 +366,74 @@ Available scripts:
 - `pnpm build`: lint then build minified CDN + ESM outputs in `dist/`
 - `pnpm lint`: run ESLint with `--fix`
 - `pnpm format`: run Prettier over the repo
+- `pnpm test`: run the Playwright suite against `dist/`
+- `pnpm test:ui`: run the suite in Playwright's UI mode
+- `pnpm test:serve`: serve the repo so you can open the fixture by hand
+
+## Testing
+
+Tests run in a real browser with Playwright, against the built `dist/` output
+rather than `src/`, so they cover what consumers actually install.
+
+```shell
+pnpm exec playwright install chromium
+pnpm test
+```
+
+`tests/fixtures/index.html` is a single page exercising every feature, wired up
+with `data-testid` hooks and buttons. The specs drive it, and you can open it
+yourself:
+
+```shell
+pnpm test:serve
+# then visit http://localhost:3210/tests/fixtures/index.html
+```
+
+The page is served on ports 3210 and 3211 so the cross-origin `.url` behaviour
+is testable against a real second origin.
+
+Two scenarios cannot share that page, because they need a different Alpine build
+and a policy the page itself cannot carry: `csp.html` covers the `@alpinejs/csp`
+build under an enforced `script-src 'self'`, and `trusted-types.html` covers
+`require-trusted-types-for 'script'`.
 
 ## Notes
 
 - Missing templates and failed URL requests are handled with console
   warnings/errors and lifecycle error events.
-- Expression evaluation failures dispatch `x-component:error` and clear mounted
-  content for that host.
+- A throwing directive expression is reported by Alpine's own error handler, not
+  as `x-component:error`. The host's mounted content is cleared.
 - URL responses are cached by URL.
 - Template fragments are cached by template id.
-- Stylesheets are cached by style target list.
+
+## Migration From v2
+
+v3 renders into the light DOM instead of a Shadow DOM root.
+
+Remove `x-component-styles` and `styles`. They no longer exist, because document
+styles now reach component content on their own.
+
+```html
+<!-- v2 -->
+<div x-component="'person-card'" x-component-styles="person-card"></div>
+
+<!-- v3 -->
+<div x-component="'person-card'"></div>
+```
+
+If you relied on Shadow DOM to keep page styles _out_ of a component, scope your
+CSS with `@scope` or a class convention instead.
+
+Everything else carries over. Templates, `.url`, `.external`, `x-slot`, and the
+lifecycle events are unchanged.
+
+What you gain by dropping the shadow boundary:
+
+- Page styles apply to component content with no configuration
+- `$refs` and `$root` resolve across the host boundary
+- `label[for]`, `aria-describedby`, and friends can reference component content
+- Form controls inside a component submit with an ancestor `<form>`
+- `document.querySelector` finds component content
 
 ## Migration From v1
 
@@ -304,12 +444,12 @@ v1:
 <x-component url="/public/person.html"></x-component>
 ```
 
-v2:
+v2 and v3:
 
 ```html
 <div x-component="'person'"></div>
 <div x-component.url="'/public/person.html'"></div>
 ```
 
-`window.xComponent.name` custom-element renaming is no longer used because v2 is
-directive-based.
+`window.xComponent.name` custom-element renaming is no longer used because v2
+and v3 are directive-based.

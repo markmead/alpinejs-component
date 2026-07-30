@@ -1,9 +1,33 @@
 import { remoteTemplateCache, setBoundedCacheEntry, templateFragmentCache } from './cache'
 
+// Without a policy, every render throws on pages that enforce
+// `require-trusted-types-for 'script'`. Markup passes through unchanged, because templates are
+// trusted by contract and sanitising here would strip the Alpine directives that make them work.
+function createMarkupPolicy() {
+  if (!globalThis.trustedTypes?.createPolicy) {
+    return null
+  }
+
+  try {
+    return globalThis.trustedTypes.createPolicy('alpinejs-component', {
+      createHTML: (markupString) => markupString,
+    })
+  } catch (policyError) {
+    console.warn(
+      '[alpinejs-component] Could not create a Trusted Types policy. Add "alpinejs-component" to the trusted-types CSP directive.',
+      policyError,
+    )
+
+    return null
+  }
+}
+
+const markupPolicy = createMarkupPolicy()
+
 function htmlToFragment(htmlString) {
   const templateElement = document.createElement('template')
 
-  templateElement.innerHTML = htmlString
+  templateElement.innerHTML = markupPolicy ? markupPolicy.createHTML(htmlString) : htmlString
 
   return templateElement.content
 }
@@ -18,7 +42,7 @@ function resolveTemplateUrl(urlIdentifier, { allowCrossOrigin = false } = {}) {
   let resolvedUrl
 
   try {
-    resolvedUrl = new URL(normalizedUrl, window.location.href)
+    resolvedUrl = new URL(normalizedUrl, globalThis.location.href)
   } catch {
     throw new Error(`Invalid URL for x-component.url: ${normalizedUrl}`)
   }
@@ -27,7 +51,7 @@ function resolveTemplateUrl(urlIdentifier, { allowCrossOrigin = false } = {}) {
     throw new Error(`Unsupported URL protocol for x-component.url: ${resolvedUrl.protocol}`)
   }
 
-  if (!allowCrossOrigin && resolvedUrl.origin !== window.location.origin) {
+  if (!allowCrossOrigin && resolvedUrl.origin !== globalThis.location.origin) {
     throw new Error(`Cross-origin URL blocked for x-component.url: ${resolvedUrl.href}`)
   }
 

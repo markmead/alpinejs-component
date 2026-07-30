@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>alpinejs-component — Trusted Types</title>
+
+    <script defer src="/dist/component.min.js"></script>
+
+    <script>
+      document.addEventListener('alpine:init', () => {
+        Alpine.data('cardHost', () => ({ cardName: 'tt-card', item: { name: 'Ada' } }))
+      })
+
+      // The policy arrives as a response header the spec adds, so the page cannot tell from its
+      // own markup whether it turned up. A raw innerHTML assignment is refused under
+      // enforcement and allowed without it, which is the difference the spec needs. Gated behind
+      // ?probe=1 because a refusal also logs, and the render test asserts a silent console.
+      if (new URL(location.href).searchParams.has('probe')) {
+        globalThis.isTrustedTypesEnforced = false
+
+        try {
+          document.createElement('div').innerHTML = '<b>probe</b>'
+        } catch {
+          globalThis.isTrustedTypesEnforced = true
+        }
+      }
+    </script>
+
+    <!-- Alpine's CSP build, not the default one. require-trusted-types-for 'script' blocks
+         new Function, so the default build cannot evaluate a single expression here. -->
+    <script defer src="/node_modules/@alpinejs/csp/dist/cdn.min.js"></script>
+
+    <link rel="stylesheet" href="/tests/fixtures/tailwind.css" />
+  </head>
+
+  <body class="page">
+    <header class="masthead">
+      <h1>Trusted Types</h1>
+
+      <p class="lede">
+        The plugin renders through a Trusted Types policy, so template markup survives
+        <code>require-trusted-types-for 'script'</code> instead of throwing on every mount.
+      </p>
+
+      <p class="note">
+        Served with a Content-Security-Policy header by the spec, because a document-level policy
+        cannot be set from the page itself. Open this page by hand and no policy applies, which is
+        why the spec asserts the enforcement separately. The rest of the plugin is covered on
+        <a class="underline underline-offset-2" href="/tests/fixtures/index.html">index.html</a>.
+      </p>
+    </header>
+
+    <main class="sections">
+      <section class="section" id="render">
+        <h2>Render and project under an enforced policy</h2>
+
+        <p class="note">
+          The card is cloned from a template and the <code>actions</code> slot is filled, both of
+          which write markup that the policy would otherwise refuse.
+        </p>
+
+        <template id="tt-card">
+          <article class="card grid gap-3">
+            <h2
+              class="font-semibold"
+              data-testid="trusted-types-card-title"
+              x-text="item.name"
+            ></h2>
+            <footer class="controls"><slot name="actions"></slot></footer>
+          </article>
+        </template>
+
+        <div class="result" x-data="cardHost">
+          <div data-testid="trusted-types-host" x-component="cardName">
+            <template x-slot="actions"
+              ><b data-testid="trusted-types-slot-content">projected</b></template
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

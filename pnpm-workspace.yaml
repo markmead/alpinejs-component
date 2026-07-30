@@ -4,3 +4,5 @@ minimumReleaseAge: 2880
 # esbuild's postinstall fetches its platform binary; pnpm blocks build scripts by default.
 allowBuilds:
   esbuild: true
+  # Only needed for Tailwind's --watch, which the test pipeline never uses.
+  '@parcel/watcher': false

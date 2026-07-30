@@ -24,6 +24,11 @@ pnpm-debug.log*
 .env.test.local
 .env.production.local
 
-# testing
-index.html
-/public
+# playwright
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache
+
+# Compiled by pnpm build:css
+tests/fixtures/tailwind.css

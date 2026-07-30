@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>alpinejs-component</title>
+
+    <script defer src="/dist/component.min.js"></script>
+    <script defer src="/tests/fixtures/lifecycle-log.js"></script>
+    <script defer src="/tests/fixtures/source-view.js"></script>
+    <script defer src="/node_modules/alpinejs/dist/cdn.min.js"></script>
+
+    <link rel="stylesheet" href="/tests/fixtures/tailwind.css" />
+  </head>
+
+  <body class="page">
+    <header class="masthead">
+      <h1>x-component</h1>
+
+      <p class="lede">
+        Render a template from the page or a URL into any element, fill its slots, and keep the
+        result in the light DOM where the rest of your page can reach it.
+      </p>
+
+      <p class="note">
+        Every section below shows the template it renders, the markup that uses it, and the live
+        result, so nothing here needs an editor to follow. Two sections are marked
+        <span class="flag">Known bug</span> and show output that is wrong today. This page is also
+        the fixture the Playwright suite drives;
+        <a class="underline underline-offset-2" href="/tests/fixtures/csp.html">csp.html</a> and
+        <a class="underline underline-offset-2" href="/tests/fixtures/trusted-types.html"
+          >trusted-types.html</a
+        >
+        cover the two scenarios it cannot.
+      </p>
+    </header>
+
+    <main class="sections">
+      <section class="section" id="render">
+        <h2>Render a template from the page</h2>
+
+        <p class="note">
+          The expression is the <code>id</code> of a <code>&lt;template&gt;</code> on the page. Its
+          content is cloned into the host element and initialized against the host's scope, so
+          <code>item</code> below resolves to the host's data, including inside an
+          <code>x-for</code>.
+        </p>
+
+        <template id="person-card">
+          <article class="card grid gap-3">
+            <div class="grid gap-0.5">
+              <h3 class="font-semibold" x-text="item.name"></h3>
+              <p class="text-sm text-slate-600" x-text="`Age ${item.age}`"></p>
+            </div>
+
+            <ul class="flex flex-wrap gap-2">
+              <template x-for="skill in item.skills" :key="skill">
+                <li
+                  class="rounded-full bg-slate-200 px-2.5 py-0.5 text-xs font-medium"
+                  x-text="skill"
+                ></li>
+              </template>
+            </ul>
+          </article>
+        </template>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#person-card"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
+
+          <div class="result" data-usage-markup>
+            <div
+              data-testid="person-card-host"
+              x-data="{ item: { name: 'John', age: 25, skills: ['JavaScript', 'CSS'] } }"
+              x-component="'person-card'"
+            ></div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="section" id="styles">
+        <h2>Style a component with the page's stylesheet</h2>
+
+        <p class="note">
+          The utilities on the card below come from the page's compiled Tailwind build and are used
+          nowhere except inside a component template. Nothing opts in: the content renders into the
+          light DOM, so the stylesheet already applies to it. In v2 the shadow boundary cut it off,
+          and reaching it meant naming a stylesheet with <code>x-component-styles</code>. This is
+          issue #41, so this one card spells its chrome out in utilities rather than borrowing the
+          page's <code>.card</code> class.
+        </p>
+
+        <template id="styled-card">
+          <p class="styled rounded-xl border border-slate-200 bg-slate-50 p-4 text-proof">
+            Styled by Tailwind utilities from the page stylesheet
+          </p>
+        </template>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#styled-card"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
+
+          <div class="result" data-usage-markup>
+            <div data-testid="styled-card-host" x-data x-component="'styled-card'"></div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="section" id="slots">
+        <h2>Fill a component's slots</h2>
+
+        <p class="note">
+          A <code>&lt;template x-slot&gt;</code> on the host fills the default
+          <code>&lt;slot&gt;</code>, and <code>x-slot="actions"</code> fills the one named
+          <code>actions</code>. A slot nobody fills keeps its own children as fallback. Slot content
+          is authored on the host, so it reads and writes the host's scope: <code>owner</code> is
+          the host's <code>Ada</code>, not the component's own value, and the button updates the
+          host.
+        </p>
+
+        <template id="slotted-card">
+          <article class="card grid gap-3" x-data="{ owner: 'component-scope' }">
+            <slot></slot>
+
+            <footer class="controls"><slot name="actions"></slot></footer>
+
+            <aside class="text-sm text-slate-500">
+              <slot name="unfilled">Fallback content for an unfilled slot</slot>
+            </aside>
+          </article>
+        </template>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#slotted-card"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
+
+          <div class="result" data-usage-markup>
+            <div
+              data-testid="slotted-card-host"
+              x-data="{ owner: 'Ada' }"
+              x-component="'slotted-card'"
+            >
+              <template x-slot>
+                <p>Owned by <strong data-testid="slot-owner-name" x-text="owner"></strong></p>
+              </template>
+
+              <template x-slot="actions">
+                <button
+                  class="button"
+                  data-testid="rename-owner-button"
+                  type="button"
+                  @click="owner = 'Grace'"
+                >
+                  Rename owner
+                </button>
+              </template>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="section" id="duplicate-slots">
+        <h2>Fill one slot from two templates</h2>
+
+        <p class="note">
+          Two templates naming the same slot both fill it, in document order, the way a native slot
+          behaves. This renders the same card as the section above.
+        </p>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#slotted-card"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
+
+          <div class="result" data-usage-markup>
+            <div data-testid="duplicate-slots-host" x-data x-component="'slotted-card'">
+              <template x-slot="actions"><b class="duplicate-item">one</b></template>
+              <template x-slot="actions"><b class="duplicate-item">two</b></template>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="section" id="looped-slots">
+        <h2>Repeat a slot for every row <span class="flag">Known bug</span></h2>
+
+        <p class="note">
+          A <code>&lt;slot&gt;</code> nested in an <code>x-for</code> or <code>x-if</code> template
+          is filled, once per iteration. It is the one place slot content does not get the host's
+          scope: the cells below ask for <code>owner</code>, which is <code>Ada</code> on the host,
+          and render the component's <code>component-scope</code> instead. Alpine clones those
+          templates with <code>cloneNode</code>, and the expando binding projected content to the
+          host does not survive the clone. Keep slots out of <code>x-for</code> and
+          <code>x-if</code> when the content needs host scope.
+        </p>
+
+        <template id="looped-card">
+          <ul class="grid gap-2" x-data="{ owner: 'component-scope', rows: [1, 2] }">
+            <template x-for="row in rows" :key="row">
+              <li class="slot-cell"><slot name="cell"></slot></li>
+            </template>
+          </ul>
+        </template>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#looped-card"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result, showing the wrong scope</figcaption>
+
+          <div class="result result-bug" data-usage-markup>
+            <div
+              data-testid="looped-card-host"
+              x-data="{ owner: 'Ada' }"
+              x-component="'looped-card'"
+            >
+              <template x-slot="cell">
+                <span class="looped-slot-owner" x-text="owner"></span>
+              </template>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="section" id="dynamic">
+        <h2>Swap the component at runtime</h2>
+
+        <p class="note">
+          The expression is reactive. Changing it destroys the tree that was mounted and renders the
+          new one in its place, and the host's slot content is projected again every time, including
+          after a component that has no slots to fill. An expression that resolves to an empty
+          string unmounts and leaves the host empty.
+        </p>
+
+        <template id="view-a">
+          <p class="card">View A [<slot></slot>]</p>
+        </template>
+
+        <template id="view-b">
+          <p class="card">View B [<slot></slot>]</p>
+        </template>
+
+        <template id="slotless">
+          <p class="card">A component with no slots</p>
+        </template>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Templates</figcaption>
+          <pre class="code"><code data-source="#view-a, #view-b, #slotless"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
+
+          <div class="result" data-usage-markup>
+            <div class="grid gap-3" x-data="{ activeView: 'view-a', slotLabel: 'first' }">
+              <div class="controls">
+                <button
+                  class="button"
+                  data-testid="show-view-a-button"
+                  type="button"
+                  @click="activeView = 'view-a'"
+                >
+                  View A
+                </button>
+
+                <button
+                  class="button"
+                  data-testid="show-view-b-button"
+                  type="button"
+                  @click="activeView = 'view-b'"
+                >
+                  View B
+                </button>
+
+                <button
+                  class="button"
+                  data-testid="show-slotless-button"
+                  type="button"
+                  @click="activeView = 'slotless'"
+                >
+                  Slotless
+                </button>
+
+                <button
+                  class="button"
+                  data-testid="clear-view-button"
+                  type="button"
+                  @click="activeView = ''"
+                >
+                  Clear
+                </button>
+
+                <button
+                  class="button"
+                  data-testid="relabel-slot-button"
+                  type="button"
+                  @click="slotLabel = 'updated'"
+                >
+                  Relabel slot
+                </button>
+              </div>
+
+              <div data-testid="dynamic-view-host" x-component="activeView">
+                <template x-slot>
+                  <span data-testid="dynamic-slot-label" x-text="slotLabel"></span>
+                </template>
+              </div>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="section" id="url">
+        <h2>Load a template from a URL</h2>
+
+        <p class="note">
+          With the <code>.url</code> modifier the expression is a URL to fetch rather than the id of
+          a template on the page. Everything else is the same, slots included. Because the fetch is
+          asynchronous, the host emits <code>x-component:loading</code> and then
+          <code>x-component:loaded</code>. The events bubble, so the log below listens on the
+          wrapper rather than the host, and a same-origin URL is required unless you add
+          <code>.external</code>.
+        </p>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Template, fetched from remote-card.html</figcaption>
+          <pre class="code"><code data-source-url="remote-card.html"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
+
+          <div class="result" data-usage-markup>
+            <div
+              class="grid gap-2"
+              x-data="{ eventLog: [] }"
+              @x-component:loading="eventLog.push('loading')"
+              @x-component:loaded="eventLog.push('loaded')"
+            >
+              <div
+                data-testid="remote-card-host"
+                x-data="{ item: { name: 'Watched' } }"
+                x-component.url="'remote-card.html'"
+              >
+                <template x-slot="actions">
+                  <button class="button" type="button">Go</button>
+                </template>
+              </div>
+
+              <output
+                class="log"
+                data-testid="lifecycle-event-log"
+                x-text="eventLog.join(' → ')"
+              ></output>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="section" id="boundary">
+        <h2>Reach across the component boundary</h2>
+
+        <p class="note">
+          The label outside the component focuses the input inside it, that input submits with the
+          form wrapped around the component, <code>document</code> queries find it, and
+          <code>$refs</code> and <code>$root</code> resolve past the host into the surrounding tree.
+          Every one of these was broken by the shadow boundary in v2, and together they are the
+          reason v3 renders into the light DOM.
+        </p>
+
+        <template id="proof-card">
+          <div class="card grid gap-2">
+            <input class="field" id="proof-input" name="field" value="submitted" />
+
+            <p class="text-sm">
+              <span class="text-slate-600">$refs across the boundary:</span>
+              <strong x-text="$refs.hostMessage.textContent"></strong>
+            </p>
+
+            <p class="text-sm">
+              <span class="text-slate-600">$root across the boundary:</span>
+              <strong x-text="$root.tagName"></strong>
+            </p>
+          </div>
+        </template>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#proof-card"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
+
+          <div class="result" data-usage-markup>
+            <div class="grid gap-2" x-data="{ formResult: '' }">
+              <span x-ref="hostMessage" hidden>from-host</span>
+
+              <form
+                class="grid gap-3"
+                data-testid="boundary-form"
+                action="#"
+                @submit.prevent="formResult = new URLSearchParams(new FormData($el)).toString()"
+              >
+                <label class="text-sm font-medium" for="proof-input">
+                  A label outside the component targets this input
+                </label>
+
+                <div data-testid="proof-card-host" x-component="'proof-card'"></div>
+
+                <button
+                  class="button justify-self-start"
+                  data-testid="submit-form-button"
+                  type="submit"
+                >
+                  Submit the form
+                </button>
+              </form>
+
+              <output class="log" data-testid="form-result-log" x-text="formResult"></output>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="section" id="teardown">
+        <h2>Prove a swapped-out component is gone</h2>
+
+        <p class="note">
+          The component counts its own initializations and effect runs in a store, which makes two
+          failures visible. It initializes once and not twice, because the mount is wrapped in
+          <code>Alpine.mutateDom</code> and Alpine's own mutation observer therefore leaves it
+          alone. Swap it for the slotless card and bump the store again: the effect count holds,
+          because the tree that left the page was destroyed rather than left running.
+        </p>
+
+        <template id="tracked">
+          <p
+            class="card"
+            x-data
+            x-init="$store.renderProbe.initCount++"
+            x-effect="$store.renderProbe.tickCount; $store.renderProbe.effectCount++"
+          >
+            Tracked component
+          </p>
+        </template>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Template</figcaption>
+          <pre class="code"><code data-source="#tracked"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
+
+          <div class="result" data-usage-markup>
+            <div class="grid gap-3" x-data="{ trackedView: 'tracked' }">
+              <div class="controls">
+                <button
+                  class="button"
+                  data-testid="swap-away-button"
+                  type="button"
+                  @click="trackedView = 'slotless'"
+                >
+                  Swap away
+                </button>
+
+                <button
+                  class="button"
+                  data-testid="bump-store-button"
+                  type="button"
+                  @click="$store.renderProbe.tickCount++"
+                >
+                  Bump store
+                </button>
+              </div>
+
+              <div data-testid="tracked-card-host" x-component="trackedView"></div>
+
+              <output
+                class="log"
+                data-testid="probe-count-log"
+                x-text="`inits: ${$store.renderProbe.initCount}, effects: ${$store.renderProbe.effectCount}`"
+              ></output>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="section" id="failures">
+        <h2>Handle a template that will not load</h2>
+
+        <p class="note">
+          Each of these leaves the host empty and reports the reason, so expect console noise from
+          this section. A URL that fails is not cached, so retrying the same host with a working one
+          succeeds; a cross-origin URL is blocked until you add <code>.external</code>, and a
+          protocol that is not <code>http</code> or <code>https</code> is refused outright.
+        </p>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
+
+          <div class="result" data-usage-markup>
+            <dl class="cases" x-data>
+              <div>
+                <dt>Missing template</dt>
+                <dd data-testid="missing-template-host" x-component="'does-not-exist'"></dd>
+              </div>
+
+              <div>
+                <dt>Cross-origin, blocked by default</dt>
+                <dd
+                  data-testid="cross-origin-blocked-host"
+                  x-component.url="'http://localhost:3211/tests/fixtures/remote-card.html'"
+                ></dd>
+              </div>
+
+              <div>
+                <dt>Cross-origin, allowed with <code>.external</code></dt>
+                <dd
+                  data-testid="cross-origin-external-host"
+                  x-data="{ item: { name: 'External' } }"
+                  x-component.url.external="'http://localhost:3211/tests/fixtures/remote-card.html'"
+                ></dd>
+              </div>
+
+              <div>
+                <dt>Unsupported protocol</dt>
+                <dd
+                  data-testid="unsupported-protocol-host"
+                  x-component.url="'ftp://example.com/card.html'"
+                ></dd>
+              </div>
+            </dl>
+
+            <div
+              class="flex flex-wrap items-center gap-3"
+              x-data="{ cardUrl: 'missing-card.html', item: { name: 'Retried' } }"
+            >
+              <span class="text-sm text-slate-600">Failed fetch, then retried</span>
+
+              <button
+                class="button"
+                data-testid="retry-with-real-url-button"
+                type="button"
+                @click="cardUrl = 'remote-card.html'"
+              >
+                Retry with a real URL
+              </button>
+
+              <span class="basis-full" data-testid="retried-card-host" x-component.url="cardUrl">
+              </span>
+            </div>
+          </div>
+        </figure>
+      </section>
+
+      <section class="section" id="throwing">
+        <h2>Throw from the component expression <span class="flag">Known bug</span></h2>
+
+        <p class="note">
+          When the expression itself throws, the host stays empty and no
+          <code>x-component:error</code> event is emitted, so a listener waiting for one never hears
+          about it. Alpine's evaluator catches the throw and reports it to the console out of band,
+          which means the plugin never sees a failure to report. The failed URL in the section above
+          does emit the event; this does not.
+        </p>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result, showing the event that never arrives</figcaption>
+
+          <div class="result result-bug" data-usage-markup>
+            <div
+              class="grid gap-2"
+              x-data="{ errorEvents: [] }"
+              @x-component:error="errorEvents.push($event.detail.source)"
+            >
+              <span data-testid="throwing-expression-host" x-component="nope.deeply.missing"></span>
+
+              <output
+                class="log"
+                x-text="errorEvents.length ? errorEvents.join(', ') : 'no x-component:error event'"
+              ></output>
+            </div>
+          </div>
+        </figure>
+      </section>
+    </main>
+
+    <script>
+      document.addEventListener('alpine:init', () => {
+        Alpine.store('renderProbe', { tickCount: 0, initCount: 0, effectCount: 0 })
+      })
+    </script>
+  </body>
+</html>

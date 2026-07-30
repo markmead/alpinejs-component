@@ -20,4 +20,3 @@ export function setBoundedCacheEntry(cacheMap, cacheKey, cacheValue) {
 
 export const templateFragmentCache = createBoundedCache(200)
 export const remoteTemplateCache = createBoundedCache(200)
-export const adoptedStylesheetCache = createBoundedCache(100)
