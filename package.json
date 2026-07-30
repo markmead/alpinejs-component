@@ -47,11 +47,11 @@
   "devDependencies": {
     "@alpinejs/csp": "^3.15.12",
     "@eslint/js": "^10.0.1",
-    "@playwright/test": "^1.61.1",
+    "@playwright/test": "^1.62.0",
     "@tailwindcss/cli": "^4.3.3",
     "alpinejs": "^3.15.12",
     "esbuild": "^0.27.7",
-    "eslint": "^10.7.0",
+    "eslint": "^10.8.0",
     "prettier": "^3.9.6",
     "serve": "^14.2.6",
     "tailwindcss": "^4.3.3"
