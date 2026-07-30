@@ -15,6 +15,14 @@ export default defineConfig({
       name: 'chromium',
       use: devices['Desktop Chrome'],
     },
+    {
+      name: 'firefox',
+      use: devices['Desktop Firefox'],
+    },
+    {
+      name: 'webkit',
+      use: devices['Desktop Safari'],
+    },
   ],
   webServer: {
     // The repo root is served so fixtures can load dist/ and Alpine from node_modules.

@@ -73,12 +73,18 @@ Playwright suite on every push to `main` and every pull request.
 ## Testing
 
 ```shell
-pnpm exec playwright install chromium
+pnpm exec playwright install chromium firefox webkit
 pnpm test
 ```
 
-Tests run in a real browser against `dist/`, not `src/`, so they cover what
+Tests run in real browsers against `dist/`, not `src/`, so they cover what
 consumers install. `pnpm test` rebuilds first.
+
+Every spec runs on all three engines. Trusted Types is implemented everywhere now,
+so `csp.spec.js` and `trusted-types.spec.js` are not pinned to Chromium — if an
+assertion only holds on one engine, that is a bug in the assertion. Two already
+were: WebKit serializes `oklch()` hues with more precision, and Firefox attributes
+its engine deprecation warnings to whatever bundle was on the stack.
 
 `tests/fixtures/index.html` is a single page covering every feature, wired with
 `data-testid` hooks and buttons. Add new scenarios to that page rather than creating

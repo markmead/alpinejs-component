@@ -49,15 +49,15 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
-      - name: Install Chromium
+      - name: Install browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
 
-      # A restored cache carries the browser binary but not the system libraries it
-      # links against, which live outside the cached path.
-      - name: Install Chromium system dependencies
+      # A restored cache carries the browser binaries but not the system libraries they
+      # link against, which live outside the cached path.
+      - name: Install browser system dependencies
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm exec playwright install-deps chromium
+        run: pnpm exec playwright install-deps chromium firefox webkit
 
       - name: Test
         run: pnpm exec playwright test

@@ -10,7 +10,19 @@ const ENFORCED_POLICY = "require-trusted-types-for 'script'"
 async function gotoWithPolicy(page, trustedTypesDirective, { usesProbe = false } = {}) {
   const consoleMessages = []
 
-  page.on('console', (consoleMessage) => consoleMessages.push(consoleMessage.text()))
+  // Firefox attributes its own engine deprecation warnings to whatever script was on the stack,
+  // which here is Alpine's bundle. Dropping foreign warnings keeps what the specs below actually
+  // read: the plugin's own warning, and any hard error a refused assignment would raise.
+  page.on('console', (consoleMessage) => {
+    const isForeignWarning =
+      consoleMessage.type() === 'warning' && !consoleMessage.text().includes('[alpinejs-component]')
+
+    if (isForeignWarning) {
+      return
+    }
+
+    consoleMessages.push(consoleMessage.text())
+  })
 
   await page.route(`**/${FIXTURE_PATH}*`, async (route) => {
     const originalResponse = await route.fetch()
