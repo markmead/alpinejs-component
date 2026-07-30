@@ -44,6 +44,7 @@ commas, 100 columns (80 for Markdown). Run `pnpm format` rather than hand-aligni
 - `builds/` — the two entry points esbuild consumes.
 - `dist/` — **committed to the repo** and published. Rebuild with `pnpm build`
   whenever `src/` or `builds/` changes, and include the result in the same commit.
+  CI rebuilds and fails the run if the committed output does not match.
 
 Content renders into the light DOM. There is no Shadow DOM, and `<slot>` is resolved
 by manual projection rather than natively — see the slot handling in `src/slots.js`
@@ -60,7 +61,11 @@ pnpm build
 
 - `pnpm build` — lint, then build minified CDN and ESM outputs into `dist/`
 - `pnpm lint` — ESLint with `--fix`
+- `pnpm lint:check` — ESLint without `--fix`, which is what CI runs
 - `pnpm format` — Prettier over the repo
+
+`.github/workflows/ci.yml` runs lint, build, the committed-output check, and the
+Playwright suite on every push to `main` and every pull request.
 
 `package.json` has a `files` allowlist. Anything outside `dist/`, `src/`, and
 `builds/` is not published, so check `pnpm pack --dry-run` after touching packaging.

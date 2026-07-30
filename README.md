@@ -365,10 +365,15 @@ Available scripts:
 
 - `pnpm build`: lint then build minified CDN + ESM outputs in `dist/`
 - `pnpm lint`: run ESLint with `--fix`
+- `pnpm lint:check`: run ESLint without fixing, which is what CI runs
 - `pnpm format`: run Prettier over the repo
 - `pnpm test`: run the Playwright suite against `dist/`
 - `pnpm test:ui`: run the suite in Playwright's UI mode
 - `pnpm test:serve`: serve the repo so you can open the fixture by hand
+
+`dist/` is committed, so rebuild with `pnpm build` and include the result in the
+same commit whenever `src/` or `builds/` changes. CI rebuilds and fails if the
+committed output differs from what the source produces.
 
 ## Testing
 

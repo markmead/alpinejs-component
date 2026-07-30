@@ -20,6 +20,7 @@
     "url": "https://github.com/markmead/alpinejs-component/issues"
   },
   "type": "module",
+  "packageManager": "pnpm@11.1.3",
   "main": "dist/component.esm.js",
   "module": "dist/component.esm.js",
   "unpkg": "dist/component.min.js",
@@ -39,7 +40,9 @@
     "build:css": "tailwindcss --input tests/fixtures/app.css --output tests/fixtures/tailwind.css",
     "format": "prettier --write .",
     "lint": "eslint . --fix",
+    "lint:check": "eslint .",
     "prebuild": "pnpm run lint",
+    "prepublishOnly": "pnpm run build",
     "test": "pnpm run build && playwright test",
     "test:serve": "pnpm run build:css && serve . --config tests/serve.json --listen 3210 --listen 3211 --cors --no-clipboard --no-request-logging",
     "test:ui": "pnpm run build && playwright test --ui"

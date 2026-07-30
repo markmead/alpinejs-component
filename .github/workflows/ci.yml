@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # --fix is deliberately skipped: CI should fail on a violation rather than
+      # silently rewrite it and build something nobody reviewed.
+      - name: Lint
+        run: pnpm run lint:check
+
+      - name: Build
+        run: pnpm run build
+
+      # dist/ is committed and the suite runs against it, so a stale build would let
+      # tests pass against code that is not the code under review.
+      - name: Check committed output is up to date
+        run: |
+          if ! git diff --exit-code; then
+            echo "::error::Committed output is stale. Run 'pnpm build' and commit the result."
+            exit 1
+          fi
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Install Chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps chromium
+
+      # A restored cache carries the browser binary but not the system libraries it
+      # links against, which live outside the cached path.
+      - name: Install Chromium system dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium
+
+      - name: Test
+        run: pnpm exec playwright test
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
