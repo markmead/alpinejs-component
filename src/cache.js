@@ -1,22 +1,15 @@
-const DEFAULT_CACHE_LIMIT = 100
-
-function createBoundedCache(cacheLimit = DEFAULT_CACHE_LIMIT) {
-  const boundedCache = new Map()
-
-  boundedCache.maxEntries = cacheLimit
-
-  return boundedCache
-}
+const CACHE_ENTRY_LIMIT = 200
 
 export function setBoundedCacheEntry(cacheMap, cacheKey, cacheValue) {
   cacheMap.set(cacheKey, cacheValue)
 
-  while (cacheMap.size > cacheMap.maxEntries) {
+  // A Map iterates in insertion order, so its first key is always the oldest entry.
+  while (cacheMap.size > CACHE_ENTRY_LIMIT) {
     const oldestCacheKey = cacheMap.keys().next().value
 
     cacheMap.delete(oldestCacheKey)
   }
 }
 
-export const templateFragmentCache = createBoundedCache(200)
-export const remoteTemplateCache = createBoundedCache(200)
+export const templateFragmentCache = new Map()
+export const remoteTemplateCache = new Map()
