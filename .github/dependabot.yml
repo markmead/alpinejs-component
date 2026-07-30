@@ -1,0 +1,30 @@
+version: 2
+
+updates:
+  # Actions are pinned to commit SHAs, which cannot be watched for new releases
+  # by hand. Dependabot reads the trailing version comment on each pin and bumps
+  # the SHA and the comment together.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns:
+          - '*'
+
+  # "npm" is Dependabot's name for the JavaScript ecosystem as a whole, not the
+  # npm CLI. It resolves against pnpm-lock.yaml with pnpm, so no package-lock.json
+  # is ever produced.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: deps
+    groups:
+      dev-dependencies:
+        patterns:
+          - '*'
