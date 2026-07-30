@@ -24,7 +24,9 @@ test('Tailwind utilities apply to component content without any opt-in', async (
   const styledCard = page.getByTestId('styled-card-host').locator('.styled')
 
   await expect(styledCard).toHaveCSS('padding', '16px')
-  await expect(styledCard).toHaveCSS('background-color', 'oklch(0.984 0.003 247.858)')
+  // Matched loosely on the hue: WebKit serializes it as 247.858002 where the others say
+  // 247.858. What matters is that the utility reached the content at all.
+  await expect(styledCard).toHaveCSS('background-color', /^oklch\(0\.984 0\.003 247\.858/)
   await expect(styledCard).toHaveCSS('color', 'rgb(0, 128, 0)')
 })
 

@@ -339,6 +339,9 @@ This plugin targets modern browsers with support for:
 - `template.content`
 - `Element.replaceChildren`
 
+The suite runs against Chromium, Firefox and WebKit on every change, so that
+support is tested rather than assumed.
+
 ## Caching
 
 The plugin maintains bounded in-memory caches:
@@ -377,11 +380,12 @@ committed output differs from what the source produces.
 
 ## Testing
 
-Tests run in a real browser with Playwright, against the built `dist/` output
-rather than `src/`, so they cover what consumers actually install.
+Tests run in real browsers with Playwright, against the built `dist/` output
+rather than `src/`, so they cover what consumers actually install. The suite runs
+on Chromium, Firefox and WebKit, and CI runs all three.
 
 ```shell
-pnpm exec playwright install chromium
+pnpm exec playwright install chromium firefox webkit
 pnpm test
 ```
 
