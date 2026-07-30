@@ -53,7 +53,7 @@
     "@playwright/test": "^1.62.0",
     "@tailwindcss/cli": "^4.3.3",
     "alpinejs": "^3.15.12",
-    "esbuild": "^0.27.7",
+    "esbuild": "^0.28.1",
     "eslint": "^10.8.0",
     "prettier": "^3.9.6",
     "serve": "^14.2.6",
