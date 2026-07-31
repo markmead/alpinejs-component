@@ -358,6 +358,66 @@
         </figure>
       </section>
 
+      <section class="section" id="coerced">
+        <h2>Use a source that is not a string</h2>
+
+        <p class="note">
+          Whatever the expression evaluates to is coerced with <code>String()</code> and trimmed
+          before the lookup, so an id padded with whitespace and an object with its own
+          <code>toString</code> both resolve to the template they name. A value that stringifies to
+          nothing but whitespace counts as no source at all and unmounts the component, rather than
+          being looked up as a template id made of spaces.
+        </p>
+
+        <template id="coerced-card">
+          <p class="card">A template named by a padded string</p>
+        </template>
+
+        <template id="coerced-note">
+          <p class="card">A template named by an object</p>
+        </template>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Templates</figcaption>
+          <pre class="code"><code data-source="#coerced-card, #coerced-note"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Usage</figcaption>
+          <pre class="code"><code data-source="usage"></code></pre>
+        </figure>
+
+        <figure class="panel">
+          <figcaption class="panel-label">Result</figcaption>
+
+          <div class="result" data-usage-markup>
+            <div class="grid gap-3" x-data="{ cardSource: '  coerced-card  ' }">
+              <div class="controls">
+                <button
+                  class="button"
+                  data-testid="use-object-source-button"
+                  type="button"
+                  @click="cardSource = { toString: () => '  coerced-note  ' }"
+                >
+                  Use an object
+                </button>
+
+                <button
+                  class="button"
+                  data-testid="use-blank-source-button"
+                  type="button"
+                  @click="cardSource = { toString: () => '   ' }"
+                >
+                  Use a blank object
+                </button>
+              </div>
+
+              <div data-testid="coerced-source-host" x-component="cardSource"></div>
+            </div>
+          </div>
+        </figure>
+      </section>
+
       <section class="section" id="url">
         <h2>Load a template from a URL</h2>
 

@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test'
 
+import { lifecycleEventsFor } from './helpers'
+
 test.beforeEach(async ({ page }) => {
   await page.goto('index.html')
   await expect(page.getByTestId('person-card-host').locator('.card')).toBeVisible()
@@ -34,6 +36,34 @@ test('unmounts when the expression resolves to empty', async ({ page }) => {
   await page.getByTestId('clear-view-button').click()
 
   await expect(page.getByTestId('dynamic-view-host')).toBeEmpty()
+})
+
+test('trims whitespace around the resolved source', async ({ page }) => {
+  await expect(page.getByTestId('coerced-source-host').locator('.card')).toContainText(
+    'named by a padded string',
+  )
+})
+
+test('coerces a non-string source to a string', async ({ page }) => {
+  await page.getByTestId('use-object-source-button').click()
+
+  await expect(page.getByTestId('coerced-source-host').locator('.card')).toContainText(
+    'named by an object',
+  )
+})
+
+test('treats a non-string source that stringifies to whitespace as empty', async ({ page }) => {
+  await page.getByTestId('use-blank-source-button').click()
+
+  await expect(page.getByTestId('coerced-source-host')).toBeEmpty()
+
+  // The lone loaded event from the first render is the positive control. Trimming only strings
+  // would send '   ' on to be looked up as a template id, and the miss would add an error here.
+  const lifecycleEventTypes = (await lifecycleEventsFor(page, 'coerced-source-host')).map(
+    (lifecycleEvent) => lifecycleEvent.type,
+  )
+
+  expect(lifecycleEventTypes).toEqual(['x-component:loaded'])
 })
 
 test('renders nothing for a missing template', async ({ page }) => {
