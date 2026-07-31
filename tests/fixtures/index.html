@@ -367,8 +367,8 @@
           asynchronous, the host emits <code>x-component:loading</code> and then
           <code>x-component:loaded</code>. The events bubble, so the log below listens on the
           wrapper rather than the host, and a same-origin URL is required unless you add
-          <code>.external</code>. Each URL is fetched and parsed once, so swapping away and back
-          reuses what is already in the cache rather than hitting the network again.
+          <code>.external</code>. Fetched templates are cached by URL, so swapping away and back
+          reuses what is already there rather than hitting the network again.
         </p>
 
         <figure class="panel">

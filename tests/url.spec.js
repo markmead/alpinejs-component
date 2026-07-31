@@ -28,13 +28,19 @@ test('rejects non-http protocols', async ({ page }) => {
 test('serves an already-loaded URL from the cache rather than refetching it', async ({ page }) => {
   const cachedCardHost = page.getByTestId('cached-card-host')
 
-  // Settle the first load before listening, so only what happens after the swap is counted.
+  // Settle both same-origin readers of remote-card.html before listening, so only what happens
+  // after the swap is counted: the component itself, and the source panel that fetches the same
+  // file to display it.
   await expect(cachedCardHost.locator('h2')).toHaveText('Cached')
+  await expect(page.locator('[data-source-url="remote-card.html"]')).not.toBeEmpty()
+
+  // Matched exactly rather than by substring, so the cross-origin copy on port 3211 is ignored.
+  const cachedCardUrl = new URL('remote-card.html', page.url()).href
 
   const cardRequestUrls = []
 
   page.on('request', (pageRequest) => {
-    if (pageRequest.url().includes('remote-card.html')) {
+    if (pageRequest.url() === cachedCardUrl) {
       cardRequestUrls.push(pageRequest.url())
     }
   })
