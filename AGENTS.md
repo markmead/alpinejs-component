@@ -64,6 +64,9 @@ pnpm build
 - `pnpm lint:check` — ESLint without `--fix`, which is what CI runs
 - `pnpm format` — Prettier over the repo
 
+`pnpm build` runs `pnpm lint` first, so it can rewrite files in `src/` on its way
+through. `lint:check` is the one that leaves the tree alone.
+
 `.github/workflows/ci.yml` runs lint, build, the committed-output check, and the
 Playwright suite on every push to `main` and every pull request.
 
@@ -79,6 +82,19 @@ pnpm test
 
 Tests run in real browsers against `dist/`, not `src/`, so they cover what
 consumers install. `pnpm test` rebuilds first.
+
+Playwright on its own does not, which is the fast inner loop and its one trap: a
+bare `pnpm exec playwright test` after editing `src/` runs against the previous
+build and passes or fails for the wrong reason. Build first, or use `pnpm test`.
+CI builds for the same reason before it calls `pnpm exec playwright test`.
+
+```shell
+pnpm exec playwright test tests/slots.spec.js                     # one spec file
+pnpm exec playwright test tests/slots.spec.js --project=chromium  # one engine
+pnpm exec playwright test -g 'projects default and named slot'    # by test title
+pnpm exec playwright test --headed --project=chromium             # watch it run
+pnpm exec playwright test tests/url.spec.js --debug               # step through
+```
 
 Every spec runs on all three engines. Trusted Types is implemented everywhere now,
 so `csp.spec.js` and `trusted-types.spec.js` are not pinned to Chromium — if an
@@ -99,7 +115,16 @@ or a document-level policy that `index.html` cannot carry — `csp.html` and
 same log whichever page a spec drives.
 
 It is served on ports 3210 and 3211 so cross-origin `.url` behaviour can be tested
-against a real second origin.
+against a real second origin. `reuseExistingServer` is on outside CI, so a
+`pnpm test:serve` you left running is reused and Playwright skips its own start
+command — including the `build:css` inside it. Restart that server after editing
+`tests/fixtures/app.css` or the fixture styles stay stale.
+
+Two sections of `index.html` are flagged `Known bug` and specs pin the wrong
+behaviour on purpose: a `<slot>` inside `x-for` or `x-if` evaluates in the
+component's scope instead of the host's, and a throwing directive expression emits
+no `x-component:error`. Both are documented limitations in the README, so fixing
+one means changing the fixture, its spec, and the docs together.
 
 ## Documentation
 

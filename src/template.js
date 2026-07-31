@@ -91,24 +91,26 @@ export async function loadFromUrl(urlIdentifier, urlOptions = {}) {
     return null
   }
 
+  // The promise rather than its result is cached, so renders that overlap an in-flight
+  // request share it instead of each firing their own.
   if (!remoteTemplateCache.has(normalizedUrl)) {
     setBoundedCacheEntry(
       remoteTemplateCache,
       normalizedUrl,
-      fetch(normalizedUrl).then((fetchResponse) => {
+      fetch(normalizedUrl).then(async (fetchResponse) => {
         if (!fetchResponse.ok) {
           throw new Error(`Request failed (${fetchResponse.status}) for ${normalizedUrl}`)
         }
 
-        return fetchResponse.text()
+        return htmlToFragment(await fetchResponse.text())
       }),
     )
   }
 
   try {
-    const templateMarkup = await remoteTemplateCache.get(normalizedUrl)
+    const templateFragment = await remoteTemplateCache.get(normalizedUrl)
 
-    return htmlToFragment(templateMarkup).cloneNode(true)
+    return templateFragment.cloneNode(true)
   } catch (fetchError) {
     remoteTemplateCache.delete(normalizedUrl)
 

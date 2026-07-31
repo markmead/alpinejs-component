@@ -367,7 +367,8 @@
           asynchronous, the host emits <code>x-component:loading</code> and then
           <code>x-component:loaded</code>. The events bubble, so the log below listens on the
           wrapper rather than the host, and a same-origin URL is required unless you add
-          <code>.external</code>.
+          <code>.external</code>. Fetched templates are cached by URL, so swapping away and back
+          reuses what is already there rather than hitting the network again.
         </p>
 
         <figure class="panel">
@@ -405,6 +406,30 @@
                 data-testid="lifecycle-event-log"
                 x-text="eventLog.join(' → ')"
               ></output>
+            </div>
+
+            <div
+              class="flex flex-wrap items-center gap-3"
+              x-data="{ cardUrl: 'remote-card.html', item: { name: 'Cached' } }"
+            >
+              <span class="text-sm text-slate-600">Swap away and back</span>
+
+              <button
+                class="button"
+                data-testid="cache-swap-button"
+                type="button"
+                @click="
+                  cardUrl = cardUrl === 'remote-card.html' ? 'remote-note.html' : 'remote-card.html'
+                "
+              >
+                Swap URL
+              </button>
+
+              <span
+                class="basis-full"
+                data-testid="cached-card-host"
+                x-component.url="cardUrl"
+              ></span>
             </div>
           </div>
         </figure>
