@@ -1,0 +1,6 @@
+# dist/ is committed and published, but it is esbuild output on one line. Marking it
+# generated collapses it in pull request diffs, so a real src/ change is not buried
+# under two minified blobs, and keeps it out of the repository language stats.
+dist/* linguist-generated=true
+
+pnpm-lock.yaml linguist-generated=true
