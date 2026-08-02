@@ -5,10 +5,10 @@ preferences; prioritise them over "clever" or maximally terse alternatives.
 
 **Naming.** Prefer descriptive two-word names that state the thing's role, not bare
 single words or letters: `hostElement` not `el`, `slotTemplateNode` not `t`,
-`componentSource` not `src`, `projectedNode` not `n`, `stylesheetRule` not `r`.
-Booleans are prefixed `is`, `has`, or `uses` and read as a yes/no question:
-`hasMountedTree`, `usesUrlModifier`, `isReady`. Single-letter names are not
-acceptable even in small scopes, including `.map()` and `.filter()` callbacks.
+`componentSource` not `src`, `projectedNode` not `n`, `leastRecentlyUsedKey` not
+`k`. Booleans are prefixed `is`, `has`, or `uses` and read as a yes/no question:
+`usesUrlModifier`, `allowsCrossOrigin`. Single-letter names are not acceptable
+even in small scopes, including `.map()` and `.filter()` callbacks.
 
 **Functions.** Prefer named `function foo() {}` declarations over
 `const foo = () => {}`. Arrow functions are only for true inline callbacks
@@ -45,6 +45,8 @@ commas, 100 columns (80 for Markdown). Run `pnpm format` rather than hand-aligni
 - `dist/` — **committed to the repo** and published. Rebuild with `pnpm build`
   whenever `src/` or `builds/` changes, and include the result in the same commit.
   CI rebuilds and fails the run if the committed output does not match.
+- `CLAUDE.md` is a symlink to `AGENTS.md`. Edit `AGENTS.md`; both names read the
+  same file.
 
 Content renders into the light DOM. There is no Shadow DOM, and `<slot>` is resolved
 by manual projection rather than natively — see the slot handling in `src/slots.js`
@@ -72,6 +74,24 @@ Playwright suite on every push to `main` and every pull request.
 
 `package.json` has a `files` allowlist. Anything outside `dist/`, `src/`, and
 `builds/` is not published, so check `pnpm pack --dry-run` after touching packaging.
+
+`.claude/skills/` and `skills-lock.json` are checked in and deliberately trimmed
+(`793f778`). Invoking a skill that isn't vendored yet writes it into both and dirties
+the tree, so check `git status` before committing or tagging.
+
+## Releasing
+
+`dist/` must be committed and current before tagging, because that is what publishes.
+
+```shell
+npm publish        # prepublishOnly runs pnpm build first
+git tag vX.Y.Z && git push origin vX.Y.Z
+```
+
+Bumping the version means editing four places, not one: `package.json`, the two unpkg
+URLs in `README.md`, and the one in `examples/index.html`. Those URLs pin an exact
+version deliberately — the README tells users to do this so they can add SRI — so a
+missed bump leaves the docs and the example page pointing at the previous release.
 
 ## Testing
 
@@ -110,9 +130,10 @@ reaching into Alpine internals with `page.evaluate`. Open it by hand with
 
 A scenario only earns a fixture page of its own when it needs a different Alpine build
 or a document-level policy that `index.html` cannot carry — `csp.html` and
-`trusted-types.html` are the two that do. Every fixture page loads
+`trusted-types.html` are the two that do. `index.html` and `csp.html` load
 `fixtures/lifecycle-log.js`, so `lifecycleEventsFor()` in `tests/helpers.js` reads the
-same log whichever page a spec drives.
+same log across both. `trusted-types.html` does not, so lifecycle assertions are not
+available there.
 
 It is served on ports 3210 and 3211 so cross-origin `.url` behaviour can be tested
 against a real second origin. `reuseExistingServer` is on outside CI, so a
