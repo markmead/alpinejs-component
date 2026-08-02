@@ -50,7 +50,7 @@
   "devDependencies": {
     "@alpinejs/csp": "^3.15.12",
     "@eslint/js": "^10.0.1",
-    "@playwright/test": "^1.62.0",
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/cli": "^4.3.3",
     "alpinejs": "^3.15.12",
     "esbuild": "^0.28.1",
