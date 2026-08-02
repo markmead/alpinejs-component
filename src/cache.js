@@ -1,15 +1,48 @@
-const CACHE_ENTRY_LIMIT = 200
+const TEMPLATE_FRAGMENT_LIMIT = 200
+const REMOTE_FRAGMENT_LIMIT = 200
 
-export function setBoundedCacheEntry(cacheMap, cacheKey, cacheValue) {
-  cacheMap.set(cacheKey, cacheValue)
+function createBoundedCache(entryLimit) {
+  const cacheEntries = new Map()
 
-  // A Map iterates in insertion order, so its first key is always the oldest entry.
-  while (cacheMap.size > CACHE_ENTRY_LIMIT) {
-    const oldestCacheKey = cacheMap.keys().next().value
-
-    cacheMap.delete(oldestCacheKey)
+  function moveToNewest(cacheKey, cacheValue) {
+    cacheEntries.delete(cacheKey)
+    cacheEntries.set(cacheKey, cacheValue)
   }
+
+  function readEntry(cacheKey) {
+    if (!cacheEntries.has(cacheKey)) {
+      return undefined
+    }
+
+    const cacheValue = cacheEntries.get(cacheKey)
+
+    // Reading counts as use, so eviction drops the least recently read entry rather than
+    // whichever happened to be written first.
+    moveToNewest(cacheKey, cacheValue)
+
+    return cacheValue
+  }
+
+  function peekEntry(cacheKey) {
+    return cacheEntries.get(cacheKey)
+  }
+
+  function writeEntry(cacheKey, cacheValue) {
+    moveToNewest(cacheKey, cacheValue)
+
+    while (cacheEntries.size > entryLimit) {
+      const leastRecentlyUsedKey = cacheEntries.keys().next().value
+
+      cacheEntries.delete(leastRecentlyUsedKey)
+    }
+  }
+
+  function dropEntry(cacheKey) {
+    cacheEntries.delete(cacheKey)
+  }
+
+  return { readEntry, peekEntry, writeEntry, dropEntry }
 }
 
-export const templateFragmentCache = new Map()
-export const remoteTemplateCache = new Map()
+export const templateFragmentCache = createBoundedCache(TEMPLATE_FRAGMENT_LIMIT)
+export const remoteFragmentPromiseCache = createBoundedCache(REMOTE_FRAGMENT_LIMIT)

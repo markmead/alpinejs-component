@@ -17,7 +17,7 @@ v3 is directive-based and built around `x-component`.
 - Renders into the light DOM, so your page's CSS applies as-is
 - Supports default and named slots from host templates
 - Emits lifecycle events for loading, loaded, and error states
-- Uses bounded caches for templates and remote responses
+- Uses bounded caches for on-page and remote templates
 
 ## Install
 
@@ -76,7 +76,7 @@ v3 uses an Alpine directive: `x-component`.
 The directive expression can be static or dynamic. Values are normalized as:
 
 - `string`: trimmed and used directly
-- `number` / `boolean` / other primitives: converted with `String(...)`
+- `number` / `boolean` / any other value: converted with `String(...)`, then trimmed
 - `null` / `undefined` / empty string: treated as empty source
 
 When the resolved source is empty, the mounted component is unmounted/cleared.
@@ -349,7 +349,14 @@ The plugin maintains bounded in-memory caches:
 - Template fragments by template id (limit: 200)
 - Remote template fetch promises by normalized URL (limit: 200)
 
-When a cache exceeds its limit, oldest entries are evicted.
+Each cache has its own limit, both 200 today, and when one fills the least recently
+read entry is evicted.
+
+The on-page cache holds parsed fragments and the remote cache holds promises that
+resolve to them, so a template is parsed once however many times it renders, and
+overlapping renders of the same URL share one request. That trades memory for the
+parse: a page cycling through many large remote templates keeps up to 200 parsed
+trees for the document's lifetime.
 
 For URL mode, failed fetches are removed from cache so retries can succeed.
 
@@ -412,7 +419,7 @@ build under an enforced `script-src 'self'`, and `trusted-types.html` covers
   warnings/errors and lifecycle error events.
 - A throwing directive expression is reported by Alpine's own error handler, not
   as `x-component:error`. The host's mounted content is cleared.
-- URL responses are cached by URL.
+- Fetched templates are cached as parsed fragments, keyed by URL.
 - Template fragments are cached by template id.
 
 ## Migration From v2

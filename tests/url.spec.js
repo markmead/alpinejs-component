@@ -36,12 +36,18 @@ test('serves an already-loaded URL from the cache rather than refetching it', as
 
   // Matched exactly rather than by substring, so the cross-origin copy on port 3211 is ignored.
   const cachedCardUrl = new URL('remote-card.html', page.url()).href
+  const swappedNoteUrl = new URL('remote-note.html', page.url()).href
 
-  const cardRequestUrls = []
+  let cachedCardRequests = 0
+  let swappedNoteRequests = 0
 
   page.on('request', (pageRequest) => {
     if (pageRequest.url() === cachedCardUrl) {
-      cardRequestUrls.push(pageRequest.url())
+      cachedCardRequests += 1
+    }
+
+    if (pageRequest.url() === swappedNoteUrl) {
+      swappedNoteRequests += 1
     }
   })
 
@@ -51,7 +57,12 @@ test('serves an already-loaded URL from the cache rather than refetching it', as
   await page.getByTestId('cache-swap-button').click()
   await expect(cachedCardHost.locator('h2')).toHaveText('Cached')
 
-  expect(cardRequestUrls).toEqual([])
+  // remote-note.html has not been loaded before, so its single request is what proves the
+  // listener and the exact-match URLs are live rather than silently matching nothing.
+  expect({ cachedCardRequests, swappedNoteRequests }).toEqual({
+    cachedCardRequests: 0,
+    swappedNoteRequests: 1,
+  })
 })
 
 test('does not cache a failed fetch, so a retry can succeed', async ({ page }) => {

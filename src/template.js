@@ -1,4 +1,4 @@
-import { remoteTemplateCache, setBoundedCacheEntry, templateFragmentCache } from './cache'
+import { remoteFragmentPromiseCache, templateFragmentCache } from './cache'
 
 // Without a policy, every render throws on pages that enforce
 // `require-trusted-types-for 'script'`. Markup passes through unchanged, because templates are
@@ -65,23 +65,35 @@ export function loadFromTemplate(templateIdentifier) {
     return null
   }
 
-  if (!templateFragmentCache.has(normalizedTemplateId)) {
-    const templateElementNode = document.getElementById(normalizedTemplateId)
+  const cachedFragment = templateFragmentCache.readEntry(normalizedTemplateId)
 
-    if (!templateElementNode) {
-      console.warn(`[alpinejs-component] Missing template: "${normalizedTemplateId}"`)
-
-      return null
-    }
-
-    setBoundedCacheEntry(
-      templateFragmentCache,
-      normalizedTemplateId,
-      htmlToFragment(templateElementNode.innerHTML),
-    )
+  if (cachedFragment) {
+    return cachedFragment.cloneNode(true)
   }
 
-  return templateFragmentCache.get(normalizedTemplateId).cloneNode(true)
+  const templateElementNode = document.getElementById(normalizedTemplateId)
+
+  if (!templateElementNode) {
+    console.warn(`[alpinejs-component] Missing template: "${normalizedTemplateId}"`)
+
+    return null
+  }
+
+  const templateFragment = htmlToFragment(templateElementNode.innerHTML)
+
+  templateFragmentCache.writeEntry(normalizedTemplateId, templateFragment)
+
+  return templateFragment.cloneNode(true)
+}
+
+function fetchTemplateFragment(normalizedUrl) {
+  return fetch(normalizedUrl).then(async (fetchResponse) => {
+    if (!fetchResponse.ok) {
+      throw new Error(`Request failed (${fetchResponse.status}) for ${normalizedUrl}`)
+    }
+
+    return htmlToFragment(await fetchResponse.text())
+  })
 }
 
 export async function loadFromUrl(urlIdentifier, urlOptions = {}) {
@@ -91,28 +103,26 @@ export async function loadFromUrl(urlIdentifier, urlOptions = {}) {
     return null
   }
 
-  // The promise rather than its result is cached, so renders that overlap an in-flight
-  // request share it instead of each firing their own.
-  if (!remoteTemplateCache.has(normalizedUrl)) {
-    setBoundedCacheEntry(
-      remoteTemplateCache,
-      normalizedUrl,
-      fetch(normalizedUrl).then(async (fetchResponse) => {
-        if (!fetchResponse.ok) {
-          throw new Error(`Request failed (${fetchResponse.status}) for ${normalizedUrl}`)
-        }
+  let fragmentPromise = remoteFragmentPromiseCache.readEntry(normalizedUrl)
 
-        return htmlToFragment(await fetchResponse.text())
-      }),
-    )
+  if (!fragmentPromise) {
+    // The promise rather than its result is cached, so renders that overlap an in-flight
+    // request share it instead of each firing their own.
+    fragmentPromise = fetchTemplateFragment(normalizedUrl)
+
+    remoteFragmentPromiseCache.writeEntry(normalizedUrl, fragmentPromise)
   }
 
   try {
-    const templateFragment = await remoteTemplateCache.get(normalizedUrl)
+    const templateFragment = await fragmentPromise
 
     return templateFragment.cloneNode(true)
   } catch (fetchError) {
-    remoteTemplateCache.delete(normalizedUrl)
+    // Every render awaiting this promise reaches here, so only the promise that actually
+    // failed is evicted. A later render may already have replaced it with a fresh one.
+    if (remoteFragmentPromiseCache.peekEntry(normalizedUrl) === fragmentPromise) {
+      remoteFragmentPromiseCache.dropEntry(normalizedUrl)
+    }
 
     throw fetchError
   }
