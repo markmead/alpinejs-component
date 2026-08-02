@@ -6,7 +6,8 @@
 
 Directive-based Alpine.js components with slots and cached template rendering.
 
-**[✨ View the demos on CodePen](https://codepen.io/editor/markmead/pen/019d86f8-ed3f-7342-b0c1-b890dec04c9c?file=%2Findex.html&orientation=left&show=preview)**
+**[Demo: v3](https://codepen.io/editor/markmead/pen/019fc173-5225-776f-88d3-cf12cea8ce23?orientation=left&show=preview)**
+**[Demo: v2](https://codepen.io/editor/markmead/pen/019d86f8-ed3f-7342-b0c1-b890dec04c9c?orientation=left&show=preview)**
 
 ## V3 Overview
 
