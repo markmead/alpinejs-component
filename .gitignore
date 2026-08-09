@@ -15,8 +15,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# local tooling config
-.claude/settings.local.json
+# agent tooling
+/.agents
+/.claude
+skills-lock.json
 
 # local env files
 .env.local
