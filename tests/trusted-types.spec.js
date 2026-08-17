@@ -53,7 +53,9 @@ test('renders under an enforced Trusted Types policy', async ({ page }) => {
 
   await expect(page.getByTestId('trusted-types-onpage-title')).toHaveText('Ada')
   await expect(page.getByTestId('trusted-types-onpage-slot')).toHaveText('projected')
-  await expect(page.getByTestId('trusted-types-remote-title')).toHaveText('Ada')
+  await expect(page.getByTestId('trusted-types-remote-host').locator('.remote h2')).toHaveText(
+    'Ada',
+  )
   await expect(page.getByTestId('trusted-types-remote-slot')).toHaveText('projected')
   await expect(page.locator('slot')).toHaveCount(0)
 

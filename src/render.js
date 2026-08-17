@@ -16,9 +16,11 @@ export function createComponentRenderer(Alpine, hostElement) {
 
     // Alpine's mutation observer is paused so it can't double-handle nodes we manage ourselves.
     Alpine.mutateDom(() => {
-      destroyElementTrees(Alpine, mountedNodes)
-
       for (const mountedNode of mountedNodes) {
+        if (mountedNode.nodeType === Node.ELEMENT_NODE) {
+          Alpine.destroyTree(mountedNode)
+        }
+
         mountedNode.remove()
       }
     })
@@ -28,12 +30,11 @@ export function createComponentRenderer(Alpine, hostElement) {
 
   function mount(componentFragment) {
     const componentNodes = [...componentFragment.childNodes]
-    const previouslyMountedNodes = new Set(mountedNodes)
 
-    // Whatever else is on the host is content we never mounted, such as a loading placeholder.
-    const discardedHostElements = [...hostElement.children].filter(
-      (hostChildElement) => !previouslyMountedNodes.has(hostChildElement),
-    )
+    // Placeholder content that predates this renderer, such as a static loading state, can only
+    // be on the host before anything has been mounted yet — every later mount() sees only nodes
+    // this renderer itself placed there.
+    const discardedHostElements = mountedNodes.length ? [] : [...hostElement.children]
 
     // Both sets are torn down without detaching them individually — replaceChildren below does
     // the single detach for the whole host in one operation, and Alpine's observer never sees
