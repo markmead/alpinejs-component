@@ -1,3 +1,11 @@
+function destroyElementTrees(Alpine, nodesToDestroy) {
+  for (const nodeToDestroy of nodesToDestroy) {
+    if (nodeToDestroy.nodeType === Node.ELEMENT_NODE) {
+      Alpine.destroyTree(nodeToDestroy)
+    }
+  }
+}
+
 export function createComponentRenderer(Alpine, hostElement) {
   let mountedNodes = []
 
@@ -8,11 +16,9 @@ export function createComponentRenderer(Alpine, hostElement) {
 
     // Alpine's mutation observer is paused so it can't double-handle nodes we manage ourselves.
     Alpine.mutateDom(() => {
-      for (const mountedNode of mountedNodes) {
-        if (mountedNode.nodeType === Node.ELEMENT_NODE) {
-          Alpine.destroyTree(mountedNode)
-        }
+      destroyElementTrees(Alpine, mountedNodes)
 
+      for (const mountedNode of mountedNodes) {
         mountedNode.remove()
       }
     })
@@ -22,18 +28,19 @@ export function createComponentRenderer(Alpine, hostElement) {
 
   function mount(componentFragment) {
     const componentNodes = [...componentFragment.childNodes]
+    const previouslyMountedNodes = new Set(mountedNodes)
 
-    unmount()
+    // Whatever else is on the host is content we never mounted, such as a loading placeholder.
+    const discardedHostElements = [...hostElement.children].filter(
+      (hostChildElement) => !previouslyMountedNodes.has(hostChildElement),
+    )
 
-    // Whatever is left on the host is content we never mounted, such as a loading placeholder.
-    // Replacing it happens inside mutateDom, so Alpine's observer never sees those nodes leave
-    // and their trees have to be torn down by hand.
-    const discardedHostElements = [...hostElement.children]
-
+    // Both sets are torn down without detaching them individually — replaceChildren below does
+    // the single detach for the whole host in one operation, and Alpine's observer never sees
+    // those nodes leave since all of this runs inside one mutateDom.
     Alpine.mutateDom(() => {
-      for (const discardedHostElement of discardedHostElements) {
-        Alpine.destroyTree(discardedHostElement)
-      }
+      destroyElementTrees(Alpine, mountedNodes)
+      destroyElementTrees(Alpine, discardedHostElements)
 
       hostElement.replaceChildren(componentFragment)
 
@@ -52,9 +59,7 @@ export function createComponentRenderer(Alpine, hostElement) {
     if (discardedHostElements.length) {
       queueMicrotask(() => {
         Alpine.mutateDom(() => {
-          for (const discardedHostElement of discardedHostElements) {
-            Alpine.destroyTree(discardedHostElement)
-          }
+          destroyElementTrees(Alpine, discardedHostElements)
         })
       })
     }

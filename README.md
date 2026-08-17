@@ -308,16 +308,19 @@ If your CSP can't allow `'unsafe-eval'`, use Alpine's
 [CSP build](https://alpinejs.dev/advanced/csp) (`@alpinejs/csp`). This plugin works
 with it — `x-component`, `.url`, slots, and dynamic expressions all behave the same.
 
-**Trusted Types needs both pieces.** Templates are parsed by assigning to
-`innerHTML`, which is a Trusted Types sink, so under
+**Trusted Types needs both pieces, but only for remote templates.** An on-page
+`<template id="...">` is cloned from its already-parsed `.content`, so it never touches
+`innerHTML` and needs no policy. A template loaded with `x-component.url` is fetched as
+text and parsed by assigning to `innerHTML`, which is a Trusted Types sink, so under
 `require-trusted-types-for 'script'` the plugin registers a pass-through policy named
-`alpinejs-component`. Allow that name:
+`alpinejs-component` the first time it needs one. Allow that name:
 
 ```http
 Content-Security-Policy: trusted-types alpinejs-component; require-trusted-types-for 'script'
 ```
 
-If the name isn't allowed, the plugin logs a warning and rendering fails on that page.
+If the name isn't allowed, the plugin logs a warning and rendering fails for anything
+that needed the policy — remote templates, in the common case.
 
 That header alone is not enough, though. `require-trusted-types-for 'script'` also
 blocks `new Function`, so Alpine's default build can't evaluate any expression and

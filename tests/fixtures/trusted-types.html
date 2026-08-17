@@ -9,7 +9,7 @@
 
     <script>
       document.addEventListener('alpine:init', () => {
-        Alpine.data('cardHost', () => ({ cardName: 'tt-card', item: { name: 'Ada' } }))
+        Alpine.data('cardHost', () => ({ item: { name: 'Ada' } }))
       })
 
       // The policy arrives as a response header the spec adds, so the page cannot tell from its
@@ -56,15 +56,18 @@
         <h2>Render and project under an enforced policy</h2>
 
         <p class="note">
-          The card is cloned from a template and the <code>actions</code> slot is filled, both of
-          which write markup that the policy would otherwise refuse.
+          An on-page <code>&lt;template&gt;</code> is cloned from its already-parsed content, so it
+          never reaches the policy and renders the same whether or not one exists. The remote card
+          is fetched as text and the <code>actions</code> slot is filled, both of which write markup
+          that the policy would otherwise refuse — that host is what actually needs
+          <code>alpinejs-component</code> to be allowed.
         </p>
 
         <template id="tt-card">
           <article class="card grid gap-3">
             <h2
               class="font-semibold"
-              data-testid="trusted-types-card-title"
+              data-testid="trusted-types-onpage-title"
               x-text="item.name"
             ></h2>
             <footer class="controls"><slot name="actions"></slot></footer>
@@ -72,9 +75,15 @@
         </template>
 
         <div class="result" x-data="cardHost">
-          <div data-testid="trusted-types-host" x-component="cardName">
+          <div data-testid="trusted-types-onpage-host" x-component="'tt-card'">
             <template x-slot="actions"
-              ><b data-testid="trusted-types-slot-content">projected</b></template
+              ><b data-testid="trusted-types-onpage-slot">projected</b></template
+            >
+          </div>
+
+          <div data-testid="trusted-types-remote-host" x-component.url="'trusted-types-card.html'">
+            <template x-slot="actions"
+              ><b data-testid="trusted-types-remote-slot">projected</b></template
             >
           </div>
         </div>

@@ -51,8 +51,10 @@ test('the fixture really is under an enforced policy', async ({ page }) => {
 test('renders under an enforced Trusted Types policy', async ({ page }) => {
   const consoleMessages = await gotoWithPolicy(page, 'trusted-types alpinejs-component')
 
-  await expect(page.getByTestId('trusted-types-card-title')).toHaveText('Ada')
-  await expect(page.getByTestId('trusted-types-slot-content')).toHaveText('projected')
+  await expect(page.getByTestId('trusted-types-onpage-title')).toHaveText('Ada')
+  await expect(page.getByTestId('trusted-types-onpage-slot')).toHaveText('projected')
+  await expect(page.getByTestId('trusted-types-remote-title')).toHaveText('Ada')
+  await expect(page.getByTestId('trusted-types-remote-slot')).toHaveText('projected')
   await expect(page.locator('slot')).toHaveCount(0)
 
   expect(consoleMessages).toEqual([])
@@ -67,7 +69,11 @@ test('warns instead of throwing when the policy name is not allowed', async ({ p
 
   const consoleMessages = await gotoWithPolicy(page, 'trusted-types someone-else')
 
-  await expect(page.getByTestId('trusted-types-host')).toBeEmpty()
+  // The remote card is parsed through innerHTML and needs the policy, so it fails without one.
+  // The on-page template is cloned from its already-parsed content and never asks for a policy,
+  // so it renders fine regardless.
+  await expect(page.getByTestId('trusted-types-remote-host')).toBeEmpty()
+  await expect(page.getByTestId('trusted-types-onpage-title')).toHaveText('Ada')
 
   expect(consoleMessages).toContainEqual(
     expect.stringContaining('[alpinejs-component] Could not create a Trusted Types policy'),
