@@ -1,3 +1,11 @@
+function destroyElementTrees(Alpine, nodesToDestroy) {
+  for (const nodeToDestroy of nodesToDestroy) {
+    if (nodeToDestroy.nodeType === Node.ELEMENT_NODE) {
+      Alpine.destroyTree(nodeToDestroy)
+    }
+  }
+}
+
 export function createComponentRenderer(Alpine, hostElement) {
   let mountedNodes = []
 
@@ -23,17 +31,17 @@ export function createComponentRenderer(Alpine, hostElement) {
   function mount(componentFragment) {
     const componentNodes = [...componentFragment.childNodes]
 
-    unmount()
+    // Placeholder content that predates this renderer, such as a static loading state, can only
+    // be on the host before anything has been mounted yet — every later mount() sees only nodes
+    // this renderer itself placed there.
+    const discardedHostElements = mountedNodes.length ? [] : [...hostElement.children]
 
-    // Whatever is left on the host is content we never mounted, such as a loading placeholder.
-    // Replacing it happens inside mutateDom, so Alpine's observer never sees those nodes leave
-    // and their trees have to be torn down by hand.
-    const discardedHostElements = [...hostElement.children]
-
+    // Both sets are torn down without detaching them individually — replaceChildren below does
+    // the single detach for the whole host in one operation, and Alpine's observer never sees
+    // those nodes leave since all of this runs inside one mutateDom.
     Alpine.mutateDom(() => {
-      for (const discardedHostElement of discardedHostElements) {
-        Alpine.destroyTree(discardedHostElement)
-      }
+      destroyElementTrees(Alpine, mountedNodes)
+      destroyElementTrees(Alpine, discardedHostElements)
 
       hostElement.replaceChildren(componentFragment)
 
@@ -52,9 +60,7 @@ export function createComponentRenderer(Alpine, hostElement) {
     if (discardedHostElements.length) {
       queueMicrotask(() => {
         Alpine.mutateDom(() => {
-          for (const discardedHostElement of discardedHostElements) {
-            Alpine.destroyTree(discardedHostElement)
-          }
+          destroyElementTrees(Alpine, discardedHostElements)
         })
       })
     }

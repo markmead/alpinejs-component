@@ -18,8 +18,14 @@ function captureSlotContent(Alpine, hostElement) {
     } else {
       capturedSlotContent.set(slotName, slotTemplateNode.content)
     }
+  }
 
-    Alpine.mutateDom(() => slotTemplateNode.remove())
+  if (slotTemplateNodes.length) {
+    Alpine.mutateDom(() => {
+      for (const slotTemplateNode of slotTemplateNodes) {
+        slotTemplateNode.remove()
+      }
+    })
   }
 
   return capturedSlotContent

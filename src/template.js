@@ -22,12 +22,26 @@ function createMarkupPolicy() {
   }
 }
 
-const markupPolicy = createMarkupPolicy()
+let markupPolicy
+
+// Deferred past module evaluation, so loading the bundle on a page that never renders a
+// component never registers the policy or trips a CSP report for it. createMarkupPolicy()
+// itself only ever returns a policy or null, so undefined is free to mean "not computed yet".
+function getMarkupPolicy() {
+  if (markupPolicy === undefined) {
+    markupPolicy = createMarkupPolicy()
+  }
+
+  return markupPolicy
+}
 
 function htmlToFragment(htmlString) {
   const templateElement = document.createElement('template')
+  const resolvedMarkupPolicy = getMarkupPolicy()
 
-  templateElement.innerHTML = markupPolicy ? markupPolicy.createHTML(htmlString) : htmlString
+  templateElement.innerHTML = resolvedMarkupPolicy
+    ? resolvedMarkupPolicy.createHTML(htmlString)
+    : htmlString
 
   return templateElement.content
 }
@@ -79,7 +93,15 @@ export function loadFromTemplate(templateIdentifier) {
     return null
   }
 
-  const templateFragment = htmlToFragment(templateElementNode.innerHTML)
+  // A <template> element's .content is already a parsed fragment, so caching it directly skips
+  // the serialize-then-reparse round trip that innerHTML would otherwise cost. Anything else
+  // found by id has no .content, so it still goes through that path. This also means on-page
+  // templates never touch the Trusted Types sink below — only the innerHTML fallback and remote
+  // (.url) templates do.
+  const templateFragment =
+    templateElementNode.tagName === 'TEMPLATE'
+      ? templateElementNode.content
+      : htmlToFragment(templateElementNode.innerHTML)
 
   templateFragmentCache.writeEntry(normalizedTemplateId, templateFragment)
 
