@@ -75,9 +75,9 @@ Playwright suite on every push to `main` and every pull request.
 `package.json` has a `files` allowlist. Anything outside `dist/`, `src/`, and
 `builds/` is not published, so check `pnpm pack --dry-run` after touching packaging.
 
-`.claude/skills/` and `skills-lock.json` are checked in and deliberately trimmed
-(`793f778`). Invoking a skill that isn't vendored yet writes it into both and dirties
-the tree, so check `git status` before committing or tagging.
+`.agents/`, `.claude/`, and `skills-lock.json` are gitignored agent tooling, not
+tracked project files. They were vendored briefly and removed in `b4d5aba`; invoking a
+skill still writes into them locally, but that no longer dirties the tree.
 
 ## Releasing
 
